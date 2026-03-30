@@ -1,0 +1,74 @@
+{
+  "model": {
+    "name": "qwen"
+  },
+  "mcp": {
+    "enabled": true,
+    "servers": {
+      "mssql": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "mssql-mcp-server"
+        ],
+        "env": {
+          "MSSQL_CONNECTION_STRING": "Server=(localdb)\\mssqllocaldb;Database=RealEstateDb;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False"
+        }
+      },
+      "filesystem": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "D:/COURSE_2/Course_OOP"
+        ]
+      }
+    }
+  },
+  "skills": {
+    "enabled": true,
+    "path": "./skills",
+    "files": [
+      "wpf_mvvm.md",
+      "sef_core.md",
+      "sql_server.md"
+    ]
+  },
+  "context": {
+    "project": "Real Estate Agency",
+    "platform": "WPF (.NET 6/8)",
+    "architecture": "MVVM",
+    "database": "SQL Server + EF Core",
+    "roles": [
+      "admin",
+      "realtor",
+      "client"
+    ]
+  },
+  "options": {
+    "temperature": 0.7,
+    "maxTokens": 4096,
+    "stream": true
+  },
+  "$version": 3,
+  "permissions": {
+    "allow": [
+      "Bash(dotnet *)",
+      "Bash(del *)",
+      "Bash(mkdir *)",
+      "Bash(rd *)",
+      "Bash($env:nuget_fallback_packages=\"\")",
+      "Bash(set *)",
+      "Bash(powershell *)",
+      "Bash(cmd *)",
+      "Bash(x86)",
+      "Bash(\\microsoft *)",
+      "Bash($env:nuget_fallback_packages=\"c:\\users\\uunn2\\.nuget\\packages\")",
+      "Bash(robocopy *)",
+      "Bash(dir)",
+      "Bash(move *)",
+      "Bash(select-string *)",
+      "Bash(select-object *)"
+    ]
+  }
+}

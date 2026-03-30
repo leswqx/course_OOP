@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <RestoreFallbackFolders></RestoreFallbackFolders>
+    <NuGetFallbackFolder></NuGetFallbackFolder>
+  </PropertyGroup>
+</Project>
