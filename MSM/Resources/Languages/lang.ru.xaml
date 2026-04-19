@@ -67,6 +67,24 @@
     <s:String x:Key="Filter.Mortgage">Ипотека</s:String>
     <s:String x:Key="Filter.Renovation">С ремонтом</s:String>
 
+    <!-- Регистрация -->
+    <s:String x:Key="Register.Subtitle">Создание аккаунта</s:String>
+    <s:String x:Key="Register.FullName">Полное имя *</s:String>
+    <s:String x:Key="Register.Email">E-mail *</s:String>
+    <s:String x:Key="Register.Phone">Телефон</s:String>
+    <s:String x:Key="Register.ConfirmPassword">Подтвердите пароль *</s:String>
+    <s:String x:Key="Register.Submit">Зарегистрироваться</s:String>
+
+    <!-- Запись на просмотр (Phase 10) -->
+    <s:String x:Key="Schedule.FormTitle">Записаться на просмотр</s:String>
+    <s:String x:Key="Schedule.Date">Дата</s:String>
+    <s:String x:Key="Schedule.Time">Время</s:String>
+    <s:String x:Key="Schedule.Comment">Комментарий (необязательно)</s:String>
+    <s:String x:Key="Schedule.Submit">Подтвердить запись</s:String>
+    <s:String x:Key="Schedule.Cancel">Отмена</s:String>
+    <s:String x:Key="Schedule.Success">✓ Запись оформлена! Риелтор свяжется с вами.</s:String>
+    <s:String x:Key="Schedule.SlotTaken">Это время уже занято. Выберите другой слот.</s:String>
+
     <!-- HomeView -->
     <s:String x:Key="Home.LogoutButton">Выйти из системы</s:String>
     <s:String x:Key="Home.Placeholder">Функциональность будет добавлена на следующих этапах разработки.</s:String>

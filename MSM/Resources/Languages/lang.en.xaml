@@ -67,6 +67,24 @@
     <s:String x:Key="Filter.Mortgage">Mortgage</s:String>
     <s:String x:Key="Filter.Renovation">With renovation</s:String>
 
+    <!-- Registration -->
+    <s:String x:Key="Register.Subtitle">Create Account</s:String>
+    <s:String x:Key="Register.FullName">Full name *</s:String>
+    <s:String x:Key="Register.Email">E-mail *</s:String>
+    <s:String x:Key="Register.Phone">Phone</s:String>
+    <s:String x:Key="Register.ConfirmPassword">Confirm password *</s:String>
+    <s:String x:Key="Register.Submit">Register</s:String>
+
+    <!-- Appointment scheduling (Phase 10) -->
+    <s:String x:Key="Schedule.FormTitle">Schedule a Viewing</s:String>
+    <s:String x:Key="Schedule.Date">Date</s:String>
+    <s:String x:Key="Schedule.Time">Time</s:String>
+    <s:String x:Key="Schedule.Comment">Comment (optional)</s:String>
+    <s:String x:Key="Schedule.Submit">Confirm Booking</s:String>
+    <s:String x:Key="Schedule.Cancel">Cancel</s:String>
+    <s:String x:Key="Schedule.Success">✓ Booking confirmed! The realtor will contact you.</s:String>
+    <s:String x:Key="Schedule.SlotTaken">This time slot is already taken. Please choose another.</s:String>
+
     <!-- HomeView -->
     <s:String x:Key="Home.LogoutButton">Sign Out</s:String>
     <s:String x:Key="Home.Placeholder">Features will be added in the next development phases.</s:String>

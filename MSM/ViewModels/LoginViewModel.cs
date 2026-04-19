@@ -71,8 +71,6 @@ public partial class LoginViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void NavigateToRegister()
-    {
-        // TODO Phase 6: _navigationService.NavigateTo<RegisterViewModel>();
-    }
+    private void NavigateToRegister() =>
+        _navigationService.NavigateTo<RegisterViewModel>();
 }

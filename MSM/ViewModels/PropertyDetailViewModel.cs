@@ -9,11 +9,12 @@ using MSM.Services.Interfaces;
 namespace MSM.ViewModels;
 
 // ViewModel страницы детального просмотра объекта недвижимости.
-// Управляет каруселью изображений и кнопкой «В избранное».
+// Управляет каруселью изображений, избранным и формой записи на просмотр.
 public partial class PropertyDetailViewModel : ViewModelBase
 {
     private readonly IPropertyService _propertyService;
     private readonly IFavoriteService _favoriteService;
+    private readonly IAppointmentService _appointmentService;
     private readonly INavigationService _navigationService;
 
     private List<BitmapImage> _images = new();
@@ -31,16 +32,28 @@ public partial class PropertyDetailViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(ImageCounter))]
     private int _currentImageIndex;
 
-    // --- Вычисляемые свойства для View ---
+    // ===== Форма записи на просмотр =====
+    [ObservableProperty] private bool _isScheduleFormVisible;
+    [ObservableProperty] private DateTime _scheduleDate = DateTime.Today.AddDays(1);
+    [ObservableProperty] private string _scheduleTimeSlot = "10:00";
+    [ObservableProperty] private string _scheduleComment = "";
+    [ObservableProperty] private bool _scheduleSuccess;       // → DynamicResource Schedule.Success
+    [ObservableProperty] private bool _scheduleSlotTaken;    // → DynamicResource Schedule.SlotTaken
+    [ObservableProperty] private string? _scheduleErrorText; // произвольная ошибка сервиса
+    [ObservableProperty] private bool _isSubmittingSchedule;
+
+    // Доступные временные слоты (09:00–18:00)
+    public List<string> TimeSlots { get; } =
+        Enumerable.Range(9, 10).Select(h => $"{h:D2}:00").ToList();
+
+    // --- Вычисляемые свойства ---
 
     public string ImageCounter => _images.Count > 0
-        ? $"{CurrentImageIndex + 1} / {_images.Count}"
-        : "";
+        ? $"{CurrentImageIndex + 1} / {_images.Count}" : "";
 
     public bool HasMultipleImages => _images.Count > 1;
-    public bool HasImages => _images.Count > 0;
-
-    public bool IsClient => Session.IsClient;
+    public bool HasImages         => _images.Count > 0;
+    public bool IsClient          => Session.IsClient;
 
     public string FavoriteButtonText => IsFavorite ? "★  В избранном" : "☆  В избранное";
 
@@ -67,23 +80,22 @@ public partial class PropertyDetailViewModel : ViewModelBase
             if (Property == null) return "";
             if (Property.Floor.HasValue && Property.TotalFloors.HasValue)
                 return $"{Property.Floor} / {Property.TotalFloors}";
-            if (Property.Floor.HasValue)
-                return Property.Floor.ToString()!;
-            return "—";
+            return Property.Floor.HasValue ? Property.Floor.ToString()! : "—";
         }
     }
 
     public PropertyDetailViewModel(
         IPropertyService propertyService,
         IFavoriteService favoriteService,
+        IAppointmentService appointmentService,
         INavigationService navigationService)
     {
         _propertyService = propertyService;
         _favoriteService = favoriteService;
+        _appointmentService = appointmentService;
         _navigationService = navigationService;
     }
 
-    // NavigationService передаёт сюда ID выбранного объекта
     public override void OnNavigatedTo(object? parameter)
     {
         if (parameter is int id)
@@ -97,13 +109,8 @@ public partial class PropertyDetailViewModel : ViewModelBase
         try
         {
             Property = await _propertyService.GetByIdAsync(id);
-            if (Property == null)
-            {
-                ErrorMessage = "Объект не найден";
-                return;
-            }
+            if (Property == null) { ErrorMessage = "Объект не найден"; return; }
 
-            // Загружаем изображения (главное — первым)
             _images = (Property.Images?
                 .OrderByDescending(i => i.IsMain)
                 .ThenBy(i => i.SortOrder)
@@ -120,18 +127,11 @@ public partial class PropertyDetailViewModel : ViewModelBase
             OnPropertyChanged(nameof(StatusDisplay));
             OnPropertyChanged(nameof(FloorInfo));
 
-            // Проверяем избранное только для клиентов
             if (Session.IsClient && Session.CurrentUser != null)
                 IsFavorite = await _favoriteService.IsFavoriteAsync(Session.CurrentUser.Id, id);
         }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Ошибка: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
-        }
+        catch (Exception ex) { ErrorMessage = $"Ошибка: {ex.Message}"; }
+        finally { IsLoading = false; }
     }
 
     [RelayCommand]
@@ -162,17 +162,64 @@ public partial class PropertyDetailViewModel : ViewModelBase
                 await _favoriteService.AddToFavoritesAsync(Session.CurrentUser.Id, Property.Id);
             IsFavorite = !IsFavorite;
         }
+        catch (Exception ex) { ErrorMessage = $"Ошибка: {ex.Message}"; }
+    }
+
+    // Показывает / скрывает форму записи, сбрасывает состояние
+    [RelayCommand]
+    private void ToggleScheduleForm()
+    {
+        IsScheduleFormVisible = !IsScheduleFormVisible;
+        ScheduleSuccess = ScheduleSlotTaken = false;
+        ScheduleErrorText = null;
+        ScheduleComment = "";
+    }
+
+    // Создаёт запись на просмотр в БД
+    [RelayCommand]
+    private async Task SubmitAppointmentAsync()
+    {
+        if (Property == null || Session.CurrentUser == null) return;
+        if (!TimeSpan.TryParse(ScheduleTimeSlot, out var time)) return;
+
+        var slotStart = ScheduleDate.Date + time;
+        var slotEnd   = slotStart.AddHours(1);
+
+        IsSubmittingSchedule = true;
+        ScheduleSuccess = ScheduleSlotTaken = false;
+        ScheduleErrorText = null;
+
+        try
+        {
+            var available = await _appointmentService.IsSlotAvailableAsync(
+                Property.RealtorId, slotStart, slotEnd);
+
+            if (!available)
+            {
+                ScheduleSlotTaken = true; // View покажет {DynamicResource Schedule.SlotTaken}
+                return;
+            }
+
+            await _appointmentService.CreateAsync(
+                Property.Id,
+                Session.CurrentUser.Id,
+                Property.RealtorId,
+                slotStart,
+                slotEnd,
+                string.IsNullOrWhiteSpace(ScheduleComment) ? null : ScheduleComment);
+
+            ScheduleSuccess = true; // View покажет {DynamicResource Schedule.Success}
+            ScheduleComment = "";
+        }
         catch (Exception ex)
         {
-            ErrorMessage = $"Ошибка: {ex.Message}";
+            ScheduleErrorText = $"Ошибка: {ex.Message}";
         }
+        finally { IsSubmittingSchedule = false; }
     }
 
     [RelayCommand]
-    private void GoBack()
-    {
-        _navigationService.NavigateTo<PropertyListViewModel>();
-    }
+    private void GoBack() => _navigationService.NavigateTo<PropertyListViewModel>();
 
     private static BitmapImage? ToImage(byte[] data)
     {

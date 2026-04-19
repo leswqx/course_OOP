@@ -62,6 +62,7 @@ public partial class App : Application
 
         // ViewModels (scoped — живут в рамках одного DI-скоупа, создаваемого NavigationService)
         services.AddScoped<LoginViewModel>();
+        services.AddScoped<RegisterViewModel>();
         services.AddScoped<HomeViewModel>();
         services.AddScoped<PropertyListViewModel>();
         services.AddScoped<PropertyDetailViewModel>();
