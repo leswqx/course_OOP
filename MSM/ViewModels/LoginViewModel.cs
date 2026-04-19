@@ -1,17 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MSM.Models;
-using MSM.Models.Entities;
 using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
 
-/// <summary>
-/// ViewModel для авторизации
-/// </summary>
 public partial class LoginViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty]
     private string _login = string.Empty;
@@ -25,12 +22,10 @@ public partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isLoading;
 
-    public event Action<string>? LoginSuccessful;
-    public event Action? NavigationToRegister;
-
-    public LoginViewModel(IAuthService authService)
+    public LoginViewModel(IAuthService authService, INavigationService navigationService)
     {
         _authService = authService;
+        _navigationService = navigationService;
     }
 
     [RelayCommand]
@@ -58,7 +53,7 @@ public partial class LoginViewModel : ViewModelBase
             if (user != null)
             {
                 Session.CurrentUser = user;
-                LoginSuccessful?.Invoke(user.Role);
+                _navigationService.NavigateTo<PropertyListViewModel>();
             }
             else
             {
@@ -78,6 +73,6 @@ public partial class LoginViewModel : ViewModelBase
     [RelayCommand]
     private void NavigateToRegister()
     {
-        NavigationToRegister?.Invoke();
+        // TODO Phase 6: _navigationService.NavigateTo<RegisterViewModel>();
     }
 }

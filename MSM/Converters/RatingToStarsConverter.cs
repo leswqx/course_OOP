@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace RealEstateAgency.Wpf.Converters;
+namespace MSM.Converters;
 
 /// <summary>
 /// Конвертер рейтинга в строку со звездами

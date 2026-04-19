@@ -2,9 +2,9 @@ using System.Windows.Controls;
 
 namespace MSM.Views;
 
-public partial class LoginView : UserControl
+public partial class PropertyListView : UserControl
 {
-    public LoginView()
+    public PropertyListView()
     {
         InitializeComponent();
     }

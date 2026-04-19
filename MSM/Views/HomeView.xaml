@@ -1,0 +1,32 @@
+<UserControl x:Class="MSM.Views.HomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="900">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+        <TextBlock Text="🏠" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+        <TextBlock Text="{Binding WelcomeText}"
+                   FontSize="18"
+                   FontWeight="SemiBold"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   Foreground="#4A4A4A"
+                   Margin="0,0,0,40"/>
+        <TextBlock Text="Функциональность будет добавлена на следующих этапах разработки."
+                   FontSize="13"
+                   Foreground="Gray"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,40"/>
+        <Button Content="Выйти из системы"
+                Command="{Binding LogoutCommand}"
+                Height="40"
+                Width="200"
+                FontSize="14"
+                Background="#D4A5A5"
+                Foreground="White"
+                BorderThickness="0"/>
+    </StackPanel>
+</UserControl>

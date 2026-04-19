@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace RealEstateAgency.Wpf.Converters;
+namespace MSM.Converters;
 
 /// <summary>
 /// Конвертер цены в строку с форматированием

@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace RealEstateAgency.Wpf.Converters;
+namespace MSM.Converters;
 
 /// <summary>
 /// Конвертер boolean в Visibility

@@ -1,4 +1,4 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +8,6 @@ using MSM.Data.Repositories;
 using MSM.Services;
 using MSM.Services.Interfaces;
 using MSM.ViewModels;
-using MSM.Views;
 
 namespace MSM;
 
@@ -22,31 +21,25 @@ public partial class App : Application
 
         var services = new ServiceCollection();
         ConfigureServices(services);
-
         ServiceProvider = services.BuildServiceProvider();
 
-        // Инициализация базы данных
         await InitializeDatabaseAsync();
 
-        // Создаем MainWindow с зависимостями
-        var loginViewModel = ServiceProvider.GetRequiredService<LoginViewModel>();
-        var mainWindow = new MainWindow(loginViewModel);
+        var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
+
+        ServiceProvider.GetRequiredService<INavigationService>().NavigateTo<LoginViewModel>();
     }
 
     private static async Task InitializeDatabaseAsync()
     {
         using var scope = ServiceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // Применяем миграции (если есть непримененные)
         await context.Database.MigrateAsync();
-
-        // Инициализируем тестовыми данными
         await DbInitializer.InitializeAsync(context);
     }
 
-    private void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services)
     {
         // Database
         services.AddDbContext<AppDbContext>(options =>
@@ -64,20 +57,22 @@ public partial class App : Application
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IReviewService, ReviewService>();
 
-        // ViewModels
-        services.AddTransient<LoginViewModel>();
+        // Navigation (singleton — хранит CurrentViewModel, создаёт DI-скоуп при каждом переходе)
+        services.AddSingleton<INavigationService, NavigationService>();
 
-        // Views
-        services.AddTransient<LoginView>();
-        services.AddScoped<MainWindow>();
+        // ViewModels (scoped — живут в рамках одного DI-скоупа, создаваемого NavigationService)
+        services.AddScoped<LoginViewModel>();
+        services.AddScoped<HomeViewModel>();
+        services.AddScoped<PropertyListViewModel>();
+
+        // Main window (singleton — одно окно на всё приложение)
+        services.AddSingleton<MainWindow>();
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
         base.OnExit(e);
         if (ServiceProvider is IDisposable disposable)
-        {
             disposable.Dispose();
-        }
     }
 }
