@@ -6,7 +6,7 @@
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d"
              Background="{DynamicResource BackgroundBrush}"
-             d:DesignHeight="600" d:DesignWidth="960">
+             d:DesignHeight="700" d:DesignWidth="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
@@ -33,25 +33,119 @@
         <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" Margin="16,0">
-                <RadioButton Content="{DynamicResource Admin.Users}"
-                             IsChecked="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=0}"
-                             GroupName="AdminTab" Style="{StaticResource TabRadioStyle}"/>
-                <RadioButton Content="{DynamicResource Admin.Reviews}"
-                             IsChecked="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=1}"
-                             GroupName="AdminTab" Style="{StaticResource TabRadioStyle}" Margin="8,0,0,0"/>
-                <RadioButton Content="{DynamicResource Admin.Stats}"
-                             IsChecked="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=2}"
-                             GroupName="AdminTab" Style="{StaticResource TabRadioStyle}" Margin="8,0,0,0"/>
+                <Button Content="{DynamicResource Admin.Users}"
+                        Command="{Binding SetTab0Command}"
+                        Background="Transparent" BorderThickness="0,0,0,3" Padding="12,0"
+                        FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab0}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="{DynamicResource Admin.Reviews}"
+                        Command="{Binding SetTab1Command}"
+                        Background="Transparent" BorderThickness="0,0,0,3" Padding="12,0"
+                        FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab1}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="{DynamicResource Admin.Stats}"
+                        Command="{Binding SetTab2Command}"
+                        Background="Transparent" BorderThickness="0,0,0,3" Padding="12,0"
+                        FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab2}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </StackPanel>
         </Border>
 
         <!-- Контент -->
         <Grid Grid.Row="2">
 
-            <!-- ===== ВКЛАДКА: ПОЛЬЗОВАТЕЛИ ===== -->
-            <Grid Visibility="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=0}"
+            <!-- ===== ВКЛАДКА 0: ПОЛЬЗОВАТЕЛИ ===== -->
+            <Grid Visibility="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}"
                   Margin="16">
-                <DataGrid ItemsSource="{Binding Users}" AutoGenerateColumns="False"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Сообщение о смене роли -->
+                <Border Grid.Row="0" Background="{DynamicResource SuccessBrush}" CornerRadius="6"
+                        Padding="12,8" Margin="0,0,0,10"
+                        Visibility="{Binding UserActionMessage, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{Binding UserActionMessage}" FontSize="13"
+                               Foreground="White" FontWeight="SemiBold"/>
+                </Border>
+
+                <DataGrid Grid.Row="1" ItemsSource="{Binding Users}" AutoGenerateColumns="False"
                           IsReadOnly="True" CanUserAddRows="False"
                           Background="{DynamicResource SurfaceBrush}"
                           Foreground="{DynamicResource TextPrimaryBrush}"
@@ -59,20 +153,51 @@
                           RowBackground="{DynamicResource SurfaceBrush}"
                           AlternatingRowBackground="{DynamicResource BackgroundBrush}"
                           GridLinesVisibility="Horizontal"
-                          HorizontalGridLinesBrush="{DynamicResource SeparatorBrush}">
+                          HorizontalGridLinesBrush="{DynamicResource SeparatorBrush}"
+                          HeadersVisibility="Column">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="Padding" Value="8,6"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Имя"       Binding="{Binding FullName}" Width="*"/>
-                        <DataGridTextColumn Header="Логин"     Binding="{Binding Login}"    Width="120"/>
-                        <DataGridTextColumn Header="E-mail"    Binding="{Binding Email}"    Width="180"/>
-                        <DataGridTextColumn Header="Роль"      Binding="{Binding Role}"     Width="110"/>
-                        <DataGridTextColumn Header="Телефон"   Binding="{Binding Phone}"    Width="140"/>
-                        <DataGridTextColumn Header="Создан"    Binding="{Binding CreatedAt}" Width="100"/>
+                        <DataGridTextColumn Header="Имя"     Binding="{Binding FullName}"   Width="*"/>
+                        <DataGridTextColumn Header="Логин"   Binding="{Binding Login}"      Width="110"/>
+                        <DataGridTextColumn Header="E-mail"  Binding="{Binding Email}"      Width="170"/>
+                        <DataGridTextColumn Header="Роль"    Binding="{Binding RoleDisplay}" Width="110"/>
+                        <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}"      Width="130"/>
+                        <DataGridTextColumn Header="Создан"  Binding="{Binding CreatedAt}"  Width="100"/>
+                        <DataGridTemplateColumn Header="Действия" Width="200">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="4,2">
+                                        <Button Content="{DynamicResource Admin.Promote}"
+                                                Command="{Binding DataContext.PromoteToRealtorCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Id}"
+                                                Visibility="{Binding CanPromote, Converter={StaticResource BoolToVisibility}}"
+                                                Height="26" Padding="10,0" FontSize="11"
+                                                Background="{DynamicResource PrimaryBrush}"
+                                                Foreground="White" BorderThickness="0" Margin="0,0,6,0"/>
+                                        <Button Content="{DynamicResource Admin.Demote}"
+                                                Command="{Binding DataContext.DemoteToClientCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Id}"
+                                                Visibility="{Binding CanDemote, Converter={StaticResource BoolToVisibility}}"
+                                                Height="26" Padding="10,0" FontSize="11"
+                                                Background="{DynamicResource ErrorBrush}"
+                                                Foreground="White" BorderThickness="0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
 
-            <!-- ===== ВКЛАДКА: МОДЕРАЦИЯ ===== -->
-            <Grid Visibility="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=1}"
+            <!-- ===== ВКЛАДКА 1: МОДЕРАЦИЯ ОТЗЫВОВ ===== -->
+            <Grid Visibility="{Binding ShowTab1, Converter={StaticResource BoolToVisibility}}"
                   Margin="16">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="{Binding NoReviews, Converter={StaticResource BoolToVisibility}}">
@@ -88,6 +213,9 @@
                             <DataTemplate>
                                 <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
                                         Padding="16,12" Margin="0,0,0,8">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="4" ShadowDepth="1" Opacity="0.08"/>
+                                    </Border.Effect>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -129,76 +257,93 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- ===== ВКЛАДКА: СТАТИСТИКА ===== -->
-            <ScrollViewer Margin="16"
-                          Visibility="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=2}">
+            <!-- ===== ВКЛАДКА 2: СТАТИСТИКА ===== -->
+            <ScrollViewer Visibility="{Binding ShowTab2, Converter={StaticResource BoolToVisibility}}"
+                          Margin="16" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <!-- Счётчики -->
-                    <UniformGrid Columns="4" Margin="0,0,0,20">
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                    <UniformGrid Columns="5" Margin="0,0,0,20">
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="{DynamicResource Admin.TotalProps}" FontSize="12"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="{Binding StatTotalProps}" FontSize="32" FontWeight="Bold"
-                                           Foreground="{DynamicResource PrimaryBrush}"/>
+                                <TextBlock Text="{DynamicResource Admin.TotalProps}" FontSize="11"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding StatTotalProps}" FontSize="28" FontWeight="Bold"
+                                           Foreground="{DynamicResource PrimaryBrush}" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="{DynamicResource Admin.ActiveProps}" FontSize="12"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="{Binding StatActiveProps}" FontSize="32" FontWeight="Bold"
-                                           Foreground="{DynamicResource SuccessBrush}"/>
+                                <TextBlock Text="{DynamicResource Admin.ActiveProps}" FontSize="11"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding StatActiveProps}" FontSize="28" FontWeight="Bold"
+                                           Foreground="{DynamicResource SuccessBrush}" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="{DynamicResource Admin.SoldProps}" FontSize="12"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="{Binding StatSoldProps}" FontSize="32" FontWeight="Bold"
-                                           Foreground="{DynamicResource AccentBrush}"/>
+                                <TextBlock Text="{DynamicResource Admin.SoldProps}" FontSize="11"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding StatSoldProps}" FontSize="28" FontWeight="Bold"
+                                           Foreground="{DynamicResource AccentBrush}" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20">
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,8,0">
                             <StackPanel>
-                                <TextBlock Text="{DynamicResource Admin.TotalUsers}" FontSize="12"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="{Binding StatTotalUsers}" FontSize="32" FontWeight="Bold"
-                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="{DynamicResource Admin.TotalUsers}" FontSize="11"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding StatTotalUsers}" FontSize="28" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Admin.TotalRealtors}" FontSize="11"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding StatRealtors}" FontSize="28" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,4,0,0"/>
                             </StackPanel>
                         </Border>
                     </UniformGrid>
 
-                    <!-- Графики -->
-                    <Grid>
+                    <!-- Первый ряд графиков -->
+                    <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="280"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Pie: статусы объектов -->
                         <Border Grid.Column="0" Background="{DynamicResource CardBrush}"
                                 CornerRadius="8" Padding="16" Margin="0,0,12,0">
                             <StackPanel>
-                                <TextBlock Text="Объекты по статусу" FontSize="14" FontWeight="SemiBold"
+                                <TextBlock Text="{DynamicResource Admin.PropsByStatus}" FontSize="13" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
-                                <lvc:PieChart Series="{Binding PropStatusSeries}" Height="220"
+                                <lvc:PieChart Series="{Binding PropStatusSeries}" Height="200"
                                               LegendPosition="Bottom"/>
                             </StackPanel>
                         </Border>
 
-                        <!-- Bar: объекты по риелторам -->
                         <Border Grid.Column="1" Background="{DynamicResource CardBrush}"
                                 CornerRadius="8" Padding="16">
                             <StackPanel>
-                                <TextBlock Text="Объектов по риелтору" FontSize="14" FontWeight="SemiBold"
+                                <TextBlock Text="{DynamicResource Admin.PropsByRealtor}" FontSize="13" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
-                                <lvc:CartesianChart Series="{Binding RealtorSeries}"
+                                <lvc:CartesianChart Series="{Binding RealtorPropSeries}"
                                                     XAxes="{Binding RealtorXAxes}"
-                                                    Height="220"/>
+                                                    Height="200"/>
                             </StackPanel>
                         </Border>
                     </Grid>
+
+                    <!-- Второй ряд: рейтинг риелторов -->
+                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource Admin.RatingByRealtor}" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
+                            <lvc:CartesianChart Series="{Binding RealtorRatingSeries}"
+                                                XAxes="{Binding RatingXAxes}"
+                                                Height="200"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
         </Grid>

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:MSM.Controls"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d"
              Background="{DynamicResource BackgroundBrush}"
              d:DesignHeight="600" d:DesignWidth="960">
@@ -29,30 +30,46 @@
             </Grid>
         </Border>
 
-        <!-- Вкладки -->
+        <!-- Вкладки (кнопки) -->
         <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
-            <StackPanel Orientation="Horizontal" Margin="16,0">
-                <RadioButton Content="{DynamicResource Realtor.MyProperties}"
-                             IsChecked="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=0}"
-                             GroupName="Tab" Style="{StaticResource TabRadioStyle}"/>
-                <RadioButton Content="{DynamicResource Realtor.Appointments}"
-                             IsChecked="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=1}"
-                             GroupName="Tab" Style="{StaticResource TabRadioStyle}" Margin="8,0,0,0"/>
+            <StackPanel Orientation="Horizontal" Margin="12,0">
+                <Button Command="{Binding SetTab0Command}" Style="{StaticResource TabRadioStyle}"
+                        FontWeight="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}">
+                    <Button.Content>
+                        <TextBlock Text="{DynamicResource Realtor.MyProperties}"/>
+                    </Button.Content>
+                    <Button.BorderThickness>
+                        <Binding Path="ShowTab0">
+                            <Binding.Converter>
+                                <StaticResource ResourceKey="BoolToVisibility"/>
+                            </Binding.Converter>
+                        </Binding>
+                    </Button.BorderThickness>
+                </Button>
+                <Button Command="{Binding SetTab1Command}" Margin="4,0,0,0" Style="{StaticResource TabRadioStyle}">
+                    <Button.Content>
+                        <TextBlock Text="{DynamicResource Realtor.Appointments}"/>
+                    </Button.Content>
+                </Button>
+                <Button Command="{Binding SetTab2Command}" Margin="4,0,0,0" Style="{StaticResource TabRadioStyle}">
+                    <Button.Content>
+                        <TextBlock Text="{DynamicResource Admin.Stats}"/>
+                    </Button.Content>
+                </Button>
             </StackPanel>
         </Border>
 
         <!-- Контент -->
         <Grid Grid.Row="2">
 
-            <!-- ===== ВКЛАДКА: МОИ ОБЪЕКТЫ ===== -->
-            <Grid Visibility="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=0}">
+            <!-- ===== ВКЛАДКА 0: МОИ ОБЪЕКТЫ ===== -->
+            <Grid Visibility="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Кнопка добавить + форма -->
                 <StackPanel Grid.Row="0" Margin="16,12,16,0">
                     <Button Content="{DynamicResource Realtor.AddProperty}"
                             Command="{Binding ToggleFormCommand}"
@@ -61,17 +78,14 @@
                             Background="{DynamicResource PrimaryBrush}"
                             Foreground="White" BorderThickness="0"/>
 
-                    <!-- Форма добавления объекта -->
+                    <!-- Форма добавления -->
                     <Border Visibility="{Binding IsFormVisible, Converter={StaticResource BoolToVisibility}}"
                             Background="{DynamicResource SurfaceBrush}"
                             BorderBrush="{DynamicResource BorderBrush}"
-                            BorderThickness="1" CornerRadius="8"
-                            Padding="16" Margin="0,10,0,0">
+                            BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,10,0,0">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="16"/>
-                                <ColumnDefinition/>
+                                <ColumnDefinition/><ColumnDefinition Width="16"/><ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -82,7 +96,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- Строка 0: Название + Тип -->
+                            <!-- Название + Тип -->
                             <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,10">
                                 <TextBlock Text="{DynamicResource PropForm.Title}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
@@ -92,13 +106,13 @@
                                 <TextBlock Text="{DynamicResource PropForm.Type}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                 <ComboBox SelectedValue="{Binding FormType}" SelectedValuePath="Tag" Height="32">
-                                    <ComboBoxItem Content="{DynamicResource Type.Apartment}" Tag="apartment"/>
+                                    <ComboBoxItem Content="{DynamicResource Type.Apartment}" Tag="apartment" IsSelected="True"/>
                                     <ComboBoxItem Content="{DynamicResource Type.House}"     Tag="house"/>
                                     <ComboBoxItem Content="{DynamicResource Type.Complex}"   Tag="complex"/>
                                 </ComboBox>
                             </StackPanel>
 
-                            <!-- Строка 1: Цена + Площадь + Комнат -->
+                            <!-- Цена + Площадь + Комнаты -->
                             <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,10">
                                 <TextBlock Text="{DynamicResource PropForm.Price}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
@@ -106,12 +120,12 @@
                             </StackPanel>
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,10">
                                 <StackPanel Orientation="Horizontal">
-                                    <StackPanel Width="120" Margin="0,0,8,0">
+                                    <StackPanel Width="130" Margin="0,0,8,0">
                                         <TextBlock Text="{DynamicResource PropForm.Area}" FontSize="12"
                                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                         <TextBox Text="{Binding FormArea, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="8,0"/>
                                     </StackPanel>
-                                    <StackPanel Width="80">
+                                    <StackPanel Width="90">
                                         <TextBlock Text="{DynamicResource PropForm.Rooms}" FontSize="12"
                                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                         <TextBox Text="{Binding FormRooms, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="8,0"/>
@@ -119,7 +133,7 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <!-- Строка 2: Этаж + Год -->
+                            <!-- Этаж + Год -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,10">
                                 <StackPanel Orientation="Horizontal">
                                     <StackPanel Width="120" Margin="0,0,8,0">
@@ -140,7 +154,7 @@
                                 <TextBox Text="{Binding FormYearBuilt, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="8,0"/>
                             </StackPanel>
 
-                            <!-- Строка 3: Город + Адрес -->
+                            <!-- Город + Адрес -->
                             <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,10">
                                 <TextBlock Text="{DynamicResource PropForm.City}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
@@ -152,7 +166,7 @@
                                 <TextBox Text="{Binding FormAddress, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="8,0"/>
                             </StackPanel>
 
-                            <!-- Строка 4: Описание -->
+                            <!-- Описание -->
                             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
                                 <TextBlock Text="{DynamicResource PropForm.Description}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
@@ -161,8 +175,8 @@
                                          AcceptsReturn="True" VerticalContentAlignment="Top"/>
                             </StackPanel>
 
-                            <!-- Строка 5: Чекбоксы + кнопки -->
-                            <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal">
+                            <!-- Чекбоксы + кнопки -->
+                            <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                 <CheckBox Content="{DynamicResource PropForm.HasRepair}"
                                           IsChecked="{Binding FormHasRepair}"
                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,16,0"/>
@@ -176,13 +190,12 @@
                                            Visibility="{Binding FormError, Converter={StaticResource BoolToVisibility}}"/>
                                 <Button Content="{DynamicResource PropForm.Cancel}"
                                         Command="{Binding ToggleFormCommand}"
-                                        Height="34" Padding="16,0" FontSize="13" Margin="0,0,8,0"
-                                        Background="Transparent"
-                                        Foreground="{DynamicResource AccentBrush}"
+                                        Height="34" Padding="16,0" Margin="0,0,8,0"
+                                        Background="Transparent" Foreground="{DynamicResource AccentBrush}"
                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                                 <Button Content="{DynamicResource PropForm.Save}"
                                         Command="{Binding SavePropertyCommand}"
-                                        Height="34" Padding="16,0" FontSize="13"
+                                        Height="34" Padding="16,0"
                                         Background="{DynamicResource PrimaryBrush}"
                                         Foreground="White" BorderThickness="0"/>
                             </StackPanel>
@@ -190,7 +203,6 @@
                     </Border>
                 </StackPanel>
 
-                <!-- Список моих объектов -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding MyProperties}" Margin="12">
                         <ItemsControl.ItemsPanel>
@@ -211,58 +223,125 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- ===== ВКЛАДКА: ЗАПИСИ КЛИЕНТОВ ===== -->
-            <ScrollViewer Margin="16"
-                          Visibility="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=1}">
-                <ItemsControl ItemsSource="{Binding Appointments}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
-                                    Padding="16,10" Margin="0,0,0,8">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="4" ShadowDepth="1" Opacity="0.1"/>
-                                </Border.Effect>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="140"/>
-                                        <ColumnDefinition Width="160"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
+            <!-- ===== ВКЛАДКА 1: ЗАПИСИ КЛИЕНТОВ ===== -->
+            <Grid Visibility="{Binding ShowTab1, Converter={StaticResource BoolToVisibility}}" Margin="16">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding NoAppointments, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="📅" FontSize="48" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource Realtor.NoAppt}" FontSize="16"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                </StackPanel>
 
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding ClientName}" FontWeight="SemiBold"
-                                                   FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <TextBlock Text="{Binding PropertyTitle}" FontSize="12"
-                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                        <TextBlock Text="{Binding DateTime}" FontSize="12"
-                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                    </StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Appointments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
+                                        Padding="16,10" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
 
-                                    <TextBlock Grid.Column="1" Text="{Binding Status}" FontSize="12"
-                                               Foreground="{Binding StatusColor}"
-                                               FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding ClientName}" FontWeight="SemiBold"
+                                                       FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding PropertyTitle}" FontSize="12"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                            <TextBlock Text="{Binding DateTime}" FontSize="12"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        </StackPanel>
 
-                                    <!-- Кнопки только для новых записей -->
-                                    <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Button Content="{DynamicResource Realtor.Confirm}"
-                                                Command="{Binding DataContext.ConfirmAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                CommandParameter="{Binding Id}"
-                                                Height="30" Padding="10,0" FontSize="12" Margin="0,0,6,0"
-                                                Background="{DynamicResource SuccessBrush}"
-                                                Foreground="White" BorderThickness="0"/>
-                                        <Button Content="{DynamicResource Realtor.Cancel}"
-                                                Command="{Binding DataContext.CancelAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                CommandParameter="{Binding Id}"
-                                                Height="30" Padding="10,0" FontSize="12"
-                                                Background="{DynamicResource ErrorBrush}"
-                                                Foreground="White" BorderThickness="0"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Status}" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{Binding StatusColor, Converter={StaticResource StringToBrush}}"
+                                                   VerticalAlignment="Center"/>
+
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                                                    Visibility="{Binding CanAct, Converter={StaticResource BoolToVisibility}}">
+                                            <Button Content="{DynamicResource Realtor.Confirm}"
+                                                    Command="{Binding DataContext.ConfirmAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Height="30" Padding="10,0" FontSize="12" Margin="0,0,6,0"
+                                                    Background="{DynamicResource SuccessBrush}"
+                                                    Foreground="White" BorderThickness="0"/>
+                                            <Button Content="{DynamicResource Realtor.Cancel}"
+                                                    Command="{Binding DataContext.CancelAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Height="30" Padding="10,0" FontSize="12"
+                                                    Background="{DynamicResource ErrorBrush}"
+                                                    Foreground="White" BorderThickness="0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ===== ВКЛАДКА 2: СТАТИСТИКА ===== -->
+            <ScrollViewer Visibility="{Binding ShowTab2, Converter={StaticResource BoolToVisibility}}" Margin="16">
+                <StackPanel>
+                    <!-- Счётчики -->
+                    <UniformGrid Columns="4" Margin="0,0,0,16">
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Всего объектов" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding StatTotal}" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Активных" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding StatActive}" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Продано" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding StatSold}" FontSize="28" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="Мой рейтинг" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding StatRating, StringFormat='{}{0:F1} ★'}"
+                                           FontSize="28" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Графики -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="280"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="{DynamicResource CardBrush}"
+                                CornerRadius="8" Padding="16" Margin="0,0,12,0">
+                            <StackPanel>
+                                <TextBlock Text="Объекты по статусу" FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                                <lvc:PieChart Series="{Binding StatusSeries}" Height="200" LegendPosition="Bottom"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="{DynamicResource CardBrush}"
+                                CornerRadius="8" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="Записи по месяцам" FontSize="13" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                                <lvc:CartesianChart Series="{Binding RatingSeriesData}"
+                                                    XAxes="{Binding RatingXAxes}" Height="200"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
             </ScrollViewer>
         </Grid>
     </Grid>

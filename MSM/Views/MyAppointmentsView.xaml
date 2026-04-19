@@ -26,7 +26,7 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Row="1" Margin="20">
+        <Grid Grid.Row="1" Margin="20,16">
             <TextBlock Text="{DynamicResource Common.Loading}" HorizontalAlignment="Center" VerticalAlignment="Center"
                        FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
@@ -52,11 +52,10 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="150"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <StackPanel Grid.Column="0">
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding PropertyTitle}"
                                                    FontSize="14" FontWeight="SemiBold"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -69,14 +68,13 @@
                                                    FontStyle="Italic" Margin="0,2,0,0"/>
                                     </StackPanel>
 
-                                    <Border Grid.Column="2" CornerRadius="4" Padding="10,4"
-                                            HorizontalAlignment="Right" VerticalAlignment="Center">
-                                        <Border.Background>
-                                            <SolidColorBrush Color="{DynamicResource BadgePlaceholderBrush}"/>
-                                        </Border.Background>
+                                    <!-- Статус -->
+                                    <Border Grid.Column="1" CornerRadius="4" Padding="10,4"
+                                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                                            Background="{DynamicResource BadgePlaceholderBrush}">
                                         <TextBlock Text="{Binding StatusDisplay}"
                                                    FontSize="12" FontWeight="SemiBold"
-                                                   Foreground="{Binding StatusColor}"/>
+                                                   Foreground="{Binding StatusColor, Converter={StaticResource StringToBrush}}"/>
                                     </Border>
                                 </Grid>
                             </Border>

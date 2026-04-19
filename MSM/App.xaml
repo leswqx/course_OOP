@@ -35,6 +35,7 @@
 
             <!-- Конвертеры -->
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+            <converters:StringToBrushConverter x:Key="StringToBrush"/>
             <converters:PriceToStringConverter x:Key="PriceToString"/>
             <converters:RatingToStarsConverter x:Key="RatingToStars"/>
             <converters:AppointmentStatusToStringConverter x:Key="AppointmentStatusToString"/>

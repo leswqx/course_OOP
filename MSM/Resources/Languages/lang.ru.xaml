@@ -139,6 +139,12 @@
     <s:String x:Key="Admin.ActiveProps">Активных</s:String>
     <s:String x:Key="Admin.SoldProps">Продано</s:String>
     <s:String x:Key="Admin.TotalUsers">Пользователей</s:String>
+    <s:String x:Key="Admin.TotalRealtors">Риелторов</s:String>
+    <s:String x:Key="Admin.Promote">↑ Риелтор</s:String>
+    <s:String x:Key="Admin.Demote">↓ Клиент</s:String>
+    <s:String x:Key="Admin.PropsByStatus">Объекты по статусу</s:String>
+    <s:String x:Key="Admin.PropsByRealtor">Объектов по риелтору</s:String>
+    <s:String x:Key="Admin.RatingByRealtor">Рейтинг риелторов</s:String>
 
     <!-- Навигация (роль) -->
     <s:String x:Key="Nav.Favorites">⭐ Избранное</s:String>

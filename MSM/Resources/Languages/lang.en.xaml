@@ -139,6 +139,12 @@
     <s:String x:Key="Admin.ActiveProps">Active</s:String>
     <s:String x:Key="Admin.SoldProps">Sold</s:String>
     <s:String x:Key="Admin.TotalUsers">Users</s:String>
+    <s:String x:Key="Admin.TotalRealtors">Realtors</s:String>
+    <s:String x:Key="Admin.Promote">↑ Realtor</s:String>
+    <s:String x:Key="Admin.Demote">↓ Client</s:String>
+    <s:String x:Key="Admin.PropsByStatus">Properties by status</s:String>
+    <s:String x:Key="Admin.PropsByRealtor">Properties per realtor</s:String>
+    <s:String x:Key="Admin.RatingByRealtor">Realtor ratings</s:String>
 
     <!-- Role navigation -->
     <s:String x:Key="Nav.Favorites">⭐ Favorites</s:String>

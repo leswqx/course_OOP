@@ -13,30 +13,28 @@ using SkiaSharp;
 
 namespace MSM.ViewModels;
 
-// Строка пользователя в таблице
 public class UserRowViewModel
 {
     public int Id { get; }
     public string FullName { get; }
     public string Login { get; }
     public string Email { get; }
+    public string RoleDisplay { get; }
     public string Role { get; }
     public string Phone { get; }
     public string CreatedAt { get; }
+    public bool CanPromote => Role == "client";
+    public bool CanDemote  => Role == "realtor";
 
     public UserRowViewModel(User u)
     {
-        Id = u.Id;
-        FullName = u.FullName;
-        Login = u.Login;
-        Email = u.Email;
-        Phone = u.Phone ?? "—";
-        Role = u.Role switch { "admin" => "Администратор", "realtor" => "Риелтор", _ => "Клиент" };
+        Id = u.Id; FullName = u.FullName; Login = u.Login; Email = u.Email;
+        Role = u.Role; Phone = u.Phone ?? "—";
+        RoleDisplay = u.Role switch { "admin" => "Администратор", "realtor" => "Риелтор", _ => "Клиент" };
         CreatedAt = u.CreatedAt.ToString("dd.MM.yyyy");
     }
 }
 
-// Строка отзыва на модерации
 public class ReviewRowViewModel
 {
     public int Id { get; }
@@ -47,40 +45,48 @@ public class ReviewRowViewModel
 
     public ReviewRowViewModel(Review r)
     {
-        Id = r.Id;
-        Author = r.User?.FullName ?? "—";
+        Id = r.Id; Author = r.User?.FullName ?? "—";
         Rating = new string('★', r.Rating) + new string('☆', 5 - r.Rating);
-        Comment = r.Comment;
-        Date = r.CreatedAt.ToString("dd.MM.yyyy");
+        Comment = r.Comment; Date = r.CreatedAt.ToString("dd.MM.yyyy");
     }
 }
 
-// Панель администратора: пользователи, модерация отзывов, статистика (LiveCharts)
+// Панель администратора: пользователи · модерация · статистика
 public partial class AdminDashboardViewModel : ViewModelBase
 {
     private readonly IReviewService _reviewService;
     private readonly INavigationService _navigationService;
     private readonly AppDbContext _context;
 
-    [ObservableProperty] private int _selectedTab; // 0=users 1=reviews 2=stats
+    // ===== Вкладки =====
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowTab0), nameof(ShowTab1), nameof(ShowTab2))]
+    private int _selectedTab;
+    public bool ShowTab0 => SelectedTab == 0;
+    public bool ShowTab1 => SelectedTab == 1;
+    public bool ShowTab2 => SelectedTab == 2;
 
-    // --- Пользователи ---
+    // ===== Пользователи =====
     [ObservableProperty] private ObservableCollection<UserRowViewModel> _users = new();
     [ObservableProperty] private bool _isUsersLoading;
+    [ObservableProperty] private string? _userActionMessage;
 
-    // --- Отзывы ---
+    // ===== Отзывы =====
     [ObservableProperty] private ObservableCollection<ReviewRowViewModel> _pendingReviews = new();
     [ObservableProperty] private bool _isReviewsLoading;
     [ObservableProperty] private bool _noReviews;
 
-    // --- Статистика ---
+    // ===== Статистика =====
     [ObservableProperty] private int _statTotalProps;
     [ObservableProperty] private int _statActiveProps;
     [ObservableProperty] private int _statSoldProps;
     [ObservableProperty] private int _statTotalUsers;
+    [ObservableProperty] private int _statRealtors;
     [ObservableProperty] private ISeries[] _propStatusSeries = Array.Empty<ISeries>();
-    [ObservableProperty] private ISeries[] _realtorSeries = Array.Empty<ISeries>();
+    [ObservableProperty] private ISeries[] _realtorPropSeries = Array.Empty<ISeries>();
     [ObservableProperty] private Axis[] _realtorXAxes = Array.Empty<Axis>();
+    [ObservableProperty] private ISeries[] _realtorRatingSeries = Array.Empty<ISeries>();
+    [ObservableProperty] private Axis[] _ratingXAxes = Array.Empty<Axis>();
 
     public AdminDashboardViewModel(
         IReviewService reviewService,
@@ -99,18 +105,53 @@ public partial class AdminDashboardViewModel : ViewModelBase
         _ = LoadStatsAsync();
     }
 
+    // ===== Вкладки =====
+    [RelayCommand] private void SetTab0() => SelectedTab = 0;
+    [RelayCommand] private void SetTab1() => SelectedTab = 1;
+    [RelayCommand] private void SetTab2() => SelectedTab = 2;
+
+    // ===== Пользователи =====
     private async Task LoadUsersAsync()
     {
         IsUsersLoading = true;
         try
         {
-            var users = await _context.Users.OrderBy(u => u.Role).ThenBy(u => u.FullName).ToListAsync();
+            var users = await _context.Users
+                .OrderBy(u => u.Role).ThenBy(u => u.FullName)
+                .ToListAsync();
             Users.Clear();
             foreach (var u in users) Users.Add(new UserRowViewModel(u));
         }
         finally { IsUsersLoading = false; }
     }
 
+    // Повысить клиента до риелтора
+    [RelayCommand]
+    private async Task PromoteToRealtorAsync(int userId)
+    {
+        await ChangeRoleAsync(userId, "realtor");
+    }
+
+    // Понизить риелтора до клиента
+    [RelayCommand]
+    private async Task DemoteToClientAsync(int userId)
+    {
+        await ChangeRoleAsync(userId, "client");
+    }
+
+    private async Task ChangeRoleAsync(int userId, string newRole)
+    {
+        UserActionMessage = null;
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return;
+        user.Role = newRole;
+        await _context.SaveChangesAsync();
+        UserActionMessage = $"Роль пользователя {user.FullName} изменена на «{(newRole == "realtor" ? "Риелтор" : "Клиент")}»";
+        await LoadUsersAsync();
+        await LoadStatsAsync();
+    }
+
+    // ===== Отзывы =====
     private async Task LoadReviewsAsync()
     {
         IsReviewsLoading = true;
@@ -128,50 +169,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
         finally { IsReviewsLoading = false; }
     }
 
-    private async Task LoadStatsAsync()
-    {
-        var props   = await _context.Properties.ToListAsync();
-        var users   = await _context.Users.ToListAsync();
-        var realtors = await _context.Users.Where(u => u.Role == "realtor").ToListAsync();
-
-        StatTotalProps  = props.Count;
-        StatActiveProps = props.Count(p => p.Status == "active");
-        StatSoldProps   = props.Count(p => p.Status == "sold");
-        StatTotalUsers  = users.Count;
-
-        // Pie: активные / проданные / скрытые
-        PropStatusSeries = new ISeries[]
-        {
-            new PieSeries<int> { Values = new[]{ StatActiveProps }, Name = "Активные",
-                Fill = new SolidColorPaint(SKColor.Parse("#D4A5A5")) },
-            new PieSeries<int> { Values = new[]{ StatSoldProps },   Name = "Проданные",
-                Fill = new SolidColorPaint(SKColor.Parse("#7CB342")) },
-            new PieSeries<int> { Values = new[]{ props.Count(p=>p.Status=="hidden") }, Name = "Скрытые",
-                Fill = new SolidColorPaint(SKColor.Parse("#AAAAAA")) },
-        };
-
-        // Bar: объекты по риелторам
-        var realtorCounts = realtors.Select(r => new
-        {
-            Name = r.FullName.Split(' ').First(),
-            Count = props.Count(p => p.RealtorId == r.Id)
-        }).ToList();
-
-        RealtorSeries = new ISeries[]
-        {
-            new ColumnSeries<int>
-            {
-                Values = realtorCounts.Select(x => x.Count).ToArray(),
-                Name = "Объектов",
-                Fill = new SolidColorPaint(SKColor.Parse("#D4A5A5"))
-            }
-        };
-        RealtorXAxes = new Axis[]
-        {
-            new Axis { Labels = realtorCounts.Select(x => x.Name).ToArray() }
-        };
-    }
-
     [RelayCommand]
     private async Task ApproveReviewAsync(int id)
     {
@@ -184,6 +181,78 @@ public partial class AdminDashboardViewModel : ViewModelBase
     {
         await _reviewService.RejectAsync(id);
         await LoadReviewsAsync();
+    }
+
+    // ===== Статистика =====
+    private async Task LoadStatsAsync()
+    {
+        try
+        {
+            var props   = await _context.Properties.ToListAsync();
+            var users   = await _context.Users.ToListAsync();
+            var realtors = users.Where(u => u.Role == "realtor").ToList();
+
+            StatTotalProps  = props.Count;
+            StatActiveProps = props.Count(p => p.Status == "active");
+            StatSoldProps   = props.Count(p => p.Status == "sold");
+            StatTotalUsers  = users.Count;
+            StatRealtors    = realtors.Count;
+
+            // Pie: статусы объектов
+            PropStatusSeries = new ISeries[]
+            {
+                new PieSeries<int> { Values = new[]{ StatActiveProps }, Name = "Активные",
+                    Fill = new SolidColorPaint(SKColor.Parse("#D4A5A5")) },
+                new PieSeries<int> { Values = new[]{ StatSoldProps },   Name = "Проданные",
+                    Fill = new SolidColorPaint(SKColor.Parse("#7CB342")) },
+                new PieSeries<int> { Values = new[]{ props.Count(p=>p.Status=="hidden") }, Name = "Скрытые",
+                    Fill = new SolidColorPaint(SKColor.Parse("#AAAAAA")) },
+            };
+
+            // Bar: объектов по риелторам
+            var realtorData = realtors.Select(r => new
+            {
+                Name  = r.FullName.Split(' ').FirstOrDefault() ?? r.Login,
+                Count = props.Count(p => p.RealtorId == r.Id)
+            }).ToList();
+
+            RealtorPropSeries = new ISeries[]
+            {
+                new ColumnSeries<int>
+                {
+                    Values = realtorData.Select(x => x.Count).ToArray(),
+                    Name = "Объектов",
+                    Fill = new SolidColorPaint(SKColor.Parse("#D4A5A5"))
+                }
+            };
+            RealtorXAxes = new Axis[]
+            {
+                new Axis { Labels = realtorData.Select(x => x.Name).ToArray() }
+            };
+
+            // Bar: средний рейтинг по риелторам
+            var ratingTasks = realtors.Select(async r =>
+            {
+                var avg = await _reviewService.GetAverageRatingAsync(realtorId: r.Id);
+                return (Name: r.FullName.Split(' ').FirstOrDefault() ?? r.Login, Rating: avg);
+            });
+            var ratings = (await Task.WhenAll(ratingTasks)).ToList();
+
+            RealtorRatingSeries = new ISeries[]
+            {
+                new ColumnSeries<double>
+                {
+                    Values = ratings.Select(x => Math.Round(x.Rating, 1)).ToArray(),
+                    Name = "Рейтинг",
+                    Fill = new SolidColorPaint(SKColor.Parse("#C49595"))
+                }
+            };
+            RatingXAxes = new Axis[]
+            {
+                new Axis { Labels = ratings.Select(x => x.Name).ToArray(), MinStep = 1 }
+            };
+        }
+        catch { /* некритично */ }
     }
 
     [RelayCommand]
