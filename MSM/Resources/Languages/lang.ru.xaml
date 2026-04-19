@@ -85,6 +85,67 @@
     <s:String x:Key="Schedule.Success">✓ Запись оформлена! Риелтор свяжется с вами.</s:String>
     <s:String x:Key="Schedule.SlotTaken">Это время уже занято. Выберите другой слот.</s:String>
 
+    <!-- Избранное -->
+    <s:String x:Key="Favorites.Title">Избранное</s:String>
+    <s:String x:Key="Favorites.Empty">Вы ещё не добавили объекты в избранное</s:String>
+
+    <!-- Мои записи (клиент) -->
+    <s:String x:Key="MyAppt.Title">Мои записи на просмотр</s:String>
+    <s:String x:Key="MyAppt.Empty">У вас пока нет записей на просмотр</s:String>
+    <s:String x:Key="MyAppt.Property">Объект</s:String>
+    <s:String x:Key="MyAppt.DateTime">Дата и время</s:String>
+    <s:String x:Key="MyAppt.Status">Статус</s:String>
+    <s:String x:Key="MyAppt.Comment">Комментарий</s:String>
+    <s:String x:Key="Appt.New">Новая</s:String>
+    <s:String x:Key="Appt.Confirmed">Подтверждена</s:String>
+    <s:String x:Key="Appt.Cancelled">Отменена</s:String>
+    <s:String x:Key="Appt.Completed">Завершена</s:String>
+
+    <!-- Панель риелтора -->
+    <s:String x:Key="Realtor.Title">Панель риелтора</s:String>
+    <s:String x:Key="Realtor.MyProperties">Мои объекты</s:String>
+    <s:String x:Key="Realtor.Appointments">Записи клиентов</s:String>
+    <s:String x:Key="Realtor.AddProperty">+ Добавить объект</s:String>
+    <s:String x:Key="Realtor.Confirm">Подтвердить</s:String>
+    <s:String x:Key="Realtor.Cancel">Отменить</s:String>
+    <s:String x:Key="Realtor.NoAppt">Нет записей</s:String>
+
+    <!-- Форма объекта -->
+    <s:String x:Key="PropForm.Title">Название *</s:String>
+    <s:String x:Key="PropForm.Description">Описание *</s:String>
+    <s:String x:Key="PropForm.Price">Цена, ₽ *</s:String>
+    <s:String x:Key="PropForm.Area">Площадь, м² *</s:String>
+    <s:String x:Key="PropForm.Rooms">Комнат *</s:String>
+    <s:String x:Key="PropForm.Floor">Этаж</s:String>
+    <s:String x:Key="PropForm.TotalFloors">Всего этажей</s:String>
+    <s:String x:Key="PropForm.YearBuilt">Год постройки</s:String>
+    <s:String x:Key="PropForm.City">Город *</s:String>
+    <s:String x:Key="PropForm.Address">Адрес *</s:String>
+    <s:String x:Key="PropForm.Type">Тип объекта *</s:String>
+    <s:String x:Key="PropForm.HasRepair">Есть ремонт</s:String>
+    <s:String x:Key="PropForm.Mortgage">Доступна ипотека</s:String>
+    <s:String x:Key="PropForm.Save">Сохранить</s:String>
+    <s:String x:Key="PropForm.Cancel">Отмена</s:String>
+
+    <!-- Панель администратора -->
+    <s:String x:Key="Admin.Title">Панель администратора</s:String>
+    <s:String x:Key="Admin.Users">Пользователи</s:String>
+    <s:String x:Key="Admin.Reviews">Модерация отзывов</s:String>
+    <s:String x:Key="Admin.Stats">Статистика</s:String>
+    <s:String x:Key="Admin.Approve">Одобрить</s:String>
+    <s:String x:Key="Admin.Reject">Отклонить</s:String>
+    <s:String x:Key="Admin.NoReviews">Нет отзывов на модерации</s:String>
+    <s:String x:Key="Admin.TotalProps">Всего объектов</s:String>
+    <s:String x:Key="Admin.ActiveProps">Активных</s:String>
+    <s:String x:Key="Admin.SoldProps">Продано</s:String>
+    <s:String x:Key="Admin.TotalUsers">Пользователей</s:String>
+
+    <!-- Навигация (роль) -->
+    <s:String x:Key="Nav.Favorites">⭐ Избранное</s:String>
+    <s:String x:Key="Nav.MyAppt">📅 Мои записи</s:String>
+    <s:String x:Key="Nav.Realtor">📋 Кабинет</s:String>
+    <s:String x:Key="Nav.Admin">⚙ Админ</s:String>
+
     <!-- HomeView -->
     <s:String x:Key="Home.LogoutButton">Выйти из системы</s:String>
     <s:String x:Key="Home.Placeholder">Функциональность будет добавлена на следующих этапах разработки.</s:String>

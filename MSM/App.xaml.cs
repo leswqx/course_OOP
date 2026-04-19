@@ -66,6 +66,10 @@ public partial class App : Application
         services.AddScoped<HomeViewModel>();
         services.AddScoped<PropertyListViewModel>();
         services.AddScoped<PropertyDetailViewModel>();
+        services.AddScoped<FavoritesViewModel>();
+        services.AddScoped<MyAppointmentsViewModel>();
+        services.AddScoped<RealtorDashboardViewModel>();
+        services.AddScoped<AdminDashboardViewModel>();
 
         // Main window (singleton — одно окно на всё приложение)
         services.AddSingleton<MainWindow>();

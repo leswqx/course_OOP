@@ -85,6 +85,67 @@
     <s:String x:Key="Schedule.Success">✓ Booking confirmed! The realtor will contact you.</s:String>
     <s:String x:Key="Schedule.SlotTaken">This time slot is already taken. Please choose another.</s:String>
 
+    <!-- Favorites -->
+    <s:String x:Key="Favorites.Title">Favorites</s:String>
+    <s:String x:Key="Favorites.Empty">You haven't added any properties to favorites yet</s:String>
+
+    <!-- My Appointments (client) -->
+    <s:String x:Key="MyAppt.Title">My Viewing Appointments</s:String>
+    <s:String x:Key="MyAppt.Empty">You have no viewing appointments yet</s:String>
+    <s:String x:Key="MyAppt.Property">Property</s:String>
+    <s:String x:Key="MyAppt.DateTime">Date &amp; Time</s:String>
+    <s:String x:Key="MyAppt.Status">Status</s:String>
+    <s:String x:Key="MyAppt.Comment">Comment</s:String>
+    <s:String x:Key="Appt.New">New</s:String>
+    <s:String x:Key="Appt.Confirmed">Confirmed</s:String>
+    <s:String x:Key="Appt.Cancelled">Cancelled</s:String>
+    <s:String x:Key="Appt.Completed">Completed</s:String>
+
+    <!-- Realtor panel -->
+    <s:String x:Key="Realtor.Title">Realtor Dashboard</s:String>
+    <s:String x:Key="Realtor.MyProperties">My Properties</s:String>
+    <s:String x:Key="Realtor.Appointments">Client Appointments</s:String>
+    <s:String x:Key="Realtor.AddProperty">+ Add Property</s:String>
+    <s:String x:Key="Realtor.Confirm">Confirm</s:String>
+    <s:String x:Key="Realtor.Cancel">Cancel</s:String>
+    <s:String x:Key="Realtor.NoAppt">No appointments</s:String>
+
+    <!-- Property form -->
+    <s:String x:Key="PropForm.Title">Title *</s:String>
+    <s:String x:Key="PropForm.Description">Description *</s:String>
+    <s:String x:Key="PropForm.Price">Price, ₽ *</s:String>
+    <s:String x:Key="PropForm.Area">Area, m² *</s:String>
+    <s:String x:Key="PropForm.Rooms">Rooms *</s:String>
+    <s:String x:Key="PropForm.Floor">Floor</s:String>
+    <s:String x:Key="PropForm.TotalFloors">Total floors</s:String>
+    <s:String x:Key="PropForm.YearBuilt">Year built</s:String>
+    <s:String x:Key="PropForm.City">City *</s:String>
+    <s:String x:Key="PropForm.Address">Address *</s:String>
+    <s:String x:Key="PropForm.Type">Property type *</s:String>
+    <s:String x:Key="PropForm.HasRepair">Has renovation</s:String>
+    <s:String x:Key="PropForm.Mortgage">Mortgage available</s:String>
+    <s:String x:Key="PropForm.Save">Save</s:String>
+    <s:String x:Key="PropForm.Cancel">Cancel</s:String>
+
+    <!-- Admin panel -->
+    <s:String x:Key="Admin.Title">Admin Dashboard</s:String>
+    <s:String x:Key="Admin.Users">Users</s:String>
+    <s:String x:Key="Admin.Reviews">Review Moderation</s:String>
+    <s:String x:Key="Admin.Stats">Statistics</s:String>
+    <s:String x:Key="Admin.Approve">Approve</s:String>
+    <s:String x:Key="Admin.Reject">Reject</s:String>
+    <s:String x:Key="Admin.NoReviews">No reviews pending moderation</s:String>
+    <s:String x:Key="Admin.TotalProps">Total properties</s:String>
+    <s:String x:Key="Admin.ActiveProps">Active</s:String>
+    <s:String x:Key="Admin.SoldProps">Sold</s:String>
+    <s:String x:Key="Admin.TotalUsers">Users</s:String>
+
+    <!-- Role navigation -->
+    <s:String x:Key="Nav.Favorites">⭐ Favorites</s:String>
+    <s:String x:Key="Nav.MyAppt">📅 My Bookings</s:String>
+    <s:String x:Key="Nav.Realtor">📋 Dashboard</s:String>
+    <s:String x:Key="Nav.Admin">⚙ Admin</s:String>
+
     <!-- HomeView -->
     <s:String x:Key="Home.LogoutButton">Sign Out</s:String>
     <s:String x:Key="Home.Placeholder">Features will be added in the next development phases.</s:String>

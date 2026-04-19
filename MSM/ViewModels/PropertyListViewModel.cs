@@ -42,6 +42,9 @@ public partial class PropertyListViewModel : ViewModelBase
         "client"  => "Клиент",
         _         => ""
     };
+    public bool IsClient  => Session.IsClient;
+    public bool IsRealtor => Session.CurrentUser?.Role == "realtor";
+    public bool IsAdmin   => Session.CurrentUser?.Role == "admin";
 
     public PropertyListViewModel(IPropertyService propertyService, INavigationService navigationService)
     {
@@ -124,6 +127,18 @@ public partial class PropertyListViewModel : ViewModelBase
     {
         _navigationService.NavigateTo<PropertyDetailViewModel>(card.Id);
     }
+
+    [RelayCommand]
+    private void GoToFavorites() => _navigationService.NavigateTo<FavoritesViewModel>();
+
+    [RelayCommand]
+    private void GoToMyAppointments() => _navigationService.NavigateTo<MyAppointmentsViewModel>();
+
+    [RelayCommand]
+    private void GoToRealtorDashboard() => _navigationService.NavigateTo<RealtorDashboardViewModel>();
+
+    [RelayCommand]
+    private void GoToAdminDashboard() => _navigationService.NavigateTo<AdminDashboardViewModel>();
 
     [RelayCommand]
     private void Logout()

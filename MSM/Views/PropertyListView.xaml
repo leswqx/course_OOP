@@ -75,6 +75,36 @@
                             BorderBrush="{DynamicResource BorderBrush}"
                             BorderThickness="1" ToolTip="Язык / Language"/>
 
+                    <!-- Кнопки для клиента -->
+                    <Button Content="{DynamicResource Nav.Favorites}"
+                            Command="{Binding GoToFavoritesCommand}"
+                            Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"
+                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,6,0"
+                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                    <Button Content="{DynamicResource Nav.MyAppt}"
+                            Command="{Binding GoToMyAppointmentsCommand}"
+                            Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"
+                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,12,0"
+                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+
+                    <!-- Кнопка для риелтора -->
+                    <Button Content="{DynamicResource Nav.Realtor}"
+                            Command="{Binding GoToRealtorDashboardCommand}"
+                            Visibility="{Binding IsRealtor, Converter={StaticResource BoolToVisibility}}"
+                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,12,0"
+                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+
+                    <!-- Кнопка для админа -->
+                    <Button Content="{DynamicResource Nav.Admin}"
+                            Command="{Binding GoToAdminDashboardCommand}"
+                            Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibility}}"
+                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,12,0"
+                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+
                     <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
                         <TextBlock Text="{Binding UserFullName}"
                                    FontSize="13" FontWeight="SemiBold"

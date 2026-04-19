@@ -1,0 +1,206 @@
+<UserControl x:Class="MSM.Views.AdminDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d"
+             Background="{DynamicResource BackgroundBrush}"
+             d:DesignHeight="600" d:DesignWidth="960">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Шапка -->
+        <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
+            <Border.Effect>
+                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
+            </Border.Effect>
+            <Grid Margin="16,0">
+                <Button Content="{DynamicResource Common.Back}" Command="{Binding GoBackCommand}"
+                        HorizontalAlignment="Left" Background="Transparent"
+                        Foreground="{DynamicResource AccentBrush}" BorderThickness="0" FontSize="14"/>
+                <TextBlock Text="{DynamicResource Admin.Title}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+            </Grid>
+        </Border>
+
+        <!-- Вкладки -->
+        <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" Margin="16,0">
+                <RadioButton Content="{DynamicResource Admin.Users}"
+                             IsChecked="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=0}"
+                             GroupName="AdminTab" Style="{StaticResource TabRadioStyle}"/>
+                <RadioButton Content="{DynamicResource Admin.Reviews}"
+                             IsChecked="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=1}"
+                             GroupName="AdminTab" Style="{StaticResource TabRadioStyle}" Margin="8,0,0,0"/>
+                <RadioButton Content="{DynamicResource Admin.Stats}"
+                             IsChecked="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=2}"
+                             GroupName="AdminTab" Style="{StaticResource TabRadioStyle}" Margin="8,0,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Контент -->
+        <Grid Grid.Row="2">
+
+            <!-- ===== ВКЛАДКА: ПОЛЬЗОВАТЕЛИ ===== -->
+            <Grid Visibility="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=0}"
+                  Margin="16">
+                <DataGrid ItemsSource="{Binding Users}" AutoGenerateColumns="False"
+                          IsReadOnly="True" CanUserAddRows="False"
+                          Background="{DynamicResource SurfaceBrush}"
+                          Foreground="{DynamicResource TextPrimaryBrush}"
+                          BorderBrush="{DynamicResource BorderBrush}"
+                          RowBackground="{DynamicResource SurfaceBrush}"
+                          AlternatingRowBackground="{DynamicResource BackgroundBrush}"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="{DynamicResource SeparatorBrush}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Имя"       Binding="{Binding FullName}" Width="*"/>
+                        <DataGridTextColumn Header="Логин"     Binding="{Binding Login}"    Width="120"/>
+                        <DataGridTextColumn Header="E-mail"    Binding="{Binding Email}"    Width="180"/>
+                        <DataGridTextColumn Header="Роль"      Binding="{Binding Role}"     Width="110"/>
+                        <DataGridTextColumn Header="Телефон"   Binding="{Binding Phone}"    Width="140"/>
+                        <DataGridTextColumn Header="Создан"    Binding="{Binding CreatedAt}" Width="100"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <!-- ===== ВКЛАДКА: МОДЕРАЦИЯ ===== -->
+            <Grid Visibility="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=1}"
+                  Margin="16">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding NoReviews, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="✅" FontSize="48" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource Admin.NoReviews}" FontSize="16"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                </StackPanel>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding PendingReviews}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
+                                        Padding="16,12" Margin="0,0,0,8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Author}" FontWeight="SemiBold"
+                                                           FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                <TextBlock Text="{Binding Rating}" FontSize="13"
+                                                           Foreground="{DynamicResource PrimaryBrush}" Margin="12,0,0,0"/>
+                                                <TextBlock Text="{Binding Date}" FontSize="11"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="12,0,0,0"
+                                                           VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Comment}" FontSize="12"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Content="{DynamicResource Admin.Approve}"
+                                                    Command="{Binding DataContext.ApproveReviewCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Height="32" Padding="12,0" FontSize="12" Margin="0,0,8,0"
+                                                    Background="{DynamicResource SuccessBrush}"
+                                                    Foreground="White" BorderThickness="0"/>
+                                            <Button Content="{DynamicResource Admin.Reject}"
+                                                    Command="{Binding DataContext.RejectReviewCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Height="32" Padding="12,0" FontSize="12"
+                                                    Background="{DynamicResource ErrorBrush}"
+                                                    Foreground="White" BorderThickness="0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ===== ВКЛАДКА: СТАТИСТИКА ===== -->
+            <ScrollViewer Margin="16"
+                          Visibility="{Binding SelectedTab, Converter={StaticResource BoolToVisibility}, ConverterParameter=2}">
+                <StackPanel>
+                    <!-- Счётчики -->
+                    <UniformGrid Columns="4" Margin="0,0,0,20">
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Admin.TotalProps}" FontSize="12"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding StatTotalProps}" FontSize="32" FontWeight="Bold"
+                                           Foreground="{DynamicResource PrimaryBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Admin.ActiveProps}" FontSize="12"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding StatActiveProps}" FontSize="32" FontWeight="Bold"
+                                           Foreground="{DynamicResource SuccessBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Admin.SoldProps}" FontSize="12"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding StatSoldProps}" FontSize="32" FontWeight="Bold"
+                                           Foreground="{DynamicResource AccentBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20">
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Admin.TotalUsers}" FontSize="12"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{Binding StatTotalUsers}" FontSize="32" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- Графики -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Pie: статусы объектов -->
+                        <Border Grid.Column="0" Background="{DynamicResource CardBrush}"
+                                CornerRadius="8" Padding="16" Margin="0,0,12,0">
+                            <StackPanel>
+                                <TextBlock Text="Объекты по статусу" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
+                                <lvc:PieChart Series="{Binding PropStatusSeries}" Height="220"
+                                              LegendPosition="Bottom"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Bar: объекты по риелторам -->
+                        <Border Grid.Column="1" Background="{DynamicResource CardBrush}"
+                                CornerRadius="8" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="Объектов по риелтору" FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10"/>
+                                <lvc:CartesianChart Series="{Binding RealtorSeries}"
+                                                    XAxes="{Binding RealtorXAxes}"
+                                                    Height="220"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>
