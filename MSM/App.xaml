@@ -69,6 +69,9 @@
             <DataTemplate DataType="{x:Type vm:AdminDashboardViewModel}">
                 <views:AdminDashboardView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:RealtorProfileViewModel}">
+                <views:RealtorProfileView/>
+            </DataTemplate>
 
             <!-- Стиль вкладки-RadioButton (используется в панелях риелтора и админа) -->
             <Style x:Key="TabRadioStyle" TargetType="RadioButton">

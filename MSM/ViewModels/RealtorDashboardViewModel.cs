@@ -1,11 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
 using MSM.Data.Context;
 using MSM.Models;
 using MSM.Models.Entities;
@@ -33,13 +35,20 @@ public class RealtorAppointmentRow
         CanAct = a.Status == "new";
         (Status, StatusColor) = a.Status switch
         {
-            "new"       => ("Новая",       "#7A7A7A"),
-            "confirmed" => ("Подтверждена","#7CB342"),
-            "cancelled" => ("Отменена",    "#EF5350"),
-            "completed" => ("Завершена",   "#D4A5A5"),
-            _           => (a.Status,      "#7A7A7A")
+            "new"       => ("Новая",        "#7A7A7A"),
+            "confirmed" => ("Подтверждена", "#7CB342"),
+            "cancelled" => ("Отменена",     "#EF5350"),
+            "completed" => ("Завершена",    "#D4A5A5"),
+            _           => (a.Status,       "#7A7A7A")
         };
     }
+}
+
+public class ImagePreviewVm
+{
+    public string FileName { get; init; } = "";
+    public byte[] Data { get; init; } = Array.Empty<byte>();
+    public bool IsMain { get; set; }
 }
 
 // Панель риелтора: мои объекты · записи клиентов · статистика
@@ -51,6 +60,8 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     private readonly INavigationService _navigationService;
     private readonly AppDbContext _context;
 
+    private readonly List<(byte[] Data, string FileName, bool IsMain)> _pendingImages = new();
+
     // ===== Вкладки =====
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowTab0), nameof(ShowTab1), nameof(ShowTab2))]
@@ -58,6 +69,12 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     public bool ShowTab0 => SelectedTab == 0;
     public bool ShowTab1 => SelectedTab == 1;
     public bool ShowTab2 => SelectedTab == 2;
+
+    // ===== Профиль риелтора =====
+    [ObservableProperty] private string _realtorName = "";
+    [ObservableProperty] private string _realtorPhone = "";
+    [ObservableProperty] private string _realtorEmail = "";
+    [ObservableProperty] private string _realtorDescription = "";
 
     // ===== Мои объекты =====
     [ObservableProperty] private ObservableCollection<PropertyCardViewModel> _myProperties = new();
@@ -80,6 +97,7 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     [ObservableProperty] private bool _formMortgage;
     [ObservableProperty] private string? _formError;
     [ObservableProperty] private bool _isSaving;
+    [ObservableProperty] private ObservableCollection<ImagePreviewVm> _formImages = new();
 
     // ===== Записи клиентов =====
     [ObservableProperty] private ObservableCollection<RealtorAppointmentRow> _appointments = new();
@@ -112,9 +130,20 @@ public partial class RealtorDashboardViewModel : ViewModelBase
 
     public override void OnNavigatedTo(object? parameter)
     {
+        LoadProfile();
         _ = LoadPropertiesAsync();
         _ = LoadAppointmentsAsync();
         _ = LoadStatsAsync();
+    }
+
+    private void LoadProfile()
+    {
+        var u = Session.CurrentUser;
+        if (u == null) return;
+        RealtorName        = u.FullName;
+        RealtorPhone       = u.Phone ?? "—";
+        RealtorEmail       = u.Email;
+        RealtorDescription = string.IsNullOrWhiteSpace(u.Description) ? "Описание не заполнено." : u.Description;
     }
 
     // ===== Вкладки =====
@@ -147,6 +176,46 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         FormError = null;
     }
 
+    // Загрузить изображение через диалог
+    [RelayCommand]
+    private void AddImage()
+    {
+        var dlg = new OpenFileDialog
+        {
+            Title = "Выберите изображение",
+            Filter = "Изображения|*.jpg;*.jpeg;*.png;*.bmp;*.gif",
+            Multiselect = true
+        };
+        if (dlg.ShowDialog() != true) return;
+
+        foreach (var file in dlg.FileNames)
+        {
+            try
+            {
+                var bytes = File.ReadAllBytes(file);
+                var name = Path.GetFileName(file);
+                bool isMain = _pendingImages.Count == 0;
+                _pendingImages.Add((Data: bytes, FileName: name, IsMain: isMain));
+                FormImages.Add(new ImagePreviewVm { FileName = name, Data = bytes, IsMain = isMain });
+            }
+            catch { /* пропустить повреждённый файл */ }
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveImage(ImagePreviewVm img)
+    {
+        FormImages.Remove(img);
+        _pendingImages.RemoveAll(x => x.FileName == img.FileName);
+        // пересчитать IsMain
+        if (_pendingImages.Count > 0 && !_pendingImages.Any(x => x.IsMain))
+        {
+            var first = _pendingImages[0];
+            _pendingImages[0] = (first.Data, first.FileName, true);
+            if (FormImages.Count > 0) FormImages[0].IsMain = true;
+        }
+    }
+
     [RelayCommand]
     private async Task SavePropertyAsync()
     {
@@ -157,14 +226,17 @@ public partial class RealtorDashboardViewModel : ViewModelBase
             || string.IsNullOrWhiteSpace(FormAddress))
         { FormError = "Заполните все обязательные поля."; return; }
 
-        if (!decimal.TryParse(FormPrice, NumberStyles.Any, CultureInfo.InvariantCulture, out var price) || price <= 0)
-        { FormError = "Укажите корректную цену."; return; }
+        // принимаем и запятую, и точку как разделитель дробной части
+        var priceStr = FormPrice.Replace(',', '.').Replace(" ", "");
+        if (!decimal.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var price) || price <= 0)
+        { FormError = "Укажите корректную цену (например: 4500000)."; return; }
 
-        if (!double.TryParse(FormArea, NumberStyles.Any, CultureInfo.InvariantCulture, out var area) || area <= 0)
-        { FormError = "Укажите корректную площадь."; return; }
+        var areaStr = FormArea.Replace(',', '.').Replace(" ", "");
+        if (!double.TryParse(areaStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var area) || area <= 0)
+        { FormError = "Укажите корректную площадь (например: 78.5 или 78,5)."; return; }
 
-        if (!int.TryParse(FormRooms, out var rooms) || rooms <= 0)
-        { FormError = "Укажите количество комнат."; return; }
+        if (!int.TryParse(FormRooms.Trim(), out var rooms) || rooms <= 0)
+        { FormError = "Укажите количество комнат (целое число)."; return; }
 
         IsSaving = true;
         try
@@ -173,15 +245,15 @@ public partial class RealtorDashboardViewModel : ViewModelBase
             {
                 Title = FormTitle.Trim(), Description = FormDescription.Trim(),
                 Price = price, Area = area, Rooms = rooms,
-                Floor = int.TryParse(FormFloor, out var f) ? f : null,
-                TotalFloors = int.TryParse(FormTotalFloors, out var tf) ? tf : null,
-                YearBuilt = int.TryParse(FormYearBuilt, out var yb) ? yb : null,
+                Floor       = int.TryParse(FormFloor.Trim(),       out var f)  ? f  : null,
+                TotalFloors = int.TryParse(FormTotalFloors.Trim(),  out var tf) ? tf : null,
+                YearBuilt   = int.TryParse(FormYearBuilt.Trim(),   out var yb) ? yb : null,
                 City = FormCity.Trim(), Address = FormAddress.Trim(),
                 PropertyType = FormType, HasRepair = FormHasRepair,
                 MortgageAvailable = FormMortgage,
                 RealtorId = Session.CurrentUser!.Id,
             };
-            await _propertyService.AddAsync(property, Array.Empty<(byte[], string, bool)>());
+            await _propertyService.AddAsync(property, _pendingImages);
             IsFormVisible = false;
             ClearForm();
             await LoadPropertiesAsync();
@@ -248,7 +320,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
 
             StatRating = await _reviewService.GetAverageRatingAsync(realtorId: Session.CurrentUser.Id);
 
-            // Pie: статусы объектов
             StatusSeries = new ISeries[]
             {
                 new PieSeries<int> { Values = new[]{ StatActive }, Name = "Активные",
@@ -259,7 +330,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
                     Fill = new SolidColorPaint(SKColor.Parse("#AAAAAA")) },
             };
 
-            // Bar: записи по месяцам (последние 6 месяцев)
             var months = Enumerable.Range(0, 6)
                 .Select(i => System.DateTime.Today.AddMonths(-5 + i))
                 .ToList();
@@ -290,5 +360,7 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         FormTitle = FormDescription = FormPrice = FormArea = FormRooms = "";
         FormFloor = FormTotalFloors = FormYearBuilt = FormCity = FormAddress = "";
         FormType = "apartment"; FormHasRepair = FormMortgage = false;
+        FormImages.Clear();
+        _pendingImages.Clear();
     }
 }

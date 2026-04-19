@@ -219,6 +219,13 @@ public partial class PropertyDetailViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void GoToRealtorProfile()
+    {
+        if (Property == null) return;
+        _navigationService.NavigateTo<RealtorProfileViewModel>(Property.RealtorId);
+    }
+
+    [RelayCommand]
     private void GoBack() => _navigationService.NavigateTo<PropertyListViewModel>();
 
     private static BitmapImage? ToImage(byte[] data)

@@ -131,8 +131,21 @@
     <s:String x:Key="PropForm.Type">Тип объекта *</s:String>
     <s:String x:Key="PropForm.HasRepair">Есть ремонт</s:String>
     <s:String x:Key="PropForm.Mortgage">Доступна ипотека</s:String>
+    <s:String x:Key="PropForm.Images">Фотографии</s:String>
+    <s:String x:Key="PropForm.AddImage">+ Добавить фото</s:String>
     <s:String x:Key="PropForm.Save">Сохранить</s:String>
     <s:String x:Key="PropForm.Cancel">Отмена</s:String>
+
+    <!-- Профиль риелтора -->
+    <s:String x:Key="RealtorProfile.Title">Профиль риелтора</s:String>
+    <s:String x:Key="RealtorProfile.TotalProps">Объектов</s:String>
+    <s:String x:Key="RealtorProfile.Sold">Продано</s:String>
+    <s:String x:Key="RealtorProfile.Rating">Рейтинг</s:String>
+    <s:String x:Key="RealtorProfile.Reviews">Отзывы клиентов</s:String>
+    <s:String x:Key="RealtorProfile.NoReviews">Отзывов пока нет</s:String>
+
+    <!-- Кнопка профиля в детальной карточке -->
+    <s:String x:Key="Detail.RealtorProfile">👤 Профиль риелтора</s:String>
 
     <!-- Панель администратора -->
     <s:String x:Key="Admin.Title">Панель администратора</s:String>

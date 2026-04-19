@@ -131,8 +131,19 @@
     <s:String x:Key="PropForm.Type">Property type *</s:String>
     <s:String x:Key="PropForm.HasRepair">Has renovation</s:String>
     <s:String x:Key="PropForm.Mortgage">Mortgage available</s:String>
+    <s:String x:Key="PropForm.Images">Photos</s:String>
+    <s:String x:Key="PropForm.AddImage">+ Add photo</s:String>
     <s:String x:Key="PropForm.Save">Save</s:String>
     <s:String x:Key="PropForm.Cancel">Cancel</s:String>
+
+    <!-- Realtor profile -->
+    <s:String x:Key="RealtorProfile.Title">Realtor Profile</s:String>
+    <s:String x:Key="RealtorProfile.TotalProps">Properties</s:String>
+    <s:String x:Key="RealtorProfile.Sold">Sold</s:String>
+    <s:String x:Key="RealtorProfile.Rating">Rating</s:String>
+    <s:String x:Key="RealtorProfile.Reviews">Client Reviews</s:String>
+    <s:String x:Key="RealtorProfile.NoReviews">No reviews yet</s:String>
+    <s:String x:Key="Detail.RealtorProfile">👤 Realtor Profile</s:String>
 
     <!-- Admin panel -->
     <s:String x:Key="Admin.Title">Admin Dashboard</s:String>

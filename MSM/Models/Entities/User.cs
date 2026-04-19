@@ -11,6 +11,8 @@ public class User : BaseEntity
     public string Role { get; set; } = string.Empty; // admin, realtor, client
     public string FullName { get; set; } = string.Empty;
     public string? Phone { get; set; }
+    public string? Description { get; set; }
+    public byte[]? AvatarPhoto { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     // Навигационные свойства

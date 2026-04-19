@@ -155,6 +155,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <!-- Название + Тип -->
@@ -236,8 +237,48 @@
                                          AcceptsReturn="True" VerticalContentAlignment="Top"/>
                             </StackPanel>
 
+                            <!-- Картинки -->
+                            <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3"
+                                        Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock Text="{DynamicResource PropForm.Images}" FontSize="12"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                    <Button Content="{DynamicResource PropForm.AddImage}"
+                                            Command="{Binding AddImageCommand}"
+                                            Height="28" Padding="12,0" FontSize="11"
+                                            Background="{DynamicResource SurfaceBrush}"
+                                            Foreground="{DynamicResource AccentBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding FormImages}"
+                                              Visibility="{Binding FormImages.Count, Converter={StaticResource BoolToVisibility}}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,8,4" CornerRadius="4"
+                                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                                <Grid>
+                                                    <Image Source="{Binding Data, Converter={StaticResource ByteArrayToImage}}"
+                                                           Width="80" Height="60" Stretch="UniformToFill"/>
+                                                    <Button Content="✕" Width="20" Height="20"
+                                                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                            Margin="0,2,2,0" FontSize="10" Padding="0"
+                                                            Command="{Binding DataContext.RemoveImageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            Background="{DynamicResource ErrorBrush}"
+                                                            Foreground="White" BorderThickness="0"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
                             <!-- Чекбоксы + кнопки -->
-                            <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <StackPanel Grid.Row="6" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                 <CheckBox Content="{DynamicResource PropForm.HasRepair}"
                                           IsChecked="{Binding FormHasRepair}"
                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,16,0"/>
@@ -245,7 +286,7 @@
                                           IsChecked="{Binding FormMortgage}"
                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                             </StackPanel>
-                            <StackPanel Grid.Row="5" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <StackPanel Grid.Row="6" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="{Binding FormError}" Foreground="{DynamicResource ErrorBrush}"
                                            FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"
                                            Visibility="{Binding FormError, Converter={StaticResource BoolToVisibility}}"/>

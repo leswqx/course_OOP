@@ -202,7 +202,16 @@
                                    Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,2"/>
                         <TextBlock Text="{Binding Property.Realtor.Phone}"
                                    FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
-                                   Margin="0,0,0,16"/>
+                                   Margin="0,0,0,8"/>
+                        <!-- Профиль риелтора -->
+                        <Button Content="{DynamicResource Detail.RealtorProfile}"
+                                Command="{Binding GoToRealtorProfileCommand}"
+                                HorizontalAlignment="Left"
+                                Height="30" Padding="14,0" FontSize="12" Margin="0,0,0,12"
+                                Background="Transparent"
+                                Foreground="{DynamicResource PrimaryBrush}"
+                                BorderBrush="{DynamicResource PrimaryBrush}"
+                                BorderThickness="1"/>
 
                         <!-- Кнопки: только для клиента -->
                         <StackPanel Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}">
