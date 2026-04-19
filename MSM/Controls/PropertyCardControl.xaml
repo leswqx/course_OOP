@@ -7,12 +7,12 @@
              d:DesignHeight="320" d:DesignWidth="280">
 
     <Border Width="280" MinHeight="320"
-            Background="White"
+            Background="{DynamicResource CardBrush}"
             CornerRadius="8"
             Margin="8"
             Cursor="Hand">
         <Border.Effect>
-            <DropShadowEffect Color="#BBBBBB" BlurRadius="10" ShadowDepth="2" Opacity="0.25"/>
+            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="10" ShadowDepth="2" Opacity="0.25"/>
         </Border.Effect>
 
         <Grid ClipToBounds="True">
@@ -25,11 +25,12 @@
             <Grid Grid.Row="0" ClipToBounds="True">
 
                 <!-- Заглушка когда нет фото -->
-                <Border Background="#F5E6E6"
+                <Border Background="{DynamicResource PlaceholderBrush}"
                         Visibility="{Binding HasImage, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="🏠" FontSize="52" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Нет фото" Foreground="#C0A0A0" FontSize="12"
+                        <TextBlock Text="{DynamicResource Common.NoPhoto}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"
                                    HorizontalAlignment="Center" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
@@ -40,7 +41,7 @@
                        Visibility="{Binding HasImage, Converter={StaticResource BoolToVisibility}}"/>
 
                 <!-- Бейдж типа объекта -->
-                <Border Background="#D4A5A5" CornerRadius="4"
+                <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="4"
                         HorizontalAlignment="Left" VerticalAlignment="Top"
                         Margin="10,10,0,0" Padding="8,3">
                     <TextBlock Text="{Binding PropertyTypeDisplay}"
@@ -54,12 +55,12 @@
                 <!-- Цена -->
                 <TextBlock Text="{Binding Price, Converter={StaticResource PriceToString}}"
                            FontSize="20" FontWeight="Bold"
-                           Foreground="#D4A5A5"/>
+                           Foreground="{DynamicResource PrimaryBrush}"/>
 
                 <!-- Название -->
                 <TextBlock Text="{Binding Title}"
                            FontSize="13" FontWeight="SemiBold"
-                           Foreground="#4A4A4A"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
                            TextWrapping="Wrap"
                            MaxHeight="38"
                            Margin="0,5,0,0"
@@ -67,12 +68,12 @@
 
                 <!-- Площадь / комнаты -->
                 <TextBlock Text="{Binding AreaRoomsInfo}"
-                           Foreground="#7A7A7A" FontSize="12"
+                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"
                            Margin="0,6,0,0"/>
 
                 <!-- Город -->
                 <TextBlock Text="{Binding City}"
-                           Foreground="#7A7A7A" FontSize="12"
+                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"
                            Margin="0,2,0,0"/>
             </StackPanel>
         </Grid>

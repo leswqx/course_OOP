@@ -6,6 +6,33 @@
              xmlns:views="clr-namespace:MSM.Views">
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Начальная тема и язык -->
+                <ResourceDictionary Source="Resources/Themes/LightTheme.xaml"/>
+                <ResourceDictionary Source="Resources/Languages/lang.ru.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Глобальный стиль TextBox: undo/redo через Ctrl+Z/Ctrl+Y -->
+            <Style TargetType="TextBox">
+                <Setter Property="IsUndoEnabled" Value="True"/>
+                <Setter Property="UndoLimit"     Value="100"/>
+                <Setter Property="Background"    Value="{DynamicResource InputBrush}"/>
+                <Setter Property="Foreground"    Value="{DynamicResource TextPrimaryBrush}"/>
+                <Setter Property="BorderBrush"   Value="{DynamicResource BorderBrush}"/>
+                <Setter Property="CaretBrush"    Value="{DynamicResource TextPrimaryBrush}"/>
+                <Setter Property="SelectionBrush" Value="{DynamicResource PrimaryBrush}"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
+            <!-- Глобальный стиль PasswordBox -->
+            <Style TargetType="PasswordBox">
+                <Setter Property="Background"  Value="{DynamicResource InputBrush}"/>
+                <Setter Property="Foreground"  Value="{DynamicResource TextPrimaryBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                <Setter Property="CaretBrush"  Value="{DynamicResource TextPrimaryBrush}"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
             <!-- Конвертеры -->
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
             <converters:PriceToStringConverter x:Key="PriceToString"/>
@@ -19,6 +46,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:PropertyListViewModel}">
                 <views:PropertyListView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:PropertyDetailViewModel}">
+                <views:PropertyDetailView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:HomeViewModel}">
                 <views:HomeView/>

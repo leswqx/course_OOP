@@ -1,0 +1,74 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- General -->
+    <s:String x:Key="App.Title">Real Estate Agency</s:String>
+    <s:String x:Key="Common.Loading">Loading...</s:String>
+    <s:String x:Key="Common.NoPhoto">No photo</s:String>
+    <s:String x:Key="Common.NoPhotos">No photos available</s:String>
+    <s:String x:Key="Common.Logout">Sign Out</s:String>
+    <s:String x:Key="Common.Search">Search</s:String>
+    <s:String x:Key="Common.Back">← Back</s:String>
+    <s:String x:Key="Common.Yes">✓ Yes</s:String>
+    <s:String x:Key="Common.No">✗ No</s:String>
+    <s:String x:Key="Common.Available">✓ Available</s:String>
+
+    <!-- Property types -->
+    <s:String x:Key="Type.Apartment">Apartment</s:String>
+    <s:String x:Key="Type.House">House</s:String>
+    <s:String x:Key="Type.Complex">Complex</s:String>
+
+    <!-- Statuses -->
+    <s:String x:Key="Status.Active">Active</s:String>
+    <s:String x:Key="Status.Sold">Sold</s:String>
+    <s:String x:Key="Status.Hidden">Hidden</s:String>
+
+    <!-- Login -->
+    <s:String x:Key="Login.Subtitle">Sign In</s:String>
+    <s:String x:Key="Login.LoginLabel">Login</s:String>
+    <s:String x:Key="Login.PasswordLabel">Password</s:String>
+    <s:String x:Key="Login.SignIn">Sign In</s:String>
+    <s:String x:Key="Login.Register">Register</s:String>
+
+    <!-- Catalog -->
+    <s:String x:Key="Catalog.BackToList">← Back to catalog</s:String>
+    <s:String x:Key="Catalog.NoResults">No properties found</s:String>
+    <s:String x:Key="Catalog.NoResultsHint">Try changing your search query</s:String>
+
+    <!-- Property detail -->
+    <s:String x:Key="Detail.Area">Area</s:String>
+    <s:String x:Key="Detail.Rooms">Rooms</s:String>
+    <s:String x:Key="Detail.Floor">Floor</s:String>
+    <s:String x:Key="Detail.YearBuilt">Year built</s:String>
+    <s:String x:Key="Detail.Renovation">Renovation</s:String>
+    <s:String x:Key="Detail.Mortgage">Mortgage</s:String>
+    <s:String x:Key="Detail.Address">📍  Address</s:String>
+    <s:String x:Key="Detail.Realtor">👤  Realtor</s:String>
+    <s:String x:Key="Detail.Description">Description</s:String>
+    <s:String x:Key="Detail.AddFavorite">☆  Add to favorites</s:String>
+    <s:String x:Key="Detail.InFavorite">★  In favorites</s:String>
+    <s:String x:Key="Detail.Schedule">📅  Schedule viewing</s:String>
+    <s:String x:Key="Detail.ComingSoon">Available in the next version</s:String>
+
+    <!-- Filters (Phase 9) -->
+    <s:String x:Key="Filter.Title">Filters</s:String>
+    <s:String x:Key="Filter.Price">Price, ₽</s:String>
+    <s:String x:Key="Filter.Area">Area, m²</s:String>
+    <s:String x:Key="Filter.Rooms">Rooms</s:String>
+    <s:String x:Key="Filter.City">City</s:String>
+    <s:String x:Key="Filter.Type">Property type</s:String>
+    <s:String x:Key="Filter.From">from</s:String>
+    <s:String x:Key="Filter.To">to</s:String>
+    <s:String x:Key="Filter.Apply">Apply</s:String>
+    <s:String x:Key="Filter.Reset">Reset</s:String>
+    <s:String x:Key="Filter.AllCities">All cities</s:String>
+    <s:String x:Key="Filter.AllTypes">All types</s:String>
+    <s:String x:Key="Filter.Mortgage">Mortgage</s:String>
+    <s:String x:Key="Filter.Renovation">With renovation</s:String>
+
+    <!-- HomeView -->
+    <s:String x:Key="Home.LogoutButton">Sign Out</s:String>
+    <s:String x:Key="Home.Placeholder">Features will be added in the next development phases.</s:String>
+
+</ResourceDictionary>

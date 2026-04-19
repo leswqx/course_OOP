@@ -8,7 +8,7 @@
         Height="600"
         Width="900"
         WindowStartupLocation="CenterScreen"
-        Background="#F5E6E6">
+        Background="{DynamicResource BackgroundBrush}">
     <Grid>
         <ContentControl Content="{Binding CurrentViewModel}"/>
     </Grid>

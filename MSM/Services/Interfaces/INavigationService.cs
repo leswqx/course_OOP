@@ -6,5 +6,5 @@ namespace MSM.Services.Interfaces;
 public interface INavigationService : INotifyPropertyChanged
 {
     ViewModelBase? CurrentViewModel { get; }
-    void NavigateTo<TViewModel>() where TViewModel : ViewModelBase;
+    void NavigateTo<TViewModel>(object? parameter = null) where TViewModel : ViewModelBase;
 }

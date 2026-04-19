@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls="clr-namespace:MSM.Controls"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="900">
+             Background="{DynamicResource BackgroundBrush}"
+             d:DesignHeight="600" d:DesignWidth="960">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -14,111 +15,273 @@
         </Grid.RowDefinitions>
 
         <!-- ===== ШАПКА ===== -->
-        <Border Grid.Row="0" Background="White">
+        <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
             <Border.Effect>
-                <DropShadowEffect Color="#CCCCCC" BlurRadius="6" ShadowDepth="1" Opacity="0.3"/>
+                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
             </Border.Effect>
-            <Grid Margin="20,0">
+            <Grid Margin="16,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Логотип и название -->
+                <!-- Логотип + кнопка фильтров -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="🏠" FontSize="28" VerticalAlignment="Center"/>
-                    <TextBlock Text="Агентство недвижимости"
-                               FontSize="16" FontWeight="Bold"
-                               Foreground="#4A4A4A"
+                    <TextBlock Text="🏠" FontSize="26" VerticalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource App.Title}"
+                               FontSize="15" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center"
-                               Margin="10,0,0,0"/>
+                               Margin="8,0,16,0"/>
+                    <Button Content="{DynamicResource Filter.Title}"
+                            Command="{Binding ToggleFilterCommand}"
+                            Height="32" Padding="12,0"
+                            FontSize="13"
+                            Background="{DynamicResource ButtonSecondaryBg}"
+                            Foreground="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"/>
                 </StackPanel>
 
                 <!-- Поиск -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal"
                             HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                             Width="320" Height="36"
-                             FontSize="14"
-                             Padding="10,0"
-                             VerticalContentAlignment="Center"/>
-                    <Button Content="Найти"
+                             Width="280" Height="36" FontSize="14" Padding="10,0"/>
+                    <Button Content="{DynamicResource Common.Search}"
                             Command="{Binding LoadPropertiesCommand}"
-                            Height="36" Width="80"
-                            FontSize="13"
-                            Margin="8,0,0,0"
-                            Background="#D4A5A5"
-                            Foreground="White"
-                            BorderThickness="0"/>
+                            Height="36" Width="80" FontSize="13" Margin="8,0,0,0"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Foreground="White" BorderThickness="0"/>
                 </StackPanel>
 
-                <!-- Пользователь + выход -->
+                <!-- Тема / Язык / Пользователь / Выход -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal"
                             VerticalAlignment="Center" HorizontalAlignment="Right">
+
+                    <Button Content="{Binding ThemeIcon}"
+                            Command="{Binding ToggleThemeCommand}"
+                            Width="32" Height="32" Margin="0,0,6,0" FontSize="16"
+                            Background="Transparent"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1" ToolTip="Тема / Theme"/>
+
+                    <Button Content="{Binding LanguageIcon}"
+                            Command="{Binding ToggleLanguageCommand}"
+                            Width="36" Height="32" Margin="0,0,12,0"
+                            FontSize="12" FontWeight="SemiBold"
+                            Background="Transparent"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1" ToolTip="Язык / Language"/>
+
                     <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
                         <TextBlock Text="{Binding UserFullName}"
                                    FontSize="13" FontWeight="SemiBold"
-                                   Foreground="#4A4A4A" HorizontalAlignment="Right"/>
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   HorizontalAlignment="Right"/>
                         <TextBlock Text="{Binding UserRoleDisplay}"
-                                   FontSize="11" Foreground="#7A7A7A"
+                                   FontSize="11"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"
                                    HorizontalAlignment="Right"/>
                     </StackPanel>
-                    <Button Content="Выйти"
+
+                    <Button Content="{DynamicResource Common.Logout}"
                             Command="{Binding LogoutCommand}"
-                            Height="32" Width="60"
-                            FontSize="12"
+                            Height="32" Width="64" FontSize="12"
                             Background="Transparent"
-                            Foreground="#8B6F6F"
-                            BorderBrush="#8B6F6F"
+                            Foreground="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource AccentBrush}"
                             BorderThickness="1"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- ===== КОНТЕНТ ===== -->
+        <!-- ===== КОНТЕНТ: панель фильтров + каталог ===== -->
         <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!-- Боковая панель фильтров: Auto → схлопывается при Collapsed -->
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Индикатор загрузки -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}">
-                <TextBlock Text="Загрузка..." FontSize="18" Foreground="#7A7A7A"/>
-            </StackPanel>
+            <!-- ===== ПАНЕЛЬ ФИЛЬТРОВ ===== -->
+            <Border Grid.Column="0" Width="230"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,1,0"
+                    Visibility="{Binding IsFilterVisible, Converter={StaticResource BoolToVisibility}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="14,12">
 
-            <!-- Сообщение об ошибке -->
-            <TextBlock Text="{Binding ErrorMessage}"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                       FontSize="14" Foreground="Red" TextWrapping="Wrap"
-                       Visibility="{Binding ErrorMessage, Converter={StaticResource BoolToVisibility}}"/>
+                        <TextBlock Text="{DynamicResource Filter.Title}"
+                                   FontSize="15" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="0,0,0,14"/>
 
-            <!-- Нет результатов -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Visibility="{Binding HasNoResults, Converter={StaticResource BoolToVisibility}}">
-                <TextBlock Text="🔍" FontSize="48" HorizontalAlignment="Center"/>
-                <TextBlock Text="Объекты не найдены"
-                           FontSize="18" Foreground="#7A7A7A"
-                           HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                <TextBlock Text="Попробуйте изменить строку поиска"
-                           FontSize="13" Foreground="#AAAAAA"
-                           HorizontalAlignment="Center" Margin="0,5,0,0"/>
-            </StackPanel>
+                        <!-- Цена -->
+                        <TextBlock Text="{DynamicResource Filter.Price}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="14"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding FilterMinPrice, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="6,0"
+                                     ToolTip="{DynamicResource Filter.From}"/>
+                            <TextBlock Grid.Column="1" Text="–"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBox Grid.Column="2"
+                                     Text="{Binding FilterMaxPrice, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="6,0"
+                                     ToolTip="{DynamicResource Filter.To}"/>
+                        </Grid>
 
-            <!-- Список карточек -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
-                <ItemsControl ItemsSource="{Binding Properties}" Margin="12">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <controls:PropertyCardControl/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                        <!-- Площадь -->
+                        <TextBlock Text="{DynamicResource Filter.Area}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="14"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding FilterMinArea, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="6,0"
+                                     ToolTip="{DynamicResource Filter.From}"/>
+                            <TextBlock Grid.Column="1" Text="–"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBox Grid.Column="2"
+                                     Text="{Binding FilterMaxArea, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="6,0"
+                                     ToolTip="{DynamicResource Filter.To}"/>
+                        </Grid>
+
+                        <!-- Комнат -->
+                        <TextBlock Text="{DynamicResource Filter.Rooms}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding FilterRooms, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="32" Padding="6,0" Margin="0,0,0,10"/>
+
+                        <!-- Город -->
+                        <TextBlock Text="{DynamicResource Filter.City}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <ComboBox IsEditable="True"
+                                  Text="{Binding FilterCity, UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding Cities}"
+                                  Height="32" Margin="0,0,0,10"
+                                  Background="{DynamicResource InputBrush}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  BorderBrush="{DynamicResource BorderBrush}"/>
+
+                        <!-- Тип объекта -->
+                        <TextBlock Text="{DynamicResource Filter.Type}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <ComboBox SelectedValue="{Binding FilterType}"
+                                  SelectedValuePath="Tag"
+                                  Height="32" Margin="0,0,0,12"
+                                  Background="{DynamicResource InputBrush}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  BorderBrush="{DynamicResource BorderBrush}">
+                            <ComboBoxItem Content="{DynamicResource Filter.AllTypes}" Tag=""/>
+                            <ComboBoxItem Content="{DynamicResource Type.Apartment}"  Tag="apartment"/>
+                            <ComboBoxItem Content="{DynamicResource Type.House}"      Tag="house"/>
+                            <ComboBoxItem Content="{DynamicResource Type.Complex}"    Tag="complex"/>
+                        </ComboBox>
+
+                        <!-- Ипотека -->
+                        <CheckBox Content="{DynamicResource Filter.Mortgage}"
+                                  IsChecked="{Binding FilterMortgage}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  Margin="0,0,0,8"/>
+
+                        <!-- Ремонт -->
+                        <CheckBox Content="{DynamicResource Filter.Renovation}"
+                                  IsChecked="{Binding FilterRenovation}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  Margin="0,0,0,16"/>
+
+                        <!-- Кнопки Применить / Сбросить -->
+                        <Button Content="{DynamicResource Filter.Apply}"
+                                Command="{Binding LoadPropertiesCommand}"
+                                Height="36" FontSize="13"
+                                Background="{DynamicResource PrimaryBrush}"
+                                Foreground="White" BorderThickness="0"
+                                Margin="0,0,0,8"/>
+
+                        <Button Content="{DynamicResource Filter.Reset}"
+                                Command="{Binding ResetFiltersCommand}"
+                                Height="36" FontSize="13"
+                                Background="Transparent"
+                                Foreground="{DynamicResource AccentBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
+            <Grid Grid.Column="1">
+
+                <!-- Индикатор загрузки -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{DynamicResource Common.Loading}"
+                               FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+
+                <!-- Сообщение об ошибке -->
+                <TextBlock Text="{Binding ErrorMessage}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontSize="14" Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap"
+                           Visibility="{Binding ErrorMessage, Converter={StaticResource BoolToVisibility}}"/>
+
+                <!-- Нет результатов -->
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Visibility="{Binding HasNoResults, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="🔍" FontSize="48" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource Catalog.NoResults}"
+                               FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
+                               HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    <TextBlock Text="{DynamicResource Catalog.NoResultsHint}"
+                               FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                               HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <!-- Список карточек -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
+                    <ItemsControl ItemsSource="{Binding Properties}" Margin="12">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <controls:PropertyCardControl>
+                                    <controls:PropertyCardControl.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick"
+                                                      Command="{Binding DataContext.OpenDetailCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                      CommandParameter="{Binding}"/>
+                                    </controls:PropertyCardControl.InputBindings>
+                                </controls:PropertyCardControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

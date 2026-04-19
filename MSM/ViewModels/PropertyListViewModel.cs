@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MSM.Models;
@@ -6,27 +7,32 @@ using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
 
-// ViewModel каталога объектов недвижимости.
-// Загружает список из БД, поддерживает поиск по строке.
+// ViewModel каталога: поиск, фильтры по цене/площади/комнатам/городу/типу/ипотеке/ремонту.
 public partial class PropertyListViewModel : ViewModelBase
 {
     private readonly IPropertyService _propertyService;
     private readonly INavigationService _navigationService;
 
-    [ObservableProperty]
-    private ObservableCollection<PropertyCardViewModel> _properties = new();
+    [ObservableProperty] private ObservableCollection<PropertyCardViewModel> _properties = new();
+    [ObservableProperty] private string _searchQuery = string.Empty;
+    [ObservableProperty] private bool _isLoading;
+    [ObservableProperty] private bool _hasNoResults;
+    [ObservableProperty] private string? _errorMessage;
 
-    [ObservableProperty]
-    private string _searchQuery = string.Empty;
+    // Фильтры
+    [ObservableProperty] private bool _isFilterVisible;
+    [ObservableProperty] private string _filterMinPrice = "";
+    [ObservableProperty] private string _filterMaxPrice = "";
+    [ObservableProperty] private string _filterMinArea = "";
+    [ObservableProperty] private string _filterMaxArea = "";
+    [ObservableProperty] private string _filterRooms = "";
+    [ObservableProperty] private string _filterCity = "";
+    [ObservableProperty] private string _filterType = "";
+    [ObservableProperty] private bool _filterMortgage;
+    [ObservableProperty] private bool _filterRenovation;
 
-    [ObservableProperty]
-    private bool _isLoading;
-
-    [ObservableProperty]
-    private bool _hasNoResults;
-
-    [ObservableProperty]
-    private string? _errorMessage;
+    // Список городов для ComboBox (загружается из БД)
+    public ObservableCollection<string> Cities { get; } = new();
 
     public string UserFullName => Session.CurrentUser?.FullName ?? "";
     public string UserRoleDisplay => Session.CurrentUser?.Role switch
@@ -43,12 +49,25 @@ public partial class PropertyListViewModel : ViewModelBase
         _navigationService = navigationService;
     }
 
-    // Вызывается NavigationService автоматически при переходе на эту страницу
     public override void OnNavigatedTo(object? parameter)
     {
+        _ = LoadCitiesAsync();
         _ = LoadPropertiesAsync();
     }
 
+    // Загружает города для выпадающего списка
+    private async Task LoadCitiesAsync()
+    {
+        try
+        {
+            var cities = await _propertyService.GetDistinctCitiesAsync();
+            Cities.Clear();
+            foreach (var c in cities) Cities.Add(c);
+        }
+        catch { /* не критично — ComboBox просто будет пустым */ }
+    }
+
+    // Применяет все активные фильтры и поиск
     [RelayCommand]
     private async Task LoadPropertiesAsync()
     {
@@ -59,7 +78,16 @@ public partial class PropertyListViewModel : ViewModelBase
         try
         {
             var items = await _propertyService.GetFilteredAsync(
-                searchQuery: string.IsNullOrWhiteSpace(SearchQuery) ? null : SearchQuery);
+                minPrice:     ParseDecimal(FilterMinPrice),
+                maxPrice:     ParseDecimal(FilterMaxPrice),
+                minArea:      ParseDouble(FilterMinArea),
+                maxArea:      ParseDouble(FilterMaxArea),
+                rooms:        ParseInt(FilterRooms),
+                city:         NullIfEmpty(FilterCity),
+                propertyType: NullIfEmpty(FilterType),
+                searchQuery:  NullIfEmpty(SearchQuery),
+                hasMortgage:  FilterMortgage ? true : null,
+                hasRenovation: FilterRenovation ? true : null);
 
             Properties.Clear();
             foreach (var p in items)
@@ -78,9 +106,42 @@ public partial class PropertyListViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void ToggleFilter() => IsFilterVisible = !IsFilterVisible;
+
+    // Сбрасывает все фильтры и перезагружает список
+    [RelayCommand]
+    private void ResetFilters()
+    {
+        FilterMinPrice = FilterMaxPrice = "";
+        FilterMinArea  = FilterMaxArea  = "";
+        FilterRooms    = FilterCity     = FilterType = "";
+        FilterMortgage = FilterRenovation = false;
+        _ = LoadPropertiesAsync();
+    }
+
+    [RelayCommand]
+    private void OpenDetail(PropertyCardViewModel card)
+    {
+        _navigationService.NavigateTo<PropertyDetailViewModel>(card.Id);
+    }
+
+    [RelayCommand]
     private void Logout()
     {
         Session.Logout();
         _navigationService.NavigateTo<LoginViewModel>();
     }
+
+    // Вспомогательные методы парсинга
+    private static decimal? ParseDecimal(string s) =>
+        decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var v) ? v : null;
+
+    private static double? ParseDouble(string s) =>
+        double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var v) ? v : null;
+
+    private static int? ParseInt(string s) =>
+        int.TryParse(s, out var v) ? v : null;
+
+    private static string? NullIfEmpty(string s) =>
+        string.IsNullOrWhiteSpace(s) ? null : s;
 }

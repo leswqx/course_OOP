@@ -1,0 +1,258 @@
+<UserControl x:Class="MSM.Views.PropertyDetailView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:MSM.Controls"
+             mc:Ignorable="d"
+             Background="{DynamicResource BackgroundBrush}"
+             d:DesignHeight="600" d:DesignWidth="900">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== ШАПКА ===== -->
+        <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
+            <Border.Effect>
+                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
+            </Border.Effect>
+            <Grid Margin="16,0">
+                <Button Content="{DynamicResource Catalog.BackToList}"
+                        Command="{Binding GoBackCommand}"
+                        HorizontalAlignment="Left"
+                        Background="Transparent"
+                        Foreground="{DynamicResource AccentBrush}"
+                        BorderThickness="0"
+                        FontSize="14"
+                        Cursor="Hand"/>
+
+                <TextBlock Text="{DynamicResource App.Title}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="15" FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+            </Grid>
+        </Border>
+
+        <!-- ===== КОНТЕНТ ===== -->
+        <Grid Grid.Row="1">
+
+            <!-- Загрузка -->
+            <TextBlock Text="{DynamicResource Common.Loading}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
+                       Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
+
+            <!-- Ошибка -->
+            <TextBlock Text="{Binding ErrorMessage}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="14" Foreground="{DynamicResource ErrorBrush}"
+                       Visibility="{Binding ErrorMessage, Converter={StaticResource BoolToVisibility}}"/>
+
+            <!-- Основной контент -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
+                <Grid Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="420"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- ===== ЛЕВАЯ КОЛОНКА: Карусель ===== -->
+                    <controls:ImageCarouselControl Grid.Column="0" Grid.Row="0"
+                                                   Height="340"
+                                                   Margin="0,0,16,0"/>
+
+                    <!-- ===== ПРАВАЯ КОЛОНКА: Информация ===== -->
+                    <StackPanel Grid.Column="1" Grid.Row="0">
+
+                        <!-- Бейдж типа + статус -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="4"
+                                    Padding="10,4" Margin="0,0,8,0">
+                                <TextBlock Text="{Binding PropertyTypeDisplay}"
+                                           Foreground="White" FontSize="12" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Background="{DynamicResource BadgePlaceholderBrush}" CornerRadius="4" Padding="10,4">
+                                <TextBlock Text="{Binding StatusDisplay}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Цена -->
+                        <TextBlock Text="{Binding Property.Price, Converter={StaticResource PriceToString}}"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{DynamicResource PrimaryBrush}"
+                                   Margin="0,0,0,8"/>
+
+                        <!-- Название -->
+                        <TextBlock Text="{Binding Property.Title}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,16"/>
+
+                        <Separator Background="{DynamicResource SeparatorBrush}" Margin="0,0,0,12"/>
+
+                        <!-- Параметры объекта -->
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,8">
+                                <TextBlock Text="{DynamicResource Detail.Area}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                <TextBlock FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}">
+                                    <Run Text="{Binding Property.Area, StringFormat='{}{0:F0} м²'}"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,8">
+                                <TextBlock Text="{DynamicResource Detail.Rooms}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                <TextBlock Text="{Binding Property.Rooms}"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,8">
+                                <TextBlock Text="{DynamicResource Detail.Floor}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                <TextBlock Text="{Binding FloorInfo}"
+                                           FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,8">
+                                <TextBlock Text="{DynamicResource Detail.YearBuilt}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                <TextBlock FontSize="14" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}">
+                                    <TextBlock.Text>
+                                        <Binding Path="Property.YearBuilt" TargetNullValue="—"/>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- Ремонт -->
+                            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,8">
+                                <TextBlock Text="{DynamicResource Detail.Renovation}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                <TextBlock FontSize="14" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Property.HasRepair}" Value="True">
+                                                    <Setter Property="Text" Value="{DynamicResource Common.Yes}"/>
+                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Property.HasRepair}" Value="False">
+                                                    <Setter Property="Text" Value="{DynamicResource Common.No}"/>
+                                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <!-- Ипотека -->
+                            <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,0,8">
+                                <TextBlock Text="{DynamicResource Detail.Mortgage}"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                <TextBlock FontSize="14" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Property.MortgageAvailable}" Value="True">
+                                                    <Setter Property="Text" Value="{DynamicResource Common.Available}"/>
+                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Property.MortgageAvailable}" Value="False">
+                                                    <Setter Property="Text" Value="{DynamicResource Common.No}"/>
+                                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Background="{DynamicResource SeparatorBrush}" Margin="0,0,0,12"/>
+
+                        <!-- Адрес -->
+                        <TextBlock Text="{DynamicResource Detail.Address}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"
+                                   TextWrapping="Wrap" Margin="0,0,0,12">
+                            <Run Text="{Binding Property.City}"/>
+                            <Run Text=","/>
+                            <Run Text="{Binding Property.Address}"/>
+                        </TextBlock>
+
+                        <!-- Риелтор -->
+                        <TextBlock Text="{DynamicResource Detail.Realtor}"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,0,4"/>
+                        <TextBlock Text="{Binding Property.Realtor.FullName}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,2"/>
+                        <TextBlock Text="{Binding Property.Realtor.Phone}"
+                                   FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,16"/>
+
+                        <!-- Кнопки действий -->
+                        <Button Content="{Binding FavoriteButtonText}"
+                                Command="{Binding ToggleFavoriteCommand}"
+                                Height="40" FontSize="14"
+                                Background="{DynamicResource ButtonSecondaryBg}"
+                                Foreground="{DynamicResource AccentBrush}"
+                                BorderBrush="{DynamicResource PrimaryBrush}"
+                                BorderThickness="1"
+                                Margin="0,0,0,8"
+                                Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"/>
+
+                        <!-- Записаться на просмотр (Phase 10) -->
+                        <Button Content="{DynamicResource Detail.Schedule}"
+                                Height="40" FontSize="14"
+                                Background="{DynamicResource PrimaryBrush}"
+                                Foreground="White"
+                                BorderThickness="0"
+                                IsEnabled="False"
+                                ToolTip="{DynamicResource Detail.ComingSoon}"
+                                Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"/>
+                    </StackPanel>
+
+                    <!-- ===== НИЖНЯЯ ЧАСТЬ: Описание (на всю ширину) ===== -->
+                    <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                                Margin="0,20,0,0">
+                        <TextBlock Text="{DynamicResource Detail.Description}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="16">
+                            <TextBlock Text="{Binding Property.Description}"
+                                       FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"
+                                       TextWrapping="Wrap" LineHeight="22"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -114,7 +114,9 @@ public class PropertyService : IPropertyService
         int? rooms = null,
         string? city = null,
         string? propertyType = null,
-        string? searchQuery = null)
+        string? searchQuery = null,
+        bool? hasMortgage = null,
+        bool? hasRenovation = null)
     {
         var query = _unitOfWork.Properties.Query()
             .Include(p => p.Realtor)
@@ -137,8 +139,22 @@ public class PropertyService : IPropertyService
             query = query.Where(p => p.PropertyType == propertyType);
         if (!string.IsNullOrEmpty(searchQuery))
             query = query.Where(p => p.Title.Contains(searchQuery) || p.Description.Contains(searchQuery));
+        if (hasMortgage == true)
+            query = query.Where(p => p.MortgageAvailable);
+        if (hasRenovation == true)
+            query = query.Where(p => p.HasRepair);
 
         return await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetDistinctCitiesAsync()
+    {
+        return await _unitOfWork.Properties.Query()
+            .Where(p => p.Status == "active")
+            .Select(p => p.City)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToListAsync();
     }
 
     public async Task<Property> AddAsync(Property property, IEnumerable<(byte[] Data, string FileName, bool IsMain)> images)

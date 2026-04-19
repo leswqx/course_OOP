@@ -29,7 +29,10 @@ public interface IPropertyService
         int? rooms = null,
         string? city = null,
         string? propertyType = null,
-        string? searchQuery = null);
+        string? searchQuery = null,
+        bool? hasMortgage = null,
+        bool? hasRenovation = null);
+    Task<IEnumerable<string>> GetDistinctCitiesAsync();
     Task<Property> AddAsync(Property property, IEnumerable<(byte[] Data, string FileName, bool IsMain)> images);
     Task UpdateAsync(Property property);
     Task DeleteAsync(int id);

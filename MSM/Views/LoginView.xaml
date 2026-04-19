@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:helpers="clr-namespace:MSM.Helpers"
              mc:Ignorable="d"
+             Background="{DynamicResource BackgroundBrush}"
              d:DesignHeight="400" d:DesignWidth="350">
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -14,54 +15,49 @@
 
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,30">
             <TextBlock Text="🏠" FontSize="48" HorizontalAlignment="Center"/>
-            <TextBlock Text="Агентство недвижимости"
-                       FontSize="20"
-                       FontWeight="Bold"
+            <TextBlock Text="{DynamicResource App.Title}"
+                       FontSize="20" FontWeight="Bold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
                        HorizontalAlignment="Center"
                        Margin="0,10,0,5"/>
-            <TextBlock Text="Вход в систему"
+            <TextBlock Text="{DynamicResource Login.Subtitle}"
                        FontSize="16"
-                       Foreground="Gray"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
                        HorizontalAlignment="Center"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" VerticalAlignment="Center">
-            <TextBlock Text="Логин" Margin="0,0,0,5" Foreground="Gray"/>
+            <TextBlock Text="{DynamicResource Login.LoginLabel}"
+                       Margin="0,0,0,5"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
             <TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"
-                     Height="40"
-                     Padding="10,0,0,0"
-                     FontSize="14"
-                     Margin="0,0,0,20"/>
+                     Height="40" Padding="10,0,0,0" FontSize="14" Margin="0,0,0,20"/>
 
-            <TextBlock Text="Пароль" Margin="0,0,0,5" Foreground="Gray"/>
+            <TextBlock Text="{DynamicResource Login.PasswordLabel}"
+                       Margin="0,0,0,5"
+                       Foreground="{DynamicResource TextSecondaryBrush}"/>
             <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
                          helpers:PasswordBoxHelper.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Height="40"
-                         Padding="10,0,0,0"
-                         FontSize="14"
-                         Margin="0,0,0,10"/>
+                         Height="40" Padding="10,0,0,0" FontSize="14" Margin="0,0,0,10"/>
 
             <TextBlock Text="{Binding ErrorMessage}"
-                       Foreground="Red"
+                       Foreground="{DynamicResource ErrorBrush}"
                        Margin="0,0,0,15"
                        TextWrapping="Wrap"/>
 
-            <Button Content="Войти"
+            <Button Content="{DynamicResource Login.SignIn}"
                     Command="{Binding LoginCommand}"
-                    Height="40"
-                    FontSize="16"
-                    Margin="0,0,0,10"
-                    Background="#D4A5A5"
+                    Height="40" FontSize="16" Margin="0,0,0,10"
+                    Background="{DynamicResource PrimaryBrush}"
                     Foreground="White"
                     BorderThickness="0"/>
 
-            <Button Content="Зарегистрироваться"
+            <Button Content="{DynamicResource Login.Register}"
                     Command="{Binding NavigateToRegisterCommand}"
-                    Height="40"
-                    FontSize="14"
+                    Height="40" FontSize="14"
                     Background="Transparent"
-                    Foreground="#8B6F6F"
-                    BorderBrush="#8B6F6F"
+                    Foreground="{DynamicResource AccentBrush}"
+                    BorderBrush="{DynamicResource AccentBrush}"
                     BorderThickness="1"/>
         </StackPanel>
     </Grid>

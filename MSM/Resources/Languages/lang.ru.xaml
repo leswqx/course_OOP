@@ -1,0 +1,74 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Общие -->
+    <s:String x:Key="App.Title">Агентство недвижимости</s:String>
+    <s:String x:Key="Common.Loading">Загрузка...</s:String>
+    <s:String x:Key="Common.NoPhoto">Нет фото</s:String>
+    <s:String x:Key="Common.NoPhotos">Фотографии отсутствуют</s:String>
+    <s:String x:Key="Common.Logout">Выйти</s:String>
+    <s:String x:Key="Common.Search">Найти</s:String>
+    <s:String x:Key="Common.Back">← Назад</s:String>
+    <s:String x:Key="Common.Yes">✓ Есть</s:String>
+    <s:String x:Key="Common.No">✗ Нет</s:String>
+    <s:String x:Key="Common.Available">✓ Доступна</s:String>
+
+    <!-- Типы объектов -->
+    <s:String x:Key="Type.Apartment">Квартира</s:String>
+    <s:String x:Key="Type.House">Дом</s:String>
+    <s:String x:Key="Type.Complex">Комплекс</s:String>
+
+    <!-- Статусы -->
+    <s:String x:Key="Status.Active">Активен</s:String>
+    <s:String x:Key="Status.Sold">Продан</s:String>
+    <s:String x:Key="Status.Hidden">Скрыт</s:String>
+
+    <!-- Вход -->
+    <s:String x:Key="Login.Subtitle">Вход в систему</s:String>
+    <s:String x:Key="Login.LoginLabel">Логин</s:String>
+    <s:String x:Key="Login.PasswordLabel">Пароль</s:String>
+    <s:String x:Key="Login.SignIn">Войти</s:String>
+    <s:String x:Key="Login.Register">Зарегистрироваться</s:String>
+
+    <!-- Каталог -->
+    <s:String x:Key="Catalog.BackToList">← Назад к каталогу</s:String>
+    <s:String x:Key="Catalog.NoResults">Объекты не найдены</s:String>
+    <s:String x:Key="Catalog.NoResultsHint">Попробуйте изменить строку поиска</s:String>
+
+    <!-- Детальная страница -->
+    <s:String x:Key="Detail.Area">Площадь</s:String>
+    <s:String x:Key="Detail.Rooms">Комнат</s:String>
+    <s:String x:Key="Detail.Floor">Этаж</s:String>
+    <s:String x:Key="Detail.YearBuilt">Год постройки</s:String>
+    <s:String x:Key="Detail.Renovation">Ремонт</s:String>
+    <s:String x:Key="Detail.Mortgage">Ипотека</s:String>
+    <s:String x:Key="Detail.Address">📍  Адрес</s:String>
+    <s:String x:Key="Detail.Realtor">👤  Риелтор</s:String>
+    <s:String x:Key="Detail.Description">Описание</s:String>
+    <s:String x:Key="Detail.AddFavorite">☆  В избранное</s:String>
+    <s:String x:Key="Detail.InFavorite">★  В избранном</s:String>
+    <s:String x:Key="Detail.Schedule">📅  Записаться на просмотр</s:String>
+    <s:String x:Key="Detail.ComingSoon">Будет доступно в следующей версии</s:String>
+
+    <!-- Фильтры (Phase 9) -->
+    <s:String x:Key="Filter.Title">Фильтры</s:String>
+    <s:String x:Key="Filter.Price">Цена, ₽</s:String>
+    <s:String x:Key="Filter.Area">Площадь, м²</s:String>
+    <s:String x:Key="Filter.Rooms">Комнат</s:String>
+    <s:String x:Key="Filter.City">Город</s:String>
+    <s:String x:Key="Filter.Type">Тип объекта</s:String>
+    <s:String x:Key="Filter.From">от</s:String>
+    <s:String x:Key="Filter.To">до</s:String>
+    <s:String x:Key="Filter.Apply">Применить</s:String>
+    <s:String x:Key="Filter.Reset">Сбросить</s:String>
+    <s:String x:Key="Filter.AllCities">Все города</s:String>
+    <s:String x:Key="Filter.AllTypes">Все типы</s:String>
+    <s:String x:Key="Filter.Mortgage">Ипотека</s:String>
+    <s:String x:Key="Filter.Renovation">С ремонтом</s:String>
+
+    <!-- HomeView -->
+    <s:String x:Key="Home.LogoutButton">Выйти из системы</s:String>
+    <s:String x:Key="Home.Placeholder">Функциональность будет добавлена на следующих этапах разработки.</s:String>
+
+</ResourceDictionary>
