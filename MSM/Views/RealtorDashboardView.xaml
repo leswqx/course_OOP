@@ -34,28 +34,89 @@
         <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" Margin="12,0">
-                <Button Command="{Binding SetTab0Command}" Style="{StaticResource TabRadioStyle}"
-                        FontWeight="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}">
-                    <Button.Content>
-                        <TextBlock Text="{DynamicResource Realtor.MyProperties}"/>
-                    </Button.Content>
-                    <Button.BorderThickness>
-                        <Binding Path="ShowTab0">
-                            <Binding.Converter>
-                                <StaticResource ResourceKey="BoolToVisibility"/>
-                            </Binding.Converter>
-                        </Binding>
-                    </Button.BorderThickness>
+                <Button Content="{DynamicResource Realtor.MyProperties}"
+                        Command="{Binding SetTab0Command}" Padding="12,0" FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab0}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                 </Button>
-                <Button Command="{Binding SetTab1Command}" Margin="4,0,0,0" Style="{StaticResource TabRadioStyle}">
-                    <Button.Content>
-                        <TextBlock Text="{DynamicResource Realtor.Appointments}"/>
-                    </Button.Content>
+                <Button Content="{DynamicResource Realtor.Appointments}"
+                        Command="{Binding SetTab1Command}" Padding="12,0" FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab1}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                 </Button>
-                <Button Command="{Binding SetTab2Command}" Margin="4,0,0,0" Style="{StaticResource TabRadioStyle}">
-                    <Button.Content>
-                        <TextBlock Text="{DynamicResource Admin.Stats}"/>
-                    </Button.Content>
+                <Button Content="{DynamicResource Admin.Stats}"
+                        Command="{Binding SetTab2Command}" Padding="12,0" FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab2}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                 </Button>
             </StackPanel>
         </Border>

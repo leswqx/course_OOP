@@ -13,6 +13,7 @@
     <s:String x:Key="Common.Yes">✓ Yes</s:String>
     <s:String x:Key="Common.No">✗ No</s:String>
     <s:String x:Key="Common.Available">✓ Available</s:String>
+    <s:String x:Key="Common.Cancel">Cancel</s:String>
 
     <!-- Property types -->
     <s:String x:Key="Type.Apartment">Apartment</s:String>
@@ -96,6 +97,12 @@
     <s:String x:Key="MyAppt.DateTime">Date &amp; Time</s:String>
     <s:String x:Key="MyAppt.Status">Status</s:String>
     <s:String x:Key="MyAppt.Comment">Comment</s:String>
+    <s:String x:Key="MyAppt.Review">✍ Review</s:String>
+    <s:String x:Key="MyAppt.LeaveReview">Leave a review for the realtor</s:String>
+    <s:String x:Key="MyAppt.Rating">Rating</s:String>
+    <s:String x:Key="MyAppt.ReviewComment">Comment (optional)</s:String>
+    <s:String x:Key="MyAppt.SendReview">Submit</s:String>
+    <s:String x:Key="MyAppt.ReviewSent">Review submitted for moderation!</s:String>
     <s:String x:Key="Appt.New">New</s:String>
     <s:String x:Key="Appt.Confirmed">Confirmed</s:String>
     <s:String x:Key="Appt.Cancelled">Cancelled</s:String>

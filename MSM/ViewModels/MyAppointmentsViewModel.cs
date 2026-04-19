@@ -7,37 +7,40 @@ using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
 
-// Строка в списке записей клиента
 public class AppointmentRowViewModel
 {
     public int Id { get; }
+    public int RealtorId { get; }
     public string PropertyTitle { get; }
     public string DateTime { get; }
     public string StatusDisplay { get; }
     public string StatusColor { get; }
     public string? Comment { get; }
+    public bool CanReview { get; }
 
     public AppointmentRowViewModel(Appointment a)
     {
         Id = a.Id;
+        RealtorId = a.RealtorId;
         PropertyTitle = a.Property?.Title ?? "—";
         DateTime = $"{a.SlotStart:dd.MM.yyyy}  {a.SlotStart:HH:mm}–{a.SlotEnd:HH:mm}";
         Comment = a.Comment;
+        CanReview = a.Status == "completed";
         (StatusDisplay, StatusColor) = a.Status switch
         {
-            "new"       => ("Новая",       "#7A7A7A"),
-            "confirmed" => ("Подтверждена","#7CB342"),
-            "cancelled" => ("Отменена",    "#EF5350"),
-            "completed" => ("Завершена",   "#D4A5A5"),
-            _           => (a.Status,      "#7A7A7A")
+            "new"       => ("Новая",        "#7A7A7A"),
+            "confirmed" => ("Подтверждена", "#7CB342"),
+            "cancelled" => ("Отменена",     "#EF5350"),
+            "completed" => ("Завершена",    "#D4A5A5"),
+            _           => (a.Status,       "#7A7A7A")
         };
     }
 }
 
-// История записей текущего клиента
 public partial class MyAppointmentsViewModel : ViewModelBase
 {
     private readonly IAppointmentService _appointmentService;
+    private readonly IReviewService _reviewService;
     private readonly INavigationService _navigationService;
 
     [ObservableProperty] private ObservableCollection<AppointmentRowViewModel> _appointments = new();
@@ -45,9 +48,23 @@ public partial class MyAppointmentsViewModel : ViewModelBase
     [ObservableProperty] private bool _isEmpty;
     [ObservableProperty] private string? _errorMessage;
 
-    public MyAppointmentsViewModel(IAppointmentService appointmentService, INavigationService navigationService)
+    // ===== Форма отзыва =====
+    [ObservableProperty] private bool _isReviewFormVisible;
+    [ObservableProperty] private int _reviewTargetAppointmentId;
+    [ObservableProperty] private int _reviewTargetRealtorId;
+    [ObservableProperty] private int _reviewRating = 5;
+    [ObservableProperty] private string _reviewComment = "";
+    [ObservableProperty] private bool _isSubmittingReview;
+    [ObservableProperty] private bool _reviewSuccess;
+    [ObservableProperty] private string? _reviewError;
+
+    public MyAppointmentsViewModel(
+        IAppointmentService appointmentService,
+        IReviewService reviewService,
+        INavigationService navigationService)
     {
         _appointmentService = appointmentService;
+        _reviewService = reviewService;
         _navigationService = navigationService;
     }
 
@@ -67,6 +84,49 @@ public partial class MyAppointmentsViewModel : ViewModelBase
         }
         catch (Exception ex) { ErrorMessage = $"Ошибка: {ex.Message}"; }
         finally { IsLoading = false; }
+    }
+
+    [RelayCommand]
+    private void OpenReviewForm(AppointmentRowViewModel row)
+    {
+        ReviewTargetAppointmentId = row.Id;
+        ReviewTargetRealtorId = row.RealtorId;
+        ReviewRating = 5;
+        ReviewComment = "";
+        ReviewError = null;
+        ReviewSuccess = false;
+        IsReviewFormVisible = true;
+    }
+
+    [RelayCommand]
+    private void CloseReviewForm()
+    {
+        IsReviewFormVisible = false;
+        ReviewSuccess = false;
+    }
+
+    [RelayCommand]
+    private async Task SubmitReviewAsync()
+    {
+        if (Session.CurrentUser == null) return;
+        ReviewError = null;
+        if (ReviewRating < 1 || ReviewRating > 5)
+        { ReviewError = "Оценка должна быть от 1 до 5."; return; }
+
+        IsSubmittingReview = true;
+        try
+        {
+            await _reviewService.CreateAsync(
+                userId: Session.CurrentUser.Id,
+                propertyId: null,
+                realtorId: ReviewTargetRealtorId,
+                rating: ReviewRating,
+                comment: string.IsNullOrWhiteSpace(ReviewComment) ? null : ReviewComment.Trim());
+            ReviewSuccess = true;
+            IsReviewFormVisible = false;
+        }
+        catch (Exception ex) { ReviewError = $"Ошибка: {ex.Message}"; }
+        finally { IsSubmittingReview = false; }
     }
 
     [RelayCommand]

@@ -12,6 +12,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Шапка -->
         <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
             <Border.Effect>
                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
@@ -26,11 +27,15 @@
             </Grid>
         </Border>
 
+        <!-- Контент -->
         <Grid Grid.Row="1" Margin="20,16">
+
+            <!-- Загрузка -->
             <TextBlock Text="{DynamicResource Common.Loading}" HorizontalAlignment="Center" VerticalAlignment="Center"
                        FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
 
+            <!-- Пусто -->
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                         Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
                 <TextBlock Text="📅" FontSize="52" HorizontalAlignment="Center"/>
@@ -39,48 +44,129 @@
                            HorizontalAlignment="Center" Margin="0,10,0,0"/>
             </StackPanel>
 
+            <!-- Список записей -->
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
-                <ItemsControl ItemsSource="{Binding Appointments}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
-                                    Padding="16,12" Margin="0,0,0,8">
-                                <Border.Effect>
-                                    <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.1"/>
-                                </Border.Effect>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="150"/>
-                                    </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <!-- Сообщение об успешном отзыве -->
+                    <Border Background="{DynamicResource SuccessBrush}" CornerRadius="8" Padding="14,10"
+                            Margin="0,0,0,12"
+                            Visibility="{Binding ReviewSuccess, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✅ " FontSize="14"/>
+                            <TextBlock Text="{DynamicResource MyAppt.ReviewSent}" FontSize="13"
+                                       Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
 
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding PropertyTitle}"
-                                                   FontSize="14" FontWeight="SemiBold"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <TextBlock Text="{Binding DateTime}"
-                                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
-                                                   Margin="0,4,0,0"/>
-                                        <TextBlock Text="{Binding Comment}" FontSize="12"
-                                                   Foreground="{DynamicResource TextSecondaryBrush}"
-                                                   Visibility="{Binding Comment, Converter={StaticResource BoolToVisibility}}"
-                                                   FontStyle="Italic" Margin="0,2,0,0"/>
-                                    </StackPanel>
+                    <!-- Форма отзыва (показывается поверх списка) -->
+                    <Border Visibility="{Binding IsReviewFormVisible, Converter={StaticResource BoolToVisibility}}"
+                            Background="{DynamicResource CardBrush}" CornerRadius="10"
+                            BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
+                            Padding="20,16" Margin="0,0,0,16">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="12" ShadowDepth="2" Opacity="0.15"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource MyAppt.LeaveReview}" FontSize="15" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,14"/>
 
-                                    <!-- Статус -->
-                                    <Border Grid.Column="1" CornerRadius="4" Padding="10,4"
-                                            HorizontalAlignment="Right" VerticalAlignment="Center"
-                                            Background="{DynamicResource BadgePlaceholderBrush}">
-                                        <TextBlock Text="{Binding StatusDisplay}"
-                                                   FontSize="12" FontWeight="SemiBold"
-                                                   Foreground="{Binding StatusColor, Converter={StaticResource StringToBrush}}"/>
-                                    </Border>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                            <!-- Оценка -->
+                            <TextBlock Text="{DynamicResource MyAppt.Rating}" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,12">
+                                <Slider Value="{Binding ReviewRating}" Minimum="1" Maximum="5"
+                                        IsSnapToTickEnabled="True" TickFrequency="1"
+                                        Width="200" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding ReviewRating, Converter={StaticResource RatingToStars}}"
+                                           FontSize="20" Foreground="{DynamicResource PrimaryBrush}"
+                                           VerticalAlignment="Center" Margin="12,0,0,0"/>
+                            </StackPanel>
+
+                            <!-- Комментарий -->
+                            <TextBlock Text="{DynamicResource MyAppt.ReviewComment}" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                            <TextBox Text="{Binding ReviewComment, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="80" Padding="10,8" TextWrapping="Wrap"
+                                     AcceptsReturn="True" VerticalContentAlignment="Top"
+                                     Margin="0,0,0,12"/>
+
+                            <!-- Ошибка -->
+                            <TextBlock Text="{Binding ReviewError}" Foreground="{DynamicResource ErrorBrush}"
+                                       FontSize="12" Margin="0,0,0,8"
+                                       Visibility="{Binding ReviewError, Converter={StaticResource BoolToVisibility}}"/>
+
+                            <!-- Кнопки -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="{DynamicResource Common.Cancel}"
+                                        Command="{Binding CloseReviewFormCommand}"
+                                        Height="36" Padding="16,0" Margin="0,0,8,0"
+                                        Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                                <Button Content="{DynamicResource MyAppt.SendReview}"
+                                        Command="{Binding SubmitReviewCommand}"
+                                        Height="36" Padding="16,0"
+                                        Background="{DynamicResource PrimaryBrush}"
+                                        Foreground="White" BorderThickness="0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Карточки записей -->
+                    <ItemsControl ItemsSource="{Binding Appointments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
+                                        Padding="16,12" Margin="0,0,0,8">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.08"/>
+                                    </Border.Effect>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Инфо -->
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding PropertyTitle}"
+                                                       FontSize="14" FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding DateTime}"
+                                                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       Margin="0,4,0,0"/>
+                                            <TextBlock Text="{Binding Comment}" FontSize="12"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       Visibility="{Binding Comment, Converter={StaticResource BoolToVisibility}}"
+                                                       FontStyle="Italic" Margin="0,2,0,0"/>
+                                        </StackPanel>
+
+                                        <!-- Статус -->
+                                        <Border Grid.Column="1" CornerRadius="4" Padding="10,4"
+                                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                Background="{DynamicResource BadgePlaceholderBrush}"
+                                                Margin="12,0">
+                                            <TextBlock Text="{Binding StatusDisplay}"
+                                                       FontSize="12" FontWeight="SemiBold"
+                                                       Foreground="{Binding StatusColor, Converter={StaticResource StringToBrush}}"/>
+                                        </Border>
+
+                                        <!-- Кнопка отзыва (только для завершённых) -->
+                                        <Button Grid.Column="2"
+                                                Content="{DynamicResource MyAppt.Review}"
+                                                Command="{Binding DataContext.OpenReviewFormCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Visibility="{Binding CanReview, Converter={StaticResource BoolToVisibility}}"
+                                                Height="32" Padding="14,0" FontSize="12"
+                                                Background="{DynamicResource PrimaryBrush}"
+                                                Foreground="White" BorderThickness="0"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
             </ScrollViewer>
         </Grid>
     </Grid>

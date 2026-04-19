@@ -13,6 +13,7 @@
     <s:String x:Key="Common.Yes">✓ Есть</s:String>
     <s:String x:Key="Common.No">✗ Нет</s:String>
     <s:String x:Key="Common.Available">✓ Доступна</s:String>
+    <s:String x:Key="Common.Cancel">Отмена</s:String>
 
     <!-- Типы объектов -->
     <s:String x:Key="Type.Apartment">Квартира</s:String>
@@ -96,6 +97,12 @@
     <s:String x:Key="MyAppt.DateTime">Дата и время</s:String>
     <s:String x:Key="MyAppt.Status">Статус</s:String>
     <s:String x:Key="MyAppt.Comment">Комментарий</s:String>
+    <s:String x:Key="MyAppt.Review">✍ Отзыв</s:String>
+    <s:String x:Key="MyAppt.LeaveReview">Оставить отзыв о риелторе</s:String>
+    <s:String x:Key="MyAppt.Rating">Оценка</s:String>
+    <s:String x:Key="MyAppt.ReviewComment">Комментарий (необязательно)</s:String>
+    <s:String x:Key="MyAppt.SendReview">Отправить</s:String>
+    <s:String x:Key="MyAppt.ReviewSent">Отзыв отправлен на модерацию!</s:String>
     <s:String x:Key="Appt.New">Новая</s:String>
     <s:String x:Key="Appt.Confirmed">Подтверждена</s:String>
     <s:String x:Key="Appt.Cancelled">Отменена</s:String>
