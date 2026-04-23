@@ -26,7 +26,28 @@ public class AuthService : IAuthService
         if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             return null;
 
+        if (user.IsBlocked)
+            return null; // заблокированный не может войти
+
         return user;
+    }
+
+    public async Task<string?> GetLoginErrorAsync(string login, string password)
+    {
+        var user = await _unitOfWork.Users.FirstOrDefaultAsync(u => u.Login == login);
+        if (user == null) return "Неверный логин или пароль.";
+        if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)) return "Неверный логин или пароль.";
+        if (user.IsBlocked) return "Аккаунт заблокирован. Обратитесь к администратору.";
+        return null;
+    }
+
+    public async Task SetBlockedAsync(int userId, bool isBlocked)
+    {
+        var user = await _unitOfWork.Users.GetByIdAsync(userId);
+        if (user == null) return;
+        user.IsBlocked = isBlocked;
+        _unitOfWork.Users.Update(user);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task<User?> RegisterAsync(string login, string password, string email, string fullName, string? phone = null)
@@ -75,6 +96,12 @@ public class AuthService : IAuthService
     {
         return await _unitOfWork.Users.FirstOrDefaultAsync(u => u.Login == login);
     }
+
+    public async Task UpdateProfileAsync(User user)
+    {
+        _unitOfWork.Users.Update(user);
+        await _unitOfWork.SaveChangesAsync();
+    }
 }
 
 /// <summary>
@@ -83,10 +110,12 @@ public class AuthService : IAuthService
 public class PropertyService : IPropertyService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationService _notificationService;
 
-    public PropertyService(IUnitOfWork unitOfWork)
+    public PropertyService(IUnitOfWork unitOfWork, INotificationService notificationService)
     {
         _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
     }
 
     public async Task<IEnumerable<Property>> GetAllAsync()
@@ -178,6 +207,17 @@ public class PropertyService : IPropertyService
         await _unitOfWork.PropertyImages.AddRangeAsync(imageList);
         await _unitOfWork.SaveChangesAsync();
 
+        // Автооповещение клиентов когда активных объектов стало кратно 10
+        var activeCount = await _unitOfWork.Properties.Query()
+            .CountAsync(p => p.Status == "active");
+        if (activeCount > 0 && activeCount % 10 == 0)
+        {
+            var clients = await _unitOfWork.Users.Query()
+                .Where(u => u.Role == "client" && !u.IsBlocked && u.Email != null)
+                .ToListAsync();
+            _ = _notificationService.SendNewListingsNotificationAsync(clients, activeCount);
+        }
+
         return property;
     }
 
@@ -215,6 +255,40 @@ public class PropertyService : IPropertyService
             .Where(p => p.Status == "active")
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
+    }
+
+    public async Task UpdateStatusAsync(int id, string status)
+    {
+        var property = await _unitOfWork.Properties.GetByIdAsync(id);
+        if (property == null) return;
+        property.Status = status;
+        property.UpdatedAt = DateTime.Now;
+        _unitOfWork.Properties.Update(property);
+        await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task UpdatePropertyDetailsAsync(int id, string title, string description, decimal price, double area,
+        int rooms, int? floor, int? totalFloors, int? yearBuilt, string city, string address,
+        string propertyType, bool hasRepair, bool mortgageAvailable)
+    {
+        var property = await _unitOfWork.Properties.GetByIdAsync(id);
+        if (property == null) return;
+        property.Title = title;
+        property.Description = description;
+        property.Price = price;
+        property.Area = area;
+        property.Rooms = rooms;
+        property.Floor = floor;
+        property.TotalFloors = totalFloors;
+        property.YearBuilt = yearBuilt;
+        property.City = city;
+        property.Address = address;
+        property.PropertyType = propertyType;
+        property.HasRepair = hasRepair;
+        property.MortgageAvailable = mortgageAvailable;
+        property.UpdatedAt = DateTime.Now;
+        _unitOfWork.Properties.Update(property);
+        await _unitOfWork.SaveChangesAsync();
     }
 }
 

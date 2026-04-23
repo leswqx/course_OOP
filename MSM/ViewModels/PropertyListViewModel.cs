@@ -52,10 +52,11 @@ public partial class PropertyListViewModel : ViewModelBase
         _navigationService = navigationService;
     }
 
-    public override void OnNavigatedTo(object? parameter)
+    public override async void OnNavigatedTo(object? parameter)
     {
-        _ = LoadCitiesAsync();
-        _ = LoadPropertiesAsync();
+        await Task.Yield(); // дать UI отрисоваться перед загрузкой
+        await LoadCitiesAsync();
+        await LoadPropertiesAsync();
     }
 
     // Загружает города для выпадающего списка
@@ -127,6 +128,9 @@ public partial class PropertyListViewModel : ViewModelBase
     {
         _navigationService.NavigateTo<PropertyDetailViewModel>(card.Id);
     }
+
+    [RelayCommand]
+    private void GoToProfile() => _navigationService.NavigateTo<ClientProfileViewModel>();
 
     [RelayCommand]
     private void GoToFavorites() => _navigationService.NavigateTo<FavoritesViewModel>();

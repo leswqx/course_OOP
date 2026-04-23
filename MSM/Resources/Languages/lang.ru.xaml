@@ -166,7 +166,24 @@
     <s:String x:Key="Admin.PropsByRealtor">Объектов по риелтору</s:String>
     <s:String x:Key="Admin.RatingByRealtor">Рейтинг риелторов</s:String>
 
+    <!-- Профиль клиента -->
+    <s:String x:Key="ClientProfile.Title">Мой профиль</s:String>
+    <s:String x:Key="ClientProfile.PersonalData">Личные данные</s:String>
+    <s:String x:Key="ClientProfile.FullName">Полное имя *</s:String>
+    <s:String x:Key="ClientProfile.Email">E-mail *</s:String>
+    <s:String x:Key="ClientProfile.Phone">Телефон</s:String>
+    <s:String x:Key="ClientProfile.Login">Логин:</s:String>
+    <s:String x:Key="ClientProfile.UploadPhoto">📷 Загрузить фото</s:String>
+    <s:String x:Key="ClientProfile.RemovePhoto">Удалить</s:String>
+    <s:String x:Key="ClientProfile.Save">Сохранить изменения</s:String>
+    <s:String x:Key="ClientProfile.ChangePassword">Смена пароля</s:String>
+    <s:String x:Key="ClientProfile.OldPassword">Текущий пароль</s:String>
+    <s:String x:Key="ClientProfile.NewPassword">Новый пароль</s:String>
+    <s:String x:Key="ClientProfile.ConfirmPassword">Подтвердите новый пароль</s:String>
+    <s:String x:Key="ClientProfile.ChangePasswordBtn">Изменить пароль</s:String>
+
     <!-- Навигация (роль) -->
+    <s:String x:Key="Nav.Profile">👤 Профиль</s:String>
     <s:String x:Key="Nav.Favorites">⭐ Избранное</s:String>
     <s:String x:Key="Nav.MyAppt">📅 Мои записи</s:String>
     <s:String x:Key="Nav.Realtor">📋 Кабинет</s:String>

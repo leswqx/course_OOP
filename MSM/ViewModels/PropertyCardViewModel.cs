@@ -18,7 +18,12 @@ public class PropertyCardViewModel
     public string RealtorName { get; }
     public BitmapImage? MainImage { get; }
 
+    public string Status { get; }
     public bool HasImage => MainImage != null;
+    public bool IsSoldable => Status == "active";
+    public bool IsSold => Status == "sold";
+    public bool IsToggleHideVisible => Status != "sold";
+    public string ToggleHideLabel => Status == "hidden" ? "👁 Показать" : "🙈 Скрыть";
     public string AreaRoomsInfo => $"{Area:F0} м²  •  {Rooms} комн.";
     public string PropertyTypeDisplay => PropertyType switch
     {
@@ -32,6 +37,7 @@ public class PropertyCardViewModel
     {
         Id = property.Id;
         Title = property.Title;
+        Status = property.Status;
         Price = property.Price;
         Area = property.Area;
         Rooms = property.Rooms;

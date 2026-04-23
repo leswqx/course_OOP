@@ -13,6 +13,7 @@ public class User : BaseEntity
     public string? Phone { get; set; }
     public string? Description { get; set; }
     public byte[]? AvatarPhoto { get; set; }
+    public bool IsBlocked { get; set; } = false;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     // Навигационные свойства

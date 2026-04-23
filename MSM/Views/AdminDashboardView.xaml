@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:MSM.Helpers"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d"
              Background="{DynamicResource BackgroundBrush}"
@@ -123,6 +124,66 @@
                         </Style>
                     </Button.Style>
                 </Button>
+                <Button Content="📧 Рассылка"
+                        Command="{Binding SetTab4Command}"
+                        Background="Transparent" BorderThickness="0,0,0,3" Padding="12,0"
+                        FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab4}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="👤 Мой профиль"
+                        Command="{Binding SetTab3Command}"
+                        Background="Transparent" BorderThickness="0,0,0,3" Padding="12,0"
+                        FontSize="13" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab3}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </StackPanel>
         </Border>
 
@@ -134,18 +195,111 @@
                   Margin="16">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Сообщение о смене роли -->
-                <Border Grid.Row="0" Background="{DynamicResource SuccessBrush}" CornerRadius="6"
-                        Padding="12,8" Margin="0,0,0,10"
+                <!-- Сообщение об операции -->
+                <Border Grid.Row="0" CornerRadius="6" Padding="12,8" Margin="0,0,0,10"
                         Visibility="{Binding UserActionMessage, Converter={StaticResource BoolToVisibility}}">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
+                        </Style>
+                    </Border.Style>
                     <TextBlock Text="{Binding UserActionMessage}" FontSize="13"
                                Foreground="White" FontWeight="SemiBold"/>
                 </Border>
 
-                <DataGrid Grid.Row="1" ItemsSource="{Binding Users}" AutoGenerateColumns="False"
+                <!-- Поиск -->
+                <Grid Grid.Row="1" Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="80"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0"
+                             Text="{Binding UserSearch, UpdateSourceTrigger=PropertyChanged}"
+                             Height="36" FontSize="13" Padding="10,0"
+                             Background="{DynamicResource InputBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"/>
+                    <Button Grid.Column="1" Content="🔍 Найти"
+                            Command="{Binding SearchUsersCommand}"
+                            Height="36" Margin="8,0,0,0" FontSize="12"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Foreground="White" BorderThickness="0"/>
+                </Grid>
+
+                <!-- Фильтры по роли -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+                    <Button Content="Все" Command="{Binding FilterAllCommand}"
+                            Height="28" Padding="14,0" FontSize="12" Margin="0,0,6,0"
+                            BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding UserRoleFilter}" Value="all">
+                                        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="Риелторы" Command="{Binding FilterRealtorCommand}"
+                            Height="28" Padding="14,0" FontSize="12" Margin="0,0,6,0"
+                            BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding UserRoleFilter}" Value="realtor">
+                                        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="Клиенты" Command="{Binding FilterClientCommand}"
+                            Height="28" Padding="14,0" FontSize="12" Margin="0,0,6,0"
+                            BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding UserRoleFilter}" Value="client">
+                                        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="🔒 Заблокированные" Command="{Binding FilterBlockedCommand}"
+                            Height="28" Padding="14,0" FontSize="12"
+                            BorderThickness="1" BorderBrush="#EF5350">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                <Setter Property="Foreground" Value="#EF5350"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding UserRoleFilter}" Value="blocked">
+                                        <Setter Property="Background" Value="#EF5350"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+
+                <!-- Таблица пользователей -->
+                <DataGrid Grid.Row="3" ItemsSource="{Binding Users}" AutoGenerateColumns="False"
                           IsReadOnly="True" CanUserAddRows="False"
                           Background="{DynamicResource SurfaceBrush}"
                           Foreground="{DynamicResource TextPrimaryBrush}"
@@ -163,14 +317,35 @@
                             <Setter Property="Padding" Value="8,6"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsBlocked}" Value="True">
+                                    <Setter Property="Opacity" Value="0.6"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Имя"     Binding="{Binding FullName}"   Width="*"/>
-                        <DataGridTextColumn Header="Логин"   Binding="{Binding Login}"      Width="110"/>
-                        <DataGridTextColumn Header="E-mail"  Binding="{Binding Email}"      Width="170"/>
-                        <DataGridTextColumn Header="Роль"    Binding="{Binding RoleDisplay}" Width="110"/>
-                        <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}"      Width="130"/>
-                        <DataGridTextColumn Header="Создан"  Binding="{Binding CreatedAt}"  Width="100"/>
-                        <DataGridTemplateColumn Header="Действия" Width="200">
+                        <DataGridTemplateColumn Header="Имя" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding FullName}" VerticalAlignment="Center"/>
+                                        <Border Background="#EF5350" CornerRadius="3" Padding="4,1"
+                                                Margin="6,0,0,0"
+                                                Visibility="{Binding ShowBlockedBadge, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock Text="БАН" FontSize="9" Foreground="White" FontWeight="Bold"/>
+                                        </Border>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Логин"   Binding="{Binding Login}"       Width="110"/>
+                        <DataGridTextColumn Header="E-mail"  Binding="{Binding Email}"       Width="160"/>
+                        <DataGridTextColumn Header="Роль"    Binding="{Binding RoleDisplay}" Width="100"/>
+                        <DataGridTextColumn Header="Создан"  Binding="{Binding CreatedAt}"   Width="90"/>
+                        <DataGridTemplateColumn Header="Действия" Width="230">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" Margin="4,2">
@@ -178,16 +353,22 @@
                                                 Command="{Binding DataContext.PromoteToRealtorCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Id}"
                                                 Visibility="{Binding CanPromote, Converter={StaticResource BoolToVisibility}}"
-                                                Height="26" Padding="10,0" FontSize="11"
+                                                Height="26" Padding="8,0" FontSize="11"
                                                 Background="{DynamicResource PrimaryBrush}"
-                                                Foreground="White" BorderThickness="0" Margin="0,0,6,0"/>
+                                                Foreground="White" BorderThickness="0" Margin="0,0,4,0"/>
                                         <Button Content="{DynamicResource Admin.Demote}"
                                                 Command="{Binding DataContext.DemoteToClientCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 CommandParameter="{Binding Id}"
                                                 Visibility="{Binding CanDemote, Converter={StaticResource BoolToVisibility}}"
-                                                Height="26" Padding="10,0" FontSize="11"
-                                                Background="{DynamicResource ErrorBrush}"
-                                                Foreground="White" BorderThickness="0"/>
+                                                Height="26" Padding="8,0" FontSize="11"
+                                                Background="#FF8F00"
+                                                Foreground="White" BorderThickness="0" Margin="0,0,4,0"/>
+                                        <Button Content="{Binding BlockLabel}"
+                                                Command="{Binding DataContext.ToggleBlockCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding Id}"
+                                                Height="26" Padding="8,0" FontSize="11"
+                                                BorderThickness="1" BorderBrush="#EF5350"
+                                                Background="Transparent" Foreground="#EF5350"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -346,6 +527,282 @@
                     </Border>
                 </StackPanel>
             </ScrollViewer>
+
+            <!-- ===== ВКЛАДКА 4: РАССЫЛКА ===== -->
+            <Grid Visibility="{Binding ShowTab4, Converter={StaticResource BoolToVisibility}}"
+                  Margin="16">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel MaxWidth="620" HorizontalAlignment="Center" Margin="0,8,0,40">
+
+                        <!-- Кому -->
+                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+                                Padding="24,18" Margin="0,0,0,14">
+                            <Border.Effect>
+                                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.08"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <TextBlock Text="📬 Кому отправить" FontSize="15" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,12"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="👥 Всем пользователям" Command="{Binding MailToAllCommand}"
+                                            Height="32" Padding="14,0" FontSize="12" Margin="0,0,8,0"
+                                            BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding MailRecipients}" Value="all">
+                                                        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button Content="🏠 Клиентам" Command="{Binding MailToClientsCommand}"
+                                            Height="32" Padding="14,0" FontSize="12" Margin="0,0,8,0"
+                                            BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding MailRecipients}" Value="clients">
+                                                        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button Content="👔 Риелторам" Command="{Binding MailToRealtorsCommand}"
+                                            Height="32" Padding="14,0" FontSize="12"
+                                            BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding MailRecipients}" Value="realtors">
+                                                        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Письмо -->
+                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+                                Padding="24,18" Margin="0,0,0,14">
+                            <Border.Effect>
+                                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.08"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <TextBlock Text="✉ Содержание письма" FontSize="15" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,14"/>
+
+                                <TextBlock Text="Тема письма" FontSize="12"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding MailSubject, UpdateSourceTrigger=PropertyChanged}"
+                                         Height="36" Padding="10,0" Margin="0,0,0,14"
+                                         FontSize="13"/>
+
+                                <TextBlock Text="Текст письма" FontSize="12"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding MailBody, UpdateSourceTrigger=PropertyChanged}"
+                                         MinHeight="120" Padding="10,8" FontSize="13"
+                                         TextWrapping="Wrap" AcceptsReturn="True"
+                                         VerticalContentAlignment="Top" Margin="0,0,0,16"/>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Результат -->
+                                    <TextBlock Grid.Column="0" Text="{Binding MailResult}"
+                                               VerticalAlignment="Center" FontSize="13"
+                                               TextWrapping="Wrap" Margin="0,0,12,0"
+                                               Visibility="{Binding MailResult, Converter={StaticResource BoolToVisibility}}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding MailSuccess}" Value="True">
+                                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding MailSuccess}" Value="False">
+                                                        <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                    <Button Grid.Column="1" Content="📨 Отправить"
+                                            Command="{Binding SendMailCommand}"
+                                            Height="40" Padding="24,0" FontSize="13"
+                                            Background="{DynamicResource PrimaryBrush}"
+                                            Foreground="White" BorderThickness="0"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Подсказка про SMTP -->
+                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8"
+                                Padding="16,12" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="ℹ Настройка SMTP" FontSize="12" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
+                                           TextWrapping="Wrap">
+                                    Для отправки писем заполните данные в файле App.config — Smtp:Host, Smtp:UserName, Smtp:Password.
+                                    Для Gmail используйте App Password (не основной пароль). Пока не настроено — письма тихо игнорируются.
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ===== ВКЛАДКА 3: МОЙ ПРОФИЛЬ ===== -->
+            <ScrollViewer Visibility="{Binding ShowTab3, Converter={StaticResource BoolToVisibility}}"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel MaxWidth="560" HorizontalAlignment="Center" Margin="0,24,0,40">
+
+                    <!-- Аватар -->
+                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12"
+                            Padding="28,20" Margin="0,0,0,16">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel HorizontalAlignment="Center">
+                            <Border Width="90" Height="90" CornerRadius="45" ClipToBounds="True"
+                                    Background="{DynamicResource PlaceholderBrush}" Margin="0,0,0,10">
+                                <Grid>
+                                    <TextBlock Text="👤" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Visibility="{Binding ProfileAvatar, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}"/>
+                                    <Image Source="{Binding ProfileAvatar, Converter={StaticResource ByteArrayToImage}}" Stretch="UniformToFill"
+                                           Visibility="{Binding ProfileAvatar, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="{Binding ProfileLogin}" FontSize="15" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Администратор" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,2,0,12"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="📷 Загрузить фото" Command="{Binding UploadProfileAvatarCommand}"
+                                        Height="30" Padding="14,0" FontSize="12" Margin="0,0,8,0"
+                                        Background="{DynamicResource PrimaryBrush}" Foreground="White" BorderThickness="0"/>
+                                <Button Content="✕ Удалить" Command="{Binding RemoveProfileAvatarCommand}"
+                                        Height="30" Padding="14,0" FontSize="12"
+                                        Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                        Visibility="{Binding ProfileAvatar, Converter={StaticResource BoolToVisibility}}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Личные данные -->
+                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12"
+                            Padding="28,20" Margin="0,0,0,16">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Личные данные" FontSize="15" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+                            <TextBlock Text="Имя и фамилия" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding ProfileFullName, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="36" Padding="10,0" Margin="0,0,0,12"/>
+                            <TextBlock Text="E-mail" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding ProfileEmail, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="36" Padding="10,0" Margin="0,0,0,12"/>
+                            <TextBlock Text="Телефон" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding ProfilePhone, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="36" Padding="10,0" Margin="0,0,0,14"/>
+                            <Button Content="💾 Сохранить профиль" Command="{Binding SaveProfileCommand}"
+                                    Height="38" FontSize="13" HorizontalAlignment="Left" Padding="20,0"
+                                    Background="{DynamicResource PrimaryBrush}" Foreground="White" BorderThickness="0"/>
+                            <TextBlock Margin="0,10,0,0" FontSize="13" TextWrapping="Wrap"
+                                       Text="{Binding ProfileResult}"
+                                       Visibility="{Binding ProfileResult, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ProfileSuccess}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ProfileSuccess}" Value="False">
+                                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Смена пароля -->
+                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,20">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Смена пароля" FontSize="15" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,16"/>
+                            <TextBlock Text="Текущий пароль" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
+                                         helpers:PasswordBoxHelper.BoundPassword="{Binding ProfileOldPassword, Mode=TwoWay}"
+                                         Height="36" Padding="10,0" Margin="0,0,0,12"
+                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                            <TextBlock Text="Новый пароль" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
+                                         helpers:PasswordBoxHelper.BoundPassword="{Binding ProfileNewPassword, Mode=TwoWay}"
+                                         Height="36" Padding="10,0" Margin="0,0,0,12"
+                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                            <TextBlock Text="Повторите пароль" FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
+                                         helpers:PasswordBoxHelper.BoundPassword="{Binding ProfileConfirmPassword, Mode=TwoWay}"
+                                         Height="36" Padding="10,0" Margin="0,0,0,14"
+                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                            <Button Content="🔑 Изменить пароль" Command="{Binding ChangeProfilePasswordCommand}"
+                                    Height="38" FontSize="13" HorizontalAlignment="Left" Padding="20,0"
+                                    Background="{DynamicResource AccentBrush}" Foreground="White" BorderThickness="0"/>
+                            <TextBlock Margin="0,10,0,0" FontSize="13" TextWrapping="Wrap"
+                                       Text="{Binding PasswordResult}"
+                                       Visibility="{Binding PasswordResult, Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding PasswordSuccess}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding PasswordSuccess}" Value="False">
+                                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
         </Grid>
     </Grid>
 </UserControl>

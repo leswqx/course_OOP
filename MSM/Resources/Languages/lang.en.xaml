@@ -164,7 +164,24 @@
     <s:String x:Key="Admin.PropsByRealtor">Properties per realtor</s:String>
     <s:String x:Key="Admin.RatingByRealtor">Realtor ratings</s:String>
 
+    <!-- Client profile -->
+    <s:String x:Key="ClientProfile.Title">My Profile</s:String>
+    <s:String x:Key="ClientProfile.PersonalData">Personal Information</s:String>
+    <s:String x:Key="ClientProfile.FullName">Full name *</s:String>
+    <s:String x:Key="ClientProfile.Email">E-mail *</s:String>
+    <s:String x:Key="ClientProfile.Phone">Phone</s:String>
+    <s:String x:Key="ClientProfile.Login">Login:</s:String>
+    <s:String x:Key="ClientProfile.UploadPhoto">📷 Upload photo</s:String>
+    <s:String x:Key="ClientProfile.RemovePhoto">Remove</s:String>
+    <s:String x:Key="ClientProfile.Save">Save changes</s:String>
+    <s:String x:Key="ClientProfile.ChangePassword">Change Password</s:String>
+    <s:String x:Key="ClientProfile.OldPassword">Current password</s:String>
+    <s:String x:Key="ClientProfile.NewPassword">New password</s:String>
+    <s:String x:Key="ClientProfile.ConfirmPassword">Confirm new password</s:String>
+    <s:String x:Key="ClientProfile.ChangePasswordBtn">Change password</s:String>
+
     <!-- Role navigation -->
+    <s:String x:Key="Nav.Profile">👤 Profile</s:String>
     <s:String x:Key="Nav.Favorites">⭐ Favorites</s:String>
     <s:String x:Key="Nav.MyAppt">📅 My Bookings</s:String>
     <s:String x:Key="Nav.Realtor">📋 Dashboard</s:String>

@@ -42,6 +42,9 @@
             <converters:ByteArrayToImageConverter x:Key="ByteArrayToImage"/>
 
             <!-- DataTemplates: WPF автоматически подбирает нужный View по типу ViewModel -->
+            <DataTemplate DataType="{x:Type vm:LandingViewModel}">
+                <views:LandingView/>
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:LoginViewModel}">
                 <views:LoginView/>
             </DataTemplate>
@@ -71,6 +74,9 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:RealtorProfileViewModel}">
                 <views:RealtorProfileView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ClientProfileViewModel}">
+                <views:ClientProfileView/>
             </DataTemplate>
 
             <!-- Стиль вкладки-RadioButton (используется в панелях риелтора и админа) -->

@@ -57,7 +57,8 @@ public partial class LoginViewModel : ViewModelBase
             }
             else
             {
-                ErrorMessage = "Неверный логин или пароль";
+                ErrorMessage = await _authService.GetLoginErrorAsync(Login, Password)
+                               ?? "Неверный логин или пароль";
             }
         }
         catch (Exception ex)

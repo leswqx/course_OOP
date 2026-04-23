@@ -54,6 +54,7 @@ public partial class PropertyDetailViewModel : ViewModelBase
     public bool HasMultipleImages => _images.Count > 1;
     public bool HasImages         => _images.Count > 0;
     public bool IsClient          => Session.IsClient;
+    public bool IsBookable        => Session.IsClient && Property?.Status == "active";
 
     public string FavoriteButtonText => IsFavorite ? "★  В избранном" : "☆  В избранное";
 
@@ -126,6 +127,7 @@ public partial class PropertyDetailViewModel : ViewModelBase
             OnPropertyChanged(nameof(PropertyTypeDisplay));
             OnPropertyChanged(nameof(StatusDisplay));
             OnPropertyChanged(nameof(FloorInfo));
+            OnPropertyChanged(nameof(IsBookable));
 
             if (Session.IsClient && Session.CurrentUser != null)
                 IsFavorite = await _favoriteService.IsFavoriteAsync(Session.CurrentUser.Id, id);

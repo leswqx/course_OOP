@@ -76,6 +76,12 @@
                             BorderThickness="1" ToolTip="Язык / Language"/>
 
                     <!-- Кнопки для клиента -->
+                    <Button Content="{DynamicResource Nav.Profile}"
+                            Command="{Binding GoToProfileCommand}"
+                            Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"
+                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,6,0"
+                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                     <Button Content="{DynamicResource Nav.Favorites}"
                             Command="{Binding GoToFavoritesCommand}"
                             Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"

@@ -225,8 +225,9 @@
                                     BorderBrush="{DynamicResource PrimaryBrush}"
                                     BorderThickness="1" Margin="0,0,0,8"/>
 
-                            <!-- Записаться на просмотр — переключает форму -->
+                            <!-- Записаться на просмотр — только для активных объектов -->
                             <Button Command="{Binding ToggleScheduleFormCommand}"
+                                    Visibility="{Binding IsBookable, Converter={StaticResource BoolToVisibility}}"
                                     Height="40" FontSize="14"
                                     Background="{DynamicResource PrimaryBrush}"
                                     Foreground="White" BorderThickness="0">
@@ -241,6 +242,14 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
+
+                            <!-- Бейдж "Продан" для неактивных объектов -->
+                            <Border Visibility="{Binding IsBookable, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}"
+                                    Background="#EF5350" CornerRadius="6" Padding="12,8" Margin="0,0,0,8">
+                                <TextBlock Text="🏷 Объект продан — запись недоступна"
+                                           Foreground="White" FontSize="13" FontWeight="SemiBold"
+                                           TextAlignment="Center"/>
+                            </Border>
 
                             <!-- ===== INLINE ФОРМА ЗАПИСИ ===== -->
                             <Border Visibility="{Binding IsScheduleFormVisible, Converter={StaticResource BoolToVisibility}}"

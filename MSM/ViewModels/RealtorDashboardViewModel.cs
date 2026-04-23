@@ -7,6 +7,7 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using MSM.Data.Context;
 using MSM.Models;
@@ -24,7 +25,9 @@ public class RealtorAppointmentRow
     public string DateTime { get; }
     public string Status { get; }
     public string StatusColor { get; }
-    public bool CanAct { get; }
+    public bool CanConfirm { get; }
+    public bool CanCancel { get; }
+    public bool CanComplete { get; }
 
     public RealtorAppointmentRow(Appointment a)
     {
@@ -32,13 +35,15 @@ public class RealtorAppointmentRow
         ClientName = a.Client?.FullName ?? "—";
         PropertyTitle = a.Property?.Title ?? "—";
         DateTime = $"{a.SlotStart:dd.MM.yyyy  HH:mm}–{a.SlotEnd:HH:mm}";
-        CanAct = a.Status == "new";
+        CanConfirm  = a.Status == "new";
+        CanCancel   = a.Status is "new" or "confirmed";
+        CanComplete = a.Status == "confirmed";
         (Status, StatusColor) = a.Status switch
         {
             "new"       => ("Новая",        "#7A7A7A"),
             "confirmed" => ("Подтверждена", "#7CB342"),
             "cancelled" => ("Отменена",     "#EF5350"),
-            "completed" => ("Завершена",    "#D4A5A5"),
+            "completed" => ("Завершена ✓",  "#D4A5A5"),
             _           => (a.Status,       "#7A7A7A")
         };
     }
@@ -64,11 +69,12 @@ public partial class RealtorDashboardViewModel : ViewModelBase
 
     // ===== Вкладки =====
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowTab0), nameof(ShowTab1), nameof(ShowTab2))]
+    [NotifyPropertyChangedFor(nameof(ShowTab0), nameof(ShowTab1), nameof(ShowTab2), nameof(ShowTab3))]
     private int _selectedTab;
     public bool ShowTab0 => SelectedTab == 0;
     public bool ShowTab1 => SelectedTab == 1;
     public bool ShowTab2 => SelectedTab == 2;
+    public bool ShowTab3 => SelectedTab == 3;
 
     // ===== Профиль риелтора =====
     [ObservableProperty] private string _realtorName = "";
@@ -99,6 +105,25 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     [ObservableProperty] private bool _isSaving;
     [ObservableProperty] private ObservableCollection<ImagePreviewVm> _formImages = new();
 
+    // ===== Форма редактирования объекта =====
+    [ObservableProperty] private bool _isEditFormVisible;
+    [ObservableProperty] private int _editPropertyId;
+    [ObservableProperty] private string _editTitle = "";
+    [ObservableProperty] private string _editDescription = "";
+    [ObservableProperty] private string _editPrice = "";
+    [ObservableProperty] private string _editArea = "";
+    [ObservableProperty] private string _editRooms = "";
+    [ObservableProperty] private string _editFloor = "";
+    [ObservableProperty] private string _editTotalFloors = "";
+    [ObservableProperty] private string _editYearBuilt = "";
+    [ObservableProperty] private string _editCity = "";
+    [ObservableProperty] private string _editAddress = "";
+    [ObservableProperty] private string _editType = "apartment";
+    [ObservableProperty] private bool _editHasRepair;
+    [ObservableProperty] private bool _editMortgage;
+    [ObservableProperty] private string? _editError;
+    [ObservableProperty] private bool _isEditSaving;
+
     // ===== Записи клиентов =====
     [ObservableProperty] private ObservableCollection<RealtorAppointmentRow> _appointments = new();
     [ObservableProperty] private bool _isApptLoading;
@@ -128,12 +153,14 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         _context = context;
     }
 
-    public override void OnNavigatedTo(object? parameter)
+    public override async void OnNavigatedTo(object? parameter)
     {
+        await Task.Yield();
         LoadProfile();
-        _ = LoadPropertiesAsync();
-        _ = LoadAppointmentsAsync();
-        _ = LoadStatsAsync();
+        LoadProfileTab();
+        await LoadPropertiesAsync();
+        await LoadAppointmentsAsync();
+        await LoadStatsAsync();
     }
 
     private void LoadProfile()
@@ -150,6 +177,7 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     [RelayCommand] private void SetTab0() => SelectedTab = 0;
     [RelayCommand] private void SetTab1() => SelectedTab = 1;
     [RelayCommand] private void SetTab2() => SelectedTab = 2;
+    [RelayCommand] private void SetTab3() => SelectedTab = 3;
 
     // ===== Объекты =====
     private async Task LoadPropertiesAsync()
@@ -168,6 +196,99 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     [RelayCommand]
     private void OpenDetail(PropertyCardViewModel card) =>
         _navigationService.NavigateTo<PropertyDetailViewModel>(card.Id);
+
+    [RelayCommand]
+    private async Task DeletePropertyAsync(PropertyCardViewModel card)
+    {
+        await _propertyService.DeleteAsync(card.Id);
+        await LoadPropertiesAsync();
+        await LoadStatsAsync();
+    }
+
+    [RelayCommand]
+    private async Task OpenEditFormAsync(PropertyCardViewModel card)
+    {
+        var property = await _propertyService.GetByIdAsync(card.Id);
+        if (property == null) return;
+
+        EditPropertyId   = property.Id;
+        EditTitle        = property.Title;
+        EditDescription  = property.Description;
+        EditPrice        = property.Price.ToString(CultureInfo.InvariantCulture);
+        EditArea         = property.Area.ToString(CultureInfo.InvariantCulture);
+        EditRooms        = property.Rooms.ToString();
+        EditFloor        = property.Floor?.ToString() ?? "";
+        EditTotalFloors  = property.TotalFloors?.ToString() ?? "";
+        EditYearBuilt    = property.YearBuilt?.ToString() ?? "";
+        EditCity         = property.City;
+        EditAddress      = property.Address;
+        EditType         = property.PropertyType;
+        EditHasRepair    = property.HasRepair;
+        EditMortgage     = property.MortgageAvailable;
+        EditError        = null;
+        IsEditFormVisible = true;
+    }
+
+    [RelayCommand]
+    private void CloseEditForm() => IsEditFormVisible = false;
+
+    [RelayCommand]
+    private async Task SaveEditAsync()
+    {
+        EditError = null;
+        if (string.IsNullOrWhiteSpace(EditTitle) || string.IsNullOrWhiteSpace(EditDescription)
+            || string.IsNullOrWhiteSpace(EditPrice) || string.IsNullOrWhiteSpace(EditArea)
+            || string.IsNullOrWhiteSpace(EditRooms) || string.IsNullOrWhiteSpace(EditCity)
+            || string.IsNullOrWhiteSpace(EditAddress))
+        { EditError = "Заполните все обязательные поля."; return; }
+
+        var priceStr = EditPrice.Replace(',', '.').Replace(" ", "");
+        if (!decimal.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var price) || price <= 0)
+        { EditError = "Укажите корректную цену."; return; }
+
+        var areaStr = EditArea.Replace(',', '.').Replace(" ", "");
+        if (!double.TryParse(areaStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var area) || area <= 0)
+        { EditError = "Укажите корректную площадь."; return; }
+
+        if (!int.TryParse(EditRooms.Trim(), out var rooms) || rooms <= 0)
+        { EditError = "Укажите количество комнат."; return; }
+
+        IsEditSaving = true;
+        try
+        {
+            await _propertyService.UpdatePropertyDetailsAsync(
+                EditPropertyId,
+                EditTitle.Trim(), EditDescription.Trim(), price, area, rooms,
+                int.TryParse(EditFloor.Trim(), out var f) ? f : null,
+                int.TryParse(EditTotalFloors.Trim(), out var tf) ? tf : null,
+                int.TryParse(EditYearBuilt.Trim(), out var yb) ? yb : null,
+                EditCity.Trim(), EditAddress.Trim(),
+                EditType, EditHasRepair, EditMortgage);
+
+            IsEditFormVisible = false;
+            await LoadPropertiesAsync();
+            await LoadStatsAsync();
+        }
+        catch (Exception ex) { EditError = $"Ошибка: {ex.Message}"; }
+        finally { IsEditSaving = false; }
+    }
+
+    [RelayCommand]
+    private async Task SetSoldAsync(PropertyCardViewModel card)
+    {
+        await _propertyService.UpdateStatusAsync(card.Id, "sold");
+        await LoadPropertiesAsync();
+        await LoadStatsAsync();
+    }
+
+    [RelayCommand]
+    private async Task ToggleHiddenAsync(PropertyCardViewModel card)
+    {
+        var newStatus = card.Status == "hidden" ? "active" : "hidden";
+        await _propertyService.UpdateStatusAsync(card.Id, newStatus);
+        await LoadPropertiesAsync();
+        await LoadStatsAsync();
+    }
 
     [RelayCommand]
     private void ToggleForm()
@@ -351,6 +472,102 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         }
         catch { /* статистика некритична */ }
     }
+
+    // ===== Профиль =====
+    [ObservableProperty] private string _profileFullName = "";
+    [ObservableProperty] private string _profileEmail = "";
+    [ObservableProperty] private string _profilePhone = "";
+    [ObservableProperty] private string _profileDescription = "";
+    [ObservableProperty] private byte[]? _profileAvatar;
+    [ObservableProperty] private string _profileOldPassword = "";
+    [ObservableProperty] private string _profileNewPassword = "";
+    [ObservableProperty] private string _profileConfirmPassword = "";
+    [ObservableProperty] private string? _profileResult;
+    [ObservableProperty] private bool _profileSuccess;
+    [ObservableProperty] private string? _passwordResult;
+    [ObservableProperty] private bool _passwordSuccess;
+    [ObservableProperty] private bool _isProfileSaving;
+
+    public string ProfileLogin => Session.CurrentUser?.Login ?? "";
+
+    private void LoadProfileTab()
+    {
+        var u = Session.CurrentUser;
+        if (u == null) return;
+        ProfileFullName     = u.FullName;
+        ProfileEmail        = u.Email;
+        ProfilePhone        = u.Phone ?? "";
+        ProfileDescription  = u.Description ?? "";
+        ProfileAvatar       = u.AvatarPhoto;
+        ProfileResult       = null;
+        PasswordResult      = null;
+    }
+
+    [RelayCommand]
+    private async Task SaveProfileAsync()
+    {
+        var user = Session.CurrentUser;
+        if (user == null) return;
+        if (string.IsNullOrWhiteSpace(ProfileFullName))
+        { ProfileResult = "Имя не может быть пустым."; ProfileSuccess = false; return; }
+
+        IsProfileSaving = true;
+        ProfileResult = null;
+        try
+        {
+            var authService = MSM.App.ServiceProvider.GetRequiredService<IAuthService>();
+            user.FullName    = ProfileFullName.Trim();
+            user.Email       = ProfileEmail.Trim();
+            user.Phone       = string.IsNullOrWhiteSpace(ProfilePhone) ? null : ProfilePhone.Trim();
+            user.Description = string.IsNullOrWhiteSpace(ProfileDescription) ? null : ProfileDescription.Trim();
+            user.AvatarPhoto = ProfileAvatar;
+            await authService.UpdateProfileAsync(user);
+            // обновить шапку профиля
+            RealtorName        = user.FullName;
+            RealtorEmail       = user.Email;
+            RealtorPhone       = user.Phone ?? "—";
+            RealtorDescription = user.Description ?? "Описание не заполнено.";
+            ProfileResult  = "Профиль сохранён!";
+            ProfileSuccess = true;
+        }
+        catch (Exception ex) { ProfileResult = $"Ошибка: {ex.Message}"; ProfileSuccess = false; }
+        finally { IsProfileSaving = false; }
+    }
+
+    [RelayCommand]
+    private async Task ChangeProfilePasswordAsync()
+    {
+        var user = Session.CurrentUser;
+        if (user == null) return;
+        if (string.IsNullOrWhiteSpace(ProfileOldPassword) || string.IsNullOrWhiteSpace(ProfileNewPassword))
+        { PasswordResult = "Заполните все поля."; PasswordSuccess = false; return; }
+        if (ProfileNewPassword != ProfileConfirmPassword)
+        { PasswordResult = "Пароли не совпадают."; PasswordSuccess = false; return; }
+        if (ProfileNewPassword.Length < 6)
+        { PasswordResult = "Минимум 6 символов."; PasswordSuccess = false; return; }
+
+        IsProfileSaving = true;
+        PasswordResult = null;
+        try
+        {
+            var authService = MSM.App.ServiceProvider.GetRequiredService<IAuthService>();
+            var ok = await authService.ChangePasswordAsync(user, ProfileOldPassword, ProfileNewPassword);
+            if (ok) { PasswordResult = "Пароль изменён!"; PasswordSuccess = true; ProfileOldPassword = ProfileNewPassword = ProfileConfirmPassword = ""; }
+            else    { PasswordResult = "Неверный текущий пароль."; PasswordSuccess = false; }
+        }
+        catch (Exception ex) { PasswordResult = $"Ошибка: {ex.Message}"; PasswordSuccess = false; }
+        finally { IsProfileSaving = false; }
+    }
+
+    [RelayCommand]
+    private void UploadProfileAvatar()
+    {
+        var dlg = new OpenFileDialog { Filter = "Изображения|*.jpg;*.jpeg;*.png;*.bmp", Title = "Фото профиля" };
+        if (dlg.ShowDialog() == true) ProfileAvatar = System.IO.File.ReadAllBytes(dlg.FileName);
+    }
+
+    [RelayCommand]
+    private void RemoveProfileAvatar() => ProfileAvatar = null;
 
     [RelayCommand]
     private void GoBack() => _navigationService.NavigateTo<PropertyListViewModel>();

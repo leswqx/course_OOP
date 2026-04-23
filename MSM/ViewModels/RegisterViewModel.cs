@@ -9,6 +9,7 @@ public partial class RegisterViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
     private readonly INavigationService _navigationService;
+    private readonly INotificationService _notificationService;
 
     [ObservableProperty] private string _login = "";
     [ObservableProperty] private string _password = "";
@@ -19,10 +20,12 @@ public partial class RegisterViewModel : ViewModelBase
     [ObservableProperty] private string? _errorMessage;
     [ObservableProperty] private bool _isLoading;
 
-    public RegisterViewModel(IAuthService authService, INavigationService navigationService)
+    public RegisterViewModel(IAuthService authService, INavigationService navigationService,
+        INotificationService notificationService)
     {
         _authService = authService;
         _navigationService = navigationService;
+        _notificationService = notificationService;
     }
 
     [RelayCommand]
@@ -61,6 +64,13 @@ public partial class RegisterViewModel : ViewModelBase
                 ErrorMessage = "Логин или e-mail уже занят.";
                 return;
             }
+
+            // Приветственное письмо — fire-and-forget, не блокируем навигацию
+            _ = _notificationService.SendWelcomeEmailAsync(user).ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                    System.Diagnostics.Debug.WriteLine($"[Email] Регистрация: {t.Exception?.GetBaseException().Message}");
+            });
 
             _navigationService.NavigateTo<LoginViewModel>();
         }

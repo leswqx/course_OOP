@@ -7,6 +7,7 @@ using MSM.Data.Context;
 using MSM.Data.Repositories;
 using MSM.Services;
 using MSM.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using MSM.ViewModels;
 
 namespace MSM;
@@ -28,7 +29,7 @@ public partial class App : Application
         var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
 
-        ServiceProvider.GetRequiredService<INavigationService>().NavigateTo<LoginViewModel>();
+        ServiceProvider.GetRequiredService<INavigationService>().NavigateTo<LandingViewModel>();
     }
 
     private static async Task InitializeDatabaseAsync()
@@ -56,11 +57,13 @@ public partial class App : Application
         services.AddScoped<IAppointmentService, AppointmentService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IReviewService, ReviewService>();
+        services.AddSingleton<INotificationService, EmailNotificationService>();
 
         // Navigation (singleton — хранит CurrentViewModel, создаёт DI-скоуп при каждом переходе)
         services.AddSingleton<INavigationService, NavigationService>();
 
         // ViewModels (scoped — живут в рамках одного DI-скоупа, создаваемого NavigationService)
+        services.AddScoped<LandingViewModel>();
         services.AddScoped<LoginViewModel>();
         services.AddScoped<RegisterViewModel>();
         services.AddScoped<HomeViewModel>();
@@ -71,6 +74,7 @@ public partial class App : Application
         services.AddScoped<RealtorDashboardViewModel>();
         services.AddScoped<AdminDashboardViewModel>();
         services.AddScoped<RealtorProfileViewModel>();
+        services.AddScoped<ClientProfileViewModel>();
 
         // Main window (singleton — одно окно на всё приложение)
         services.AddSingleton<MainWindow>();

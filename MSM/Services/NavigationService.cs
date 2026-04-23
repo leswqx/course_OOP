@@ -15,6 +15,7 @@ public partial class NavigationService : ObservableObject, INavigationService
 
     [ObservableProperty] private ViewModelBase? _currentViewModel;
     [ObservableProperty] private bool _canGoBack;
+    [ObservableProperty] private bool _showGlobalNav;
 
     public NavigationService(IServiceScopeFactory scopeFactory)
     {
@@ -35,6 +36,7 @@ public partial class NavigationService : ObservableObject, INavigationService
         CurrentViewModel = vm;
         vm.OnNavigatedTo(parameter);
         CanGoBack = _history.Count > 0;
+        ShowGlobalNav = vm is not ViewModels.LandingViewModel;
     }
 
     public void GoBack()
@@ -50,5 +52,16 @@ public partial class NavigationService : ObservableObject, INavigationService
         CurrentViewModel = vm;
         vm.OnNavigatedTo(param);
         CanGoBack = _history.Count > 0;
+        ShowGlobalNav = vm is not ViewModels.LandingViewModel;
+    }
+
+    [CommunityToolkit.Mvvm.Input.RelayCommand]
+    private void NavigateBack() => GoBack();
+
+    [CommunityToolkit.Mvvm.Input.RelayCommand]
+    public void GoHome()
+    {
+        _history.Clear();
+        NavigateTo<ViewModels.LandingViewModel>();
     }
 }
