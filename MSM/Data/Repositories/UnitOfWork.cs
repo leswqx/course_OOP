@@ -19,6 +19,7 @@ public class UnitOfWork : IUnitOfWork
     private IRepository<RealtorSchedule>? _realtorSchedules;
     private IRepository<Favorite>? _favorites;
     private IRepository<Review>? _reviews;
+    private IRepository<PriceHistory>? _priceHistories;
 
     public UnitOfWork(AppDbContext context)
     {
@@ -32,6 +33,7 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<RealtorSchedule> RealtorSchedules => _realtorSchedules ??= new Repository<RealtorSchedule>(_context);
     public IRepository<Favorite> Favorites => _favorites ??= new Repository<Favorite>(_context);
     public IRepository<Review> Reviews => _reviews ??= new Repository<Review>(_context);
+    public IRepository<PriceHistory> PriceHistories => _priceHistories ??= new Repository<PriceHistory>(_context);
 
     public async Task<int> SaveChangesAsync()
     {

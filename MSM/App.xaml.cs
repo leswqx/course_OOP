@@ -7,10 +7,10 @@ using MSM.Data.Context;
 using MSM.Data.Repositories;
 using MSM.Services;
 using MSM.Services.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using MSM.ViewModels;
 
 namespace MSM;
+
 
 public partial class App : Application
 {
@@ -19,6 +19,16 @@ public partial class App : Application
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        DispatcherUnhandledException += (_, ex) =>
+        {
+            MessageBox.Show(
+                $"Ошибка: {ex.Exception.Message}\n\n{ex.Exception.StackTrace}",
+                "Необработанное исключение",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+            ex.Handled = true;
+        };
 
         var services = new ServiceCollection();
         ConfigureServices(services);
@@ -62,11 +72,13 @@ public partial class App : Application
         // Navigation (singleton — хранит CurrentViewModel, создаёт DI-скоуп при каждом переходе)
         services.AddSingleton<INavigationService, NavigationService>();
 
+        // Глобальный хедер (singleton — живёт всё время приложения)
+        services.AddSingleton<HeaderViewModel>();
+
         // ViewModels (scoped — живут в рамках одного DI-скоупа, создаваемого NavigationService)
         services.AddScoped<LandingViewModel>();
         services.AddScoped<LoginViewModel>();
         services.AddScoped<RegisterViewModel>();
-        services.AddScoped<HomeViewModel>();
         services.AddScoped<PropertyListViewModel>();
         services.AddScoped<PropertyDetailViewModel>();
         services.AddScoped<FavoritesViewModel>();
@@ -75,6 +87,7 @@ public partial class App : Application
         services.AddScoped<AdminDashboardViewModel>();
         services.AddScoped<RealtorProfileViewModel>();
         services.AddScoped<ClientProfileViewModel>();
+        services.AddScoped<AboutViewModel>();
 
         // Main window (singleton — одно окно на всё приложение)
         services.AddSingleton<MainWindow>();

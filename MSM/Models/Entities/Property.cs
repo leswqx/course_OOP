@@ -10,6 +10,7 @@ public class Property : BaseEntity
     public decimal Price { get; set; }
     public double Area { get; set; }
     public int Rooms { get; set; }
+    public int? Bathrooms { get; set; }
     public string City { get; set; } = string.Empty;
     public string? District { get; set; }
     public string Address { get; set; } = string.Empty;

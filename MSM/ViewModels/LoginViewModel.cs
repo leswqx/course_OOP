@@ -74,4 +74,7 @@ public partial class LoginViewModel : ViewModelBase
     [RelayCommand]
     private void NavigateToRegister() =>
         _navigationService.NavigateTo<RegisterViewModel>();
+
+    [RelayCommand]
+    private void GoBack() => _navigationService.NavigateTo<LandingViewModel>();
 }

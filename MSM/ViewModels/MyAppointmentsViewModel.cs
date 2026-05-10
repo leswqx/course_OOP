@@ -11,28 +11,38 @@ public class AppointmentRowViewModel
 {
     public int Id { get; }
     public int RealtorId { get; }
+    public int PropertyId { get; }
     public string PropertyTitle { get; }
     public string DateTime { get; }
     public string StatusDisplay { get; }
     public string StatusColor { get; }
+    public string StatusBgColor { get; }
     public string? Comment { get; }
-    public bool CanReview { get; }
+    public bool CanReview  { get; }
+    public bool CanCancel  { get; }
+    public string RealtorName { get; }
+    public string RawStatus { get; }
+    public bool IsCompletedAndReviewed => RawStatus == "completed" && !CanReview;
 
-    public AppointmentRowViewModel(Appointment a)
+    public AppointmentRowViewModel(Appointment a, bool alreadyReviewed = false)
     {
         Id = a.Id;
         RealtorId = a.RealtorId;
+        PropertyId = a.PropertyId;
         PropertyTitle = a.Property?.Title ?? "—";
+        RealtorName   = a.Realtor?.FullName ?? "—";
+        RawStatus = a.Status;
         DateTime = $"{a.SlotStart:dd.MM.yyyy}  {a.SlotStart:HH:mm}–{a.SlotEnd:HH:mm}";
-        Comment = a.Comment;
-        CanReview = a.Status == "completed";
-        (StatusDisplay, StatusColor) = a.Status switch
+        Comment   = a.Comment;
+        CanReview = a.Status == "completed" && !alreadyReviewed;
+        CanCancel = a.Status is "new" or "confirmed";
+        (StatusDisplay, StatusColor, StatusBgColor) = a.Status switch
         {
-            "new"       => ("Новая",        "#7A7A7A"),
-            "confirmed" => ("Подтверждена", "#7CB342"),
-            "cancelled" => ("Отменена",     "#EF5350"),
-            "completed" => ("Завершена",    "#D4A5A5"),
-            _           => (a.Status,       "#7A7A7A")
+            "new"       => ("Новая",        "#7A7A7A", "#F0F0F0"),
+            "confirmed" => ("Подтверждена", "#2E7D32", "#E4F4E8"),
+            "cancelled" => ("Отменена",     "#EF5350", "#FFEBEE"),
+            "completed" => ("Завершена",    "#27563A", "#D3EEDb"),
+            _           => (a.Status,       "#7A7A7A", "#F0F0F0")
         };
     }
 }
@@ -68,7 +78,11 @@ public partial class MyAppointmentsViewModel : ViewModelBase
         _navigationService = navigationService;
     }
 
-    public override void OnNavigatedTo(object? parameter) => _ = LoadAsync();
+    public override void OnNavigatedTo(object? parameter)
+    {
+        ReviewSuccess = false;
+        _ = LoadAsync();
+    }
 
     private async Task LoadAsync()
     {
@@ -78,8 +92,12 @@ public partial class MyAppointmentsViewModel : ViewModelBase
         try
         {
             var items = await _appointmentService.GetByClientIdAsync(Session.CurrentUser.Id);
+            var myReviews = await _reviewService.GetUserReviewsAsync(Session.CurrentUser.Id);
+            var reviewedRealtorIds = myReviews.Where(r => r.RealtorId.HasValue)
+                                               .Select(r => r.RealtorId!.Value).ToHashSet();
             Appointments.Clear();
-            foreach (var a in items) Appointments.Add(new AppointmentRowViewModel(a));
+            foreach (var a in items)
+                Appointments.Add(new AppointmentRowViewModel(a, reviewedRealtorIds.Contains(a.RealtorId)));
             IsEmpty = Appointments.Count == 0;
         }
         catch (Exception ex) { ErrorMessage = $"Ошибка: {ex.Message}"; }
@@ -128,6 +146,29 @@ public partial class MyAppointmentsViewModel : ViewModelBase
         catch (Exception ex) { ReviewError = $"Ошибка: {ex.Message}"; }
         finally { IsSubmittingReview = false; }
     }
+
+    [RelayCommand]
+    private async Task CancelAppointmentAsync(int appointmentId)
+    {
+        var result = System.Windows.MessageBox.Show(
+            "Вы уверены, что хотите отменить запись?",
+            "Подтверждение отмены",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Question);
+        if (result != System.Windows.MessageBoxResult.Yes) return;
+
+        try { await _appointmentService.UpdateStatusAsync(appointmentId, "cancelled"); }
+        catch { }
+        await LoadAsync();
+    }
+
+    [RelayCommand]
+    private void GoToRealtorProfile(AppointmentRowViewModel row) =>
+        _navigationService.NavigateTo<RealtorProfileViewModel>(row.RealtorId);
+
+    [RelayCommand]
+    private void OpenPropertyDetail(AppointmentRowViewModel row) =>
+        _navigationService.NavigateTo<PropertyDetailViewModel>(row.PropertyId);
 
     [RelayCommand]
     private void GoBack() => _navigationService.NavigateTo<PropertyListViewModel>();

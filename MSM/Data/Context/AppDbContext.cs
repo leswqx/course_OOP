@@ -20,6 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<RealtorSchedule> RealtorSchedules => Set<RealtorSchedule>();
     public DbSet<Favorite> Favorites => Set<Favorite>();
     public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<PriceHistory> PriceHistories => Set<PriceHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -116,6 +117,18 @@ public class AppDbContext : DbContext
                 .WithMany(e => e.Favorites)
                 .HasForeignKey(e => e.PropertyId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // PriceHistory configuration
+        modelBuilder.Entity<PriceHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Price).IsRequired();
+            entity.HasOne(e => e.Property)
+                .WithMany()
+                .HasForeignKey(e => e.PropertyId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(e => e.PropertyId);
         });
 
         // Review configuration

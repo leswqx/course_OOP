@@ -110,6 +110,32 @@ public class EmailNotificationService : INotificationService
         await Task.WhenAll(tasks);
     }
 
+    public async Task SendAppointmentStatusChangedAsync(User client, string propertyTitle, string realtorName, string newStatus, DateTime slotStart)
+    {
+        var (statusText, icon) = newStatus switch
+        {
+            "confirmed" => ("подтверждена", "✅"),
+            "cancelled" => ("отменена",     "❌"),
+            _           => ("изменена",     "ℹ")
+        };
+
+        var body = $"""
+            <h2>{icon} Запись на просмотр {statusText}</h2>
+            <p>Здравствуйте, <strong>{client.FullName}</strong>!</p>
+            <p>Ваша запись на просмотр объекта <strong>«{propertyTitle}»</strong> была {statusText}.</p>
+            <table style="border-collapse:collapse;margin:12px 0">
+                <tr><td style="padding:4px 12px 4px 0;color:#888">Объект:</td><td><strong>{propertyTitle}</strong></td></tr>
+                <tr><td style="padding:4px 12px 4px 0;color:#888">Риелтор:</td><td>{realtorName}</td></tr>
+                <tr><td style="padding:4px 12px 4px 0;color:#888">Дата:</td><td>{slotStart:dd.MM.yyyy HH:mm}</td></tr>
+                <tr><td style="padding:4px 12px 4px 0;color:#888">Статус:</td><td><strong>{statusText.ToUpper()}</strong></td></tr>
+            </table>
+            {(newStatus == "confirmed" ? "<p>Пожалуйста, приходите вовремя. Риелтор ждёт вас!</p>" : "<p>Если у вас есть вопросы, свяжитесь с риелтором напрямую.</p>")}
+            """;
+
+        await SendEmailAsync(client.Email, client.FullName,
+            $"{icon} Запись на просмотр {statusText} — {_agencyName}", body);
+    }
+
     private string WrapInTemplate(string content) => $"""
         <!DOCTYPE html>
         <html>

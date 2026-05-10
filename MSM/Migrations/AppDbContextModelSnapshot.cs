@@ -97,6 +97,30 @@ namespace MSM.Migrations
                     b.ToTable("Favorites");
                 });
 
+            modelBuilder.Entity("MSM.Models.Entities.PriceHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("PriceHistories");
+                });
+
             modelBuilder.Entity("MSM.Models.Entities.Property", b =>
                 {
                     b.Property<int>("Id")
@@ -112,6 +136,9 @@ namespace MSM.Migrations
 
                     b.Property<double>("Area")
                         .HasColumnType("float");
+
+                    b.Property<int?>("Bathrooms")
+                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -389,6 +416,17 @@ namespace MSM.Migrations
                     b.Navigation("Property");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MSM.Models.Entities.PriceHistory", b =>
+                {
+                    b.HasOne("MSM.Models.Entities.Property", "Property")
+                        .WithMany()
+                        .HasForeignKey("PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Property");
                 });
 
             modelBuilder.Entity("MSM.Models.Entities.Property", b =>

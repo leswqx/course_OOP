@@ -14,6 +14,7 @@ public interface IUnitOfWork : IDisposable
     IRepository<RealtorSchedule> RealtorSchedules { get; }
     IRepository<Favorite> Favorites { get; }
     IRepository<Review> Reviews { get; }
+    IRepository<PriceHistory> PriceHistories { get; }
 
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();

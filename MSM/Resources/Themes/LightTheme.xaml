@@ -2,27 +2,29 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Основные цвета -->
-    <Color x:Key="PrimaryColor">#D4A5A5</Color>
-    <Color x:Key="BackgroundColor">#F5E6E6</Color>
-    <Color x:Key="ShadowColor">#AAAAAA</Color>
+    <Color x:Key="PrimaryColor">#27563A</Color>
+    <Color x:Key="BackgroundColor">#E4E5DF</Color>
+    <Color x:Key="ShadowColor">#000000</Color>
 
     <!-- Кисти -->
-    <SolidColorBrush x:Key="BackgroundBrush"      Color="#F5E6E6"/>
-    <SolidColorBrush x:Key="SurfaceBrush"         Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="HeaderBrush"          Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="CardBrush"            Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="InputBrush"           Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="PrimaryBrush"         Color="#D4A5A5"/>
-    <SolidColorBrush x:Key="PrimaryHoverBrush"    Color="#C49595"/>
-    <SolidColorBrush x:Key="AccentBrush"          Color="#8B6F6F"/>
-    <SolidColorBrush x:Key="TextPrimaryBrush"     Color="#4A4A4A"/>
-    <SolidColorBrush x:Key="TextSecondaryBrush"   Color="#7A7A7A"/>
-    <SolidColorBrush x:Key="BorderBrush"          Color="#CCCCCC"/>
-    <SolidColorBrush x:Key="PlaceholderBrush"     Color="#F0E0E0"/>
-    <SolidColorBrush x:Key="ButtonSecondaryBg"    Color="#F5E6E6"/>
-    <SolidColorBrush x:Key="BadgePlaceholderBrush" Color="#F0F0F0"/>
-    <SolidColorBrush x:Key="SuccessBrush"         Color="#7CB342"/>
-    <SolidColorBrush x:Key="ErrorBrush"           Color="#EF5350"/>
-    <SolidColorBrush x:Key="SeparatorBrush"       Color="#EEEEEE"/>
+    <SolidColorBrush x:Key="BackgroundBrush"       Color="#E4E5DF"/>
+    <SolidColorBrush x:Key="SurfaceBrush"          Color="#EDEDE8"/>
+    <SolidColorBrush x:Key="HeaderBrush"           Color="#E4E5DF"/>
+    <SolidColorBrush x:Key="HeaderTextBrush"       Color="#27563A"/>
+    <SolidColorBrush x:Key="CardBrush"             Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="InputBrush"            Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="PrimaryBrush"          Color="#27563A"/>
+    <SolidColorBrush x:Key="PrimaryHoverBrush"     Color="#1E3F2A"/>
+    <SolidColorBrush x:Key="AccentBrush"           Color="#4A8C5C"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush"      Color="#1A2E21"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush"    Color="#5C7364"/>
+    <SolidColorBrush x:Key="BorderBrush"           Color="#C8CCC5"/>
+    <SolidColorBrush x:Key="PlaceholderBrush"      Color="#D5D9D0"/>
+    <SolidColorBrush x:Key="ButtonSecondaryBg"     Color="#EDF0EB"/>
+    <SolidColorBrush x:Key="BadgePlaceholderBrush" Color="#E8EBE4"/>
+    <SolidColorBrush x:Key="SuccessBrush"          Color="#2E7D32"/>
+    <SolidColorBrush x:Key="ErrorBrush"            Color="#C62828"/>
+    <SolidColorBrush x:Key="SeparatorBrush"        Color="#D8DDD5"/>
+    <SolidColorBrush x:Key="RatingBrush"           Color="#F4B942"/>
 
 </ResourceDictionary>

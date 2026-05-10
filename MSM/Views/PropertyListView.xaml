@@ -8,132 +8,30 @@
              Background="{DynamicResource BackgroundBrush}"
              d:DesignHeight="600" d:DesignWidth="960">
 
-    <Grid>
+    <Grid Margin="0,70,0,0">
+        <!-- ===== КОНТЕНТ: тулбар + панель фильтров + каталог ===== -->
+        <!-- Тулбар с кнопкой фильтров -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="44"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ===== ШАПКА ===== -->
-        <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
-            <Border.Effect>
-                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
-            </Border.Effect>
-            <Grid Margin="16,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Логотип + кнопка фильтров -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="🏠" FontSize="26" VerticalAlignment="Center"/>
-                    <TextBlock Text="{DynamicResource App.Title}"
-                               FontSize="15" FontWeight="Bold"
-                               Foreground="{DynamicResource TextPrimaryBrush}"
-                               VerticalAlignment="Center"
-                               Margin="8,0,16,0"/>
-                    <Button Content="{DynamicResource Filter.Title}"
-                            Command="{Binding ToggleFilterCommand}"
-                            Height="32" Padding="12,0"
-                            FontSize="13"
-                            Background="{DynamicResource ButtonSecondaryBg}"
-                            Foreground="{DynamicResource AccentBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}"
-                            BorderThickness="1"/>
-                </StackPanel>
-
-                <!-- Поиск -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal"
-                            HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                             Width="280" Height="36" FontSize="14" Padding="10,0"/>
-                    <Button Content="{DynamicResource Common.Search}"
-                            Command="{Binding LoadPropertiesCommand}"
-                            Height="36" Width="80" FontSize="13" Margin="8,0,0,0"
-                            Background="{DynamicResource PrimaryBrush}"
-                            Foreground="White" BorderThickness="0"/>
-                </StackPanel>
-
-                <!-- Тема / Язык / Пользователь / Выход -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal"
-                            VerticalAlignment="Center" HorizontalAlignment="Right">
-
-                    <Button Content="{Binding ThemeIcon}"
-                            Command="{Binding ToggleThemeCommand}"
-                            Width="32" Height="32" Margin="0,0,6,0" FontSize="16"
-                            Background="Transparent"
-                            BorderBrush="{DynamicResource BorderBrush}"
-                            BorderThickness="1" ToolTip="Тема / Theme"/>
-
-                    <Button Content="{Binding LanguageIcon}"
-                            Command="{Binding ToggleLanguageCommand}"
-                            Width="36" Height="32" Margin="0,0,12,0"
-                            FontSize="12" FontWeight="SemiBold"
-                            Background="Transparent"
-                            BorderBrush="{DynamicResource BorderBrush}"
-                            BorderThickness="1" ToolTip="Язык / Language"/>
-
-                    <!-- Кнопки для клиента -->
-                    <Button Content="{DynamicResource Nav.Profile}"
-                            Command="{Binding GoToProfileCommand}"
-                            Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"
-                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,6,0"
-                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                    <Button Content="{DynamicResource Nav.Favorites}"
-                            Command="{Binding GoToFavoritesCommand}"
-                            Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"
-                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,6,0"
-                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                    <Button Content="{DynamicResource Nav.MyAppt}"
-                            Command="{Binding GoToMyAppointmentsCommand}"
-                            Visibility="{Binding IsClient, Converter={StaticResource BoolToVisibility}}"
-                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,12,0"
-                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-
-                    <!-- Кнопка для риелтора -->
-                    <Button Content="{DynamicResource Nav.Realtor}"
-                            Command="{Binding GoToRealtorDashboardCommand}"
-                            Visibility="{Binding IsRealtor, Converter={StaticResource BoolToVisibility}}"
-                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,12,0"
-                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-
-                    <!-- Кнопка для админа -->
-                    <Button Content="{DynamicResource Nav.Admin}"
-                            Command="{Binding GoToAdminDashboardCommand}"
-                            Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibility}}"
-                            Height="32" Padding="10,0" FontSize="12" Margin="0,0,12,0"
-                            Background="Transparent" Foreground="{DynamicResource AccentBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-
-                    <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
-                        <TextBlock Text="{Binding UserFullName}"
-                                   FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                   HorizontalAlignment="Right"/>
-                        <TextBlock Text="{Binding UserRoleDisplay}"
-                                   FontSize="11"
-                                   Foreground="{DynamicResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Right"/>
-                    </StackPanel>
-
-                    <Button Content="{DynamicResource Common.Logout}"
-                            Command="{Binding LogoutCommand}"
-                            Height="32" Width="64" FontSize="12"
-                            Background="Transparent"
-                            Foreground="{DynamicResource AccentBrush}"
-                            BorderBrush="{DynamicResource AccentBrush}"
-                            BorderThickness="1"/>
-                </StackPanel>
-            </Grid>
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0">
+                <Button Content="{DynamicResource Filter.Title}"
+                        Command="{Binding ToggleFilterCommand}"
+                        Height="30" Padding="12,0" FontSize="13"
+                        Background="{DynamicResource ButtonSecondaryBg}"
+                        Foreground="{DynamicResource AccentBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"/>
+                <TextBlock Text="{Binding ResultCount, StringFormat='Найдено: {0}'}"
+                           VerticalAlignment="Center" FontSize="13" Margin="16,0,0,0"
+                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </StackPanel>
         </Border>
 
-        <!-- ===== КОНТЕНТ: панель фильтров + каталог ===== -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <!-- Боковая панель фильтров: Auto → схлопывается при Collapsed -->
@@ -142,7 +40,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- ===== ПАНЕЛЬ ФИЛЬТРОВ ===== -->
-            <Border Grid.Column="0" Width="230"
+            <Border Grid.Column="0" Width="280"
                     Background="{DynamicResource SurfaceBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="0,0,1,0"
@@ -154,6 +52,23 @@
                                    FontSize="15" FontWeight="Bold"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
                                    Margin="0,0,0,14"/>
+
+                        <!-- Сортировка -->
+                        <TextBlock Text="{DynamicResource Filter.Sort}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <ComboBox SelectedValue="{Binding FilterSortBy}"
+                                  SelectedValuePath="Tag"
+                                  Height="32" Margin="0,0,0,12"
+                                  Background="{DynamicResource InputBrush}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  BorderBrush="{DynamicResource BorderBrush}">
+                            <ComboBoxItem Content="{DynamicResource Filter.Sort.DateDesc}" Tag="date_desc"/>
+                            <ComboBoxItem Content="{DynamicResource Filter.Sort.PriceAsc}"  Tag="price_asc"/>
+                            <ComboBoxItem Content="{DynamicResource Filter.Sort.PriceDesc}" Tag="price_desc"/>
+                            <ComboBoxItem Content="{DynamicResource Filter.Sort.AreaAsc}"   Tag="area_asc"/>
+                            <ComboBoxItem Content="{DynamicResource Filter.Sort.AreaDesc}"  Tag="area_desc"/>
+                        </ComboBox>
 
                         <!-- Цена -->
                         <TextBlock Text="{DynamicResource Filter.Price}"
@@ -168,14 +83,18 @@
                             <TextBox Grid.Column="0"
                                      Text="{Binding FilterMinPrice, UpdateSourceTrigger=PropertyChanged}"
                                      Height="32" Padding="6,0"
-                                     ToolTip="{DynamicResource Filter.From}"/>
+                                     ToolTip="{DynamicResource Filter.From}"
+                                     PreviewTextInput="NumericBox_PreviewTextInput"
+                                     DataObject.Pasting="NumericBox_Pasting"/>
                             <TextBlock Grid.Column="1" Text="–"
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBox Grid.Column="2"
                                      Text="{Binding FilterMaxPrice, UpdateSourceTrigger=PropertyChanged}"
                                      Height="32" Padding="6,0"
-                                     ToolTip="{DynamicResource Filter.To}"/>
+                                     ToolTip="{DynamicResource Filter.To}"
+                                     PreviewTextInput="NumericBox_PreviewTextInput"
+                                     DataObject.Pasting="NumericBox_Pasting"/>
                         </Grid>
 
                         <!-- Площадь -->
@@ -191,34 +110,127 @@
                             <TextBox Grid.Column="0"
                                      Text="{Binding FilterMinArea, UpdateSourceTrigger=PropertyChanged}"
                                      Height="32" Padding="6,0"
-                                     ToolTip="{DynamicResource Filter.From}"/>
+                                     ToolTip="{DynamicResource Filter.From}"
+                                     PreviewTextInput="NumericBox_PreviewTextInput"
+                                     DataObject.Pasting="NumericBox_Pasting"/>
                             <TextBlock Grid.Column="1" Text="–"
                                        VerticalAlignment="Center" HorizontalAlignment="Center"
                                        Foreground="{DynamicResource TextSecondaryBrush}"/>
                             <TextBox Grid.Column="2"
                                      Text="{Binding FilterMaxArea, UpdateSourceTrigger=PropertyChanged}"
                                      Height="32" Padding="6,0"
-                                     ToolTip="{DynamicResource Filter.To}"/>
+                                     ToolTip="{DynamicResource Filter.To}"
+                                     PreviewTextInput="NumericBox_PreviewTextInput"
+                                     DataObject.Pasting="NumericBox_Pasting"/>
                         </Grid>
 
-                        <!-- Комнат -->
+                        <!-- Комнат (от/до) -->
                         <TextBlock Text="{DynamicResource Filter.Rooms}"
                                    FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                                    Margin="0,0,0,4"/>
-                        <TextBox Text="{Binding FilterRooms, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="32" Padding="6,0" Margin="0,0,0,10"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="14"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding FilterMinRooms, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="6,0"
+                                     ToolTip="{DynamicResource Filter.From}"
+                                     PreviewTextInput="IntBox_PreviewTextInput"/>
+                            <TextBlock Grid.Column="1" Text="–"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBox Grid.Column="2"
+                                     Text="{Binding FilterMaxRooms, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="6,0"
+                                     ToolTip="{DynamicResource Filter.To}"
+                                     PreviewTextInput="IntBox_PreviewTextInput"/>
+                        </Grid>
+
+                        <!-- Санузлы -->
+                        <TextBlock Text="{DynamicResource Filter.Bathrooms}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="14"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding FilterMinBathrooms, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="6,0"
+                                     ToolTip="{DynamicResource Filter.From}"
+                                     PreviewTextInput="IntBox_PreviewTextInput"/>
+                            <TextBlock Grid.Column="1" Text="–"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBox Grid.Column="2"
+                                     Text="{Binding FilterMaxBathrooms, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="6,0"
+                                     ToolTip="{DynamicResource Filter.To}"
+                                     PreviewTextInput="IntBox_PreviewTextInput"/>
+                        </Grid>
 
                         <!-- Город -->
                         <TextBlock Text="{DynamicResource Filter.City}"
                                    FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                                    Margin="0,0,0,4"/>
-                        <ComboBox IsEditable="True"
-                                  Text="{Binding FilterCity, UpdateSourceTrigger=PropertyChanged}"
+                        <ComboBox SelectedItem="{Binding FilterCity, Mode=TwoWay}"
                                   ItemsSource="{Binding Cities}"
                                   Height="32" Margin="0,0,0,10"
                                   Background="{DynamicResource InputBrush}"
                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                  BorderBrush="{DynamicResource BorderBrush}"/>
+                                  BorderBrush="{DynamicResource BorderBrush}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{Binding}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding}" Value="">
+                                                        <Setter Property="Text" Value="Все города"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <!-- Район -->
+                        <TextBlock Text="{DynamicResource Filter.District}"
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   Margin="0,0,0,4"/>
+                        <ComboBox SelectedItem="{Binding FilterDistrict, Mode=TwoWay}"
+                                  ItemsSource="{Binding Districts}"
+                                  Height="32" Margin="0,0,0,10"
+                                  Background="{DynamicResource InputBrush}"
+                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                  BorderBrush="{DynamicResource BorderBrush}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{Binding}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding}" Value="">
+                                                        <Setter Property="Text" Value="Все районы"/>
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
 
                         <!-- Тип объекта -->
                         <TextBlock Text="{DynamicResource Filter.Type}"
@@ -286,7 +298,9 @@
                 <!-- Нет результатов -->
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="{Binding HasNoResults, Converter={StaticResource BoolToVisibility}}">
-                    <TextBlock Text="🔍" FontSize="48" HorizontalAlignment="Center"/>
+                    <Path Width="48" Height="48" Stretch="Uniform" HorizontalAlignment="Center"
+                          Fill="{DynamicResource TextSecondaryBrush}"
+                          Data="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
                     <TextBlock Text="{DynamicResource Catalog.NoResults}"
                                FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
                                HorizontalAlignment="Center" Margin="0,10,0,0"/>

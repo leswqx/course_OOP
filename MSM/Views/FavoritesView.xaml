@@ -7,25 +7,19 @@
              mc:Ignorable="d"
              Background="{DynamicResource BackgroundBrush}"
              d:DesignHeight="600" d:DesignWidth="900">
-    <Grid>
+    <Grid Margin="0,70,0,0">
+
+        <!-- Заголовок страницы -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
-            <Border.Effect>
-                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
-            </Border.Effect>
-            <Grid Margin="16,0">
-                <Button Content="{DynamicResource Common.Back}" Command="{Binding GoBackCommand}"
-                        HorizontalAlignment="Left" Background="Transparent"
-                        Foreground="{DynamicResource AccentBrush}" BorderThickness="0" FontSize="14"/>
-                <TextBlock Text="{DynamicResource Favorites.Title}"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontSize="16" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
-            </Grid>
-        </Border>
+        <TextBlock Grid.Row="0"
+                   Text="{DynamicResource Favorites.Title}"
+                   FontSize="20" FontWeight="Bold"
+                   Foreground="{DynamicResource TextPrimaryBrush}"
+                   Margin="20,20,20,4"/>
 
         <Grid Grid.Row="1">
             <TextBlock Text="{DynamicResource Common.Loading}" HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -34,27 +28,58 @@
 
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                         Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
-                <TextBlock Text="⭐" FontSize="52" HorizontalAlignment="Center"/>
+                <Path Width="52" Height="52" Stretch="Uniform" HorizontalAlignment="Center"
+                      Fill="{DynamicResource TextSecondaryBrush}"
+                      Data="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z"/>
                 <TextBlock Text="{DynamicResource Favorites.Empty}" FontSize="16"
                            Foreground="{DynamicResource TextSecondaryBrush}"
-                           HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                           HorizontalAlignment="Center" Margin="0,12,0,16"/>
+                <Button Content="{DynamicResource Nav.Catalog}"
+                        Command="{Binding GoBackCommand}"
+                        HorizontalAlignment="Center"
+                        Height="40" Padding="24,0" FontSize="14"
+                        Background="{DynamicResource PrimaryBrush}"
+                        Foreground="White" BorderThickness="0"/>
             </StackPanel>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
+                          Visibility="{Binding IsContentVisible, Converter={StaticResource BoolToVisibility}}">
                 <ItemsControl ItemsSource="{Binding Properties}" Margin="12">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:PropertyCardControl>
-                                <controls:PropertyCardControl.InputBindings>
-                                    <MouseBinding MouseAction="LeftClick"
-                                                  Command="{Binding DataContext.OpenDetailCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                  CommandParameter="{Binding}"/>
-                                </controls:PropertyCardControl.InputBindings>
-                            </controls:PropertyCardControl>
+                            <Grid>
+                                <controls:PropertyCardControl>
+                                    <controls:PropertyCardControl.InputBindings>
+                                        <MouseBinding MouseAction="LeftClick"
+                                                      Command="{Binding DataContext.OpenDetailCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                      CommandParameter="{Binding}"/>
+                                    </controls:PropertyCardControl.InputBindings>
+                                </controls:PropertyCardControl>
+                                <!-- Плавающая кнопка убрать из избранного -->
+                                <Button Panel.ZIndex="5"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top"
+                                        Margin="0,12,12,0" Width="28" Height="28" Cursor="Hand"
+                                        Command="{Binding DataContext.RemoveFromFavoritesCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        ToolTip="{DynamicResource Favorites.Remove}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Bd" Background="#BB000000" CornerRadius="14">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#EF5350"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                    <TextBlock Text="✕" FontSize="12" FontWeight="Bold" Foreground="White"/>
+                                </Button>
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

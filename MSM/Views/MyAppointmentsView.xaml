@@ -1,4 +1,4 @@
-<UserControl x:Class="MSM.Views.MyAppointmentsView"
+﻿<UserControl x:Class="MSM.Views.MyAppointmentsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -38,7 +38,9 @@
             <!-- Пусто -->
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                         Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
-                <TextBlock Text="📅" FontSize="52" HorizontalAlignment="Center"/>
+                <Path Width="52" Height="52" Stretch="Uniform" HorizontalAlignment="Center"
+                      Fill="{DynamicResource TextSecondaryBrush}"
+                      Data="M19,4H18V2H16V4H8V2H6V4H5C3.89,4 3,4.9 3,6V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V6A2,2 0 0,0 19,4M19,20H5V10H19V20M19,8H5V6H19V8Z"/>
                 <TextBlock Text="{DynamicResource MyAppt.Empty}" FontSize="16"
                            Foreground="{DynamicResource TextSecondaryBrush}"
                            HorizontalAlignment="Center" Margin="0,10,0,0"/>
@@ -53,7 +55,9 @@
                             Margin="0,0,0,12"
                             Visibility="{Binding ReviewSuccess, Converter={StaticResource BoolToVisibility}}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="✅ " FontSize="14"/>
+                            <Path Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  Fill="White"
+                                  Data="M9,20.42L2.79,14.21L4.21,12.79L9,17.58L19.79,6.79L21.21,8.21L9,20.42Z"/>
                             <TextBlock Text="{DynamicResource MyAppt.ReviewSent}" FontSize="13"
                                        Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -79,7 +83,7 @@
                                         IsSnapToTickEnabled="True" TickFrequency="1"
                                         Width="200" VerticalAlignment="Center"/>
                                 <TextBlock Text="{Binding ReviewRating, Converter={StaticResource RatingToStars}}"
-                                           FontSize="20" Foreground="{DynamicResource PrimaryBrush}"
+                                           FontSize="20" Foreground="{DynamicResource RatingBrush}"
                                            VerticalAlignment="Center" Margin="12,0,0,0"/>
                             </StackPanel>
 
@@ -87,7 +91,7 @@
                             <TextBlock Text="{DynamicResource MyAppt.ReviewComment}" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
                             <TextBox Text="{Binding ReviewComment, UpdateSourceTrigger=PropertyChanged}"
-                                     Height="80" Padding="10,8" TextWrapping="Wrap"
+                                     Height="80" Padding="5,8" TextWrapping="Wrap"
                                      AcceptsReturn="True" VerticalContentAlignment="Top"
                                      Margin="0,0,0,12"/>
 
@@ -130,9 +134,15 @@
 
                                         <!-- Инфо -->
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding PropertyTitle}"
-                                                       FontSize="14" FontWeight="SemiBold"
-                                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock FontSize="14" FontWeight="SemiBold" Cursor="Hand"
+                                                       Foreground="{DynamicResource PrimaryBrush}">
+                                                <TextBlock.InputBindings>
+                                                    <MouseBinding MouseAction="LeftClick"
+                                                                  Command="{Binding DataContext.OpenPropertyDetailCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                  CommandParameter="{Binding}"/>
+                                                </TextBlock.InputBindings>
+                                                <Run Text="{Binding PropertyTitle}"/>
+                                            </TextBlock>
                                             <TextBlock Text="{Binding DateTime}"
                                                        FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                                                        Margin="0,4,0,0"/>
@@ -145,22 +155,41 @@
                                         <!-- Статус -->
                                         <Border Grid.Column="1" CornerRadius="4" Padding="10,4"
                                                 HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                Background="{DynamicResource BadgePlaceholderBrush}"
+                                                Background="{Binding StatusBgColor, Converter={StaticResource StringToBrush}}"
                                                 Margin="12,0">
                                             <TextBlock Text="{Binding StatusDisplay}"
                                                        FontSize="12" FontWeight="SemiBold"
                                                        Foreground="{Binding StatusColor, Converter={StaticResource StringToBrush}}"/>
                                         </Border>
 
-                                        <!-- Кнопка отзыва (только для завершённых) -->
-                                        <Button Grid.Column="2"
-                                                Content="{DynamicResource MyAppt.Review}"
-                                                Command="{Binding DataContext.OpenReviewFormCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                CommandParameter="{Binding}"
-                                                Visibility="{Binding CanReview, Converter={StaticResource BoolToVisibility}}"
-                                                Height="32" Padding="14,0" FontSize="12"
-                                                Background="{DynamicResource PrimaryBrush}"
-                                                Foreground="White" BorderThickness="0"/>
+                                        <!-- Кнопки действий -->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Content="{DynamicResource MyAppt.GoToRealtor}"
+                                                    Command="{Binding DataContext.GoToRealtorProfileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="32" Padding="12,0" FontSize="12" Margin="0,0,8,0"
+                                                    Background="Transparent"
+                                                    Foreground="{DynamicResource AccentBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                                            <Button Content="✕ Отменить"
+                                                    Command="{Binding DataContext.CancelAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Visibility="{Binding CanCancel, Converter={StaticResource BoolToVisibility}}"
+                                                    Height="32" Padding="12,0" FontSize="12" Margin="0,0,8,0"
+                                                    Background="Transparent" Foreground="#EF5350"
+                                                    BorderBrush="#EF5350" BorderThickness="1"/>
+                                            <TextBlock Text="{DynamicResource MyAppt.AlreadyReviewed}"
+                                                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       VerticalAlignment="Center" Margin="0,0,8,0"
+                                                       Visibility="{Binding IsCompletedAndReviewed, Converter={StaticResource BoolToVisibility}}"/>
+                                            <Button Content="{DynamicResource MyAppt.Review}"
+                                                    Command="{Binding DataContext.OpenReviewFormCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding CanReview, Converter={StaticResource BoolToVisibility}}"
+                                                    Height="32" Padding="14,0" FontSize="12"
+                                                    Background="{DynamicResource PrimaryBrush}"
+                                                    Foreground="White" BorderThickness="0"/>
+                                        </StackPanel>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -171,3 +200,4 @@
         </Grid>
     </Grid>
 </UserControl>
+

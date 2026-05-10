@@ -5,7 +5,8 @@
       "Bash(git commit -m ' *)",
       "Bash(git add *)",
       "Bash(dotnet ef *)",
-      "Bash(dir /s /b \"D:\\\\COURSE_2\\\\Course_OOP\\\\MSM\\\\Migrations\")"
+      "Bash(dir /s /b \"D:\\\\COURSE_2\\\\Course_OOP\\\\MSM\\\\Migrations\")",
+      "Bash(sqlcmd *)"
     ]
   }
 }

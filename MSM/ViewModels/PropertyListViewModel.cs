@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MSM.Models;
@@ -12,11 +13,13 @@ public partial class PropertyListViewModel : ViewModelBase
 {
     private readonly IPropertyService _propertyService;
     private readonly INavigationService _navigationService;
+    private readonly IFavoriteService _favoriteService;
 
     [ObservableProperty] private ObservableCollection<PropertyCardViewModel> _properties = new();
     [ObservableProperty] private string _searchQuery = string.Empty;
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private bool _hasNoResults;
+    [ObservableProperty] private int _resultCount;
     [ObservableProperty] private string? _errorMessage;
 
     // Фильтры
@@ -25,14 +28,21 @@ public partial class PropertyListViewModel : ViewModelBase
     [ObservableProperty] private string _filterMaxPrice = "";
     [ObservableProperty] private string _filterMinArea = "";
     [ObservableProperty] private string _filterMaxArea = "";
-    [ObservableProperty] private string _filterRooms = "";
+    [ObservableProperty] private string _filterMinRooms = "";
+    [ObservableProperty] private string _filterMaxRooms = "";
+    [ObservableProperty] private string _filterMinBathrooms = "";
+    [ObservableProperty] private string _filterMaxBathrooms = "";
     [ObservableProperty] private string _filterCity = "";
+    [ObservableProperty] private string _filterDistrict = "";
     [ObservableProperty] private string _filterType = "";
     [ObservableProperty] private bool _filterMortgage;
     [ObservableProperty] private bool _filterRenovation;
+    [ObservableProperty] private string _filterSortBy = "date_desc";
 
-    // Список городов для ComboBox (загружается из БД)
-    public ObservableCollection<string> Cities { get; } = new();
+    // Список городов и районов для ComboBox (загружается из БД, первый элемент — пустой «Все»)
+    public ObservableCollection<string> Cities         { get; } = new();
+    public ObservableCollection<string> FilteredCities { get; } = new();
+    public ObservableCollection<string> Districts      { get; } = new();
 
     public string UserFullName => Session.CurrentUser?.FullName ?? "";
     public string UserRoleDisplay => Session.CurrentUser?.Role switch
@@ -46,29 +56,65 @@ public partial class PropertyListViewModel : ViewModelBase
     public bool IsRealtor => Session.CurrentUser?.Role == "realtor";
     public bool IsAdmin   => Session.CurrentUser?.Role == "admin";
 
-    public PropertyListViewModel(IPropertyService propertyService, INavigationService navigationService)
+    public PropertyListViewModel(IPropertyService propertyService, INavigationService navigationService, IFavoriteService favoriteService)
     {
         _propertyService = propertyService;
         _navigationService = navigationService;
+        _favoriteService = favoriteService;
     }
 
     public override async void OnNavigatedTo(object? parameter)
     {
-        await Task.Yield(); // дать UI отрисоваться перед загрузкой
+        if (parameter is LandingSearchParams p)
+        {
+            FilterType     = p.PropertyType ?? "";
+            FilterMaxPrice = p.MaxPrice ?? "";
+            FilterMinRooms = p.MinRooms ?? "";
+            FilterMaxRooms = p.MaxRooms ?? "";
+        }
+        await Task.Yield();
         await LoadCitiesAsync();
+        await LoadDistrictsAsync();
         await LoadPropertiesAsync();
     }
 
-    // Загружает города для выпадающего списка
     private async Task LoadCitiesAsync()
     {
         try
         {
             var cities = await _propertyService.GetDistinctCitiesAsync();
             Cities.Clear();
-            foreach (var c in cities) Cities.Add(c);
+            Cities.Add("");
+            foreach (var c in cities.OrderBy(c => c)) Cities.Add(c);
+            RefreshFilteredCities();
         }
-        catch { /* не критично — ComboBox просто будет пустым */ }
+        catch { }
+    }
+
+    private void RefreshFilteredCities()
+    {
+        FilteredCities.Clear();
+        FilteredCities.Add("");
+        var q = FilterCity?.Trim() ?? "";
+        foreach (var c in Cities.Skip(1))
+        {
+            if (string.IsNullOrEmpty(q) || c.Contains(q, StringComparison.OrdinalIgnoreCase))
+                FilteredCities.Add(c);
+        }
+    }
+
+    partial void OnFilterCityChanged(string value) => RefreshFilteredCities();
+
+    private async Task LoadDistrictsAsync()
+    {
+        try
+        {
+            var districts = await _propertyService.GetDistinctDistrictsAsync();
+            Districts.Clear();
+            Districts.Add("");
+            foreach (var d in districts) Districts.Add(d);
+        }
+        catch { }
     }
 
     // Применяет все активные фильтры и поиск
@@ -82,21 +128,34 @@ public partial class PropertyListViewModel : ViewModelBase
         try
         {
             var items = await _propertyService.GetFilteredAsync(
-                minPrice:     ParseDecimal(FilterMinPrice),
-                maxPrice:     ParseDecimal(FilterMaxPrice),
-                minArea:      ParseDouble(FilterMinArea),
-                maxArea:      ParseDouble(FilterMaxArea),
-                rooms:        ParseInt(FilterRooms),
-                city:         NullIfEmpty(FilterCity),
-                propertyType: NullIfEmpty(FilterType),
-                searchQuery:  NullIfEmpty(SearchQuery),
-                hasMortgage:  FilterMortgage ? true : null,
-                hasRenovation: FilterRenovation ? true : null);
+                minPrice:      ParseDecimal(FilterMinPrice),
+                maxPrice:      ParseDecimal(FilterMaxPrice),
+                minArea:       ParseDouble(FilterMinArea),
+                maxArea:       ParseDouble(FilterMaxArea),
+                minRooms:      ParseInt(FilterMinRooms),
+                maxRooms:      ParseInt(FilterMaxRooms),
+                minBathrooms:  ParseInt(FilterMinBathrooms),
+                maxBathrooms:  ParseInt(FilterMaxBathrooms),
+                city:          NullIfEmpty(FilterCity),
+                district:      NullIfEmpty(FilterDistrict),
+                propertyType:  NullIfEmpty(FilterType),
+                searchQuery:   NullIfEmpty(SearchQuery),
+                hasMortgage:   FilterMortgage ? true : null,
+                hasRenovation: FilterRenovation ? true : null,
+                sortBy:        NullIfEmpty(FilterSortBy));
+
+            HashSet<int> favoriteIds = new();
+            if (Session.IsClient && Session.CurrentUser != null)
+            {
+                var favs = await _favoriteService.GetUserFavoritesAsync(Session.CurrentUser.Id);
+                foreach (var f in favs) favoriteIds.Add(f.Id);
+            }
 
             Properties.Clear();
             foreach (var p in items)
-                Properties.Add(new PropertyCardViewModel(p));
+                Properties.Add(new PropertyCardViewModel(p) { IsFavorite = favoriteIds.Contains(p.Id) });
 
+            ResultCount  = Properties.Count;
             HasNoResults = Properties.Count == 0;
         }
         catch (Exception ex)
@@ -118,8 +177,11 @@ public partial class PropertyListViewModel : ViewModelBase
     {
         FilterMinPrice = FilterMaxPrice = "";
         FilterMinArea  = FilterMaxArea  = "";
-        FilterRooms    = FilterCity     = FilterType = "";
+        FilterMinRooms = FilterMaxRooms = "";
+        FilterMinBathrooms = FilterMaxBathrooms = "";
+        FilterCity     = FilterDistrict = FilterType = "";
         FilterMortgage = FilterRenovation = false;
+        FilterSortBy   = "date_desc";
         _ = LoadPropertiesAsync();
     }
 

@@ -40,24 +40,33 @@
     <!-- Property detail -->
     <s:String x:Key="Detail.Area">Area</s:String>
     <s:String x:Key="Detail.Rooms">Rooms</s:String>
+    <s:String x:Key="Detail.Bathrooms">Bathrooms</s:String>
     <s:String x:Key="Detail.Floor">Floor</s:String>
     <s:String x:Key="Detail.YearBuilt">Year built</s:String>
     <s:String x:Key="Detail.Renovation">Renovation</s:String>
     <s:String x:Key="Detail.Mortgage">Mortgage</s:String>
-    <s:String x:Key="Detail.Address">📍  Address</s:String>
-    <s:String x:Key="Detail.Realtor">👤  Realtor</s:String>
+    <s:String x:Key="Detail.Address">Address</s:String>
+    <s:String x:Key="Detail.Realtor">Realtor</s:String>
     <s:String x:Key="Detail.Description">Description</s:String>
     <s:String x:Key="Detail.AddFavorite">☆  Add to favorites</s:String>
     <s:String x:Key="Detail.InFavorite">★  In favorites</s:String>
-    <s:String x:Key="Detail.Schedule">📅  Schedule viewing</s:String>
+    <s:String x:Key="Detail.Schedule">Schedule viewing</s:String>
     <s:String x:Key="Detail.ComingSoon">Available in the next version</s:String>
 
     <!-- Filters (Phase 9) -->
     <s:String x:Key="Filter.Title">Filters</s:String>
-    <s:String x:Key="Filter.Price">Price, ₽</s:String>
+    <s:String x:Key="Filter.Sort">Sort</s:String>
+    <s:String x:Key="Filter.Sort.DateDesc">Newest first</s:String>
+    <s:String x:Key="Filter.Sort.PriceAsc">Price ↑</s:String>
+    <s:String x:Key="Filter.Sort.PriceDesc">Price ↓</s:String>
+    <s:String x:Key="Filter.Sort.AreaAsc">Area ↑</s:String>
+    <s:String x:Key="Filter.Sort.AreaDesc">Area ↓</s:String>
+    <s:String x:Key="Filter.Price">Price, BYN</s:String>
     <s:String x:Key="Filter.Area">Area, m²</s:String>
     <s:String x:Key="Filter.Rooms">Rooms</s:String>
+    <s:String x:Key="Filter.Bathrooms">Bathrooms</s:String>
     <s:String x:Key="Filter.City">City</s:String>
+    <s:String x:Key="Filter.District">District</s:String>
     <s:String x:Key="Filter.Type">Property type</s:String>
     <s:String x:Key="Filter.From">from</s:String>
     <s:String x:Key="Filter.To">to</s:String>
@@ -89,6 +98,7 @@
     <!-- Favorites -->
     <s:String x:Key="Favorites.Title">Favorites</s:String>
     <s:String x:Key="Favorites.Empty">You haven't added any properties to favorites yet</s:String>
+    <s:String x:Key="Favorites.Remove">✕ Remove</s:String>
 
     <!-- My Appointments (client) -->
     <s:String x:Key="MyAppt.Title">My Viewing Appointments</s:String>
@@ -103,6 +113,8 @@
     <s:String x:Key="MyAppt.ReviewComment">Comment (optional)</s:String>
     <s:String x:Key="MyAppt.SendReview">Submit</s:String>
     <s:String x:Key="MyAppt.ReviewSent">Review submitted for moderation!</s:String>
+    <s:String x:Key="MyAppt.GoToRealtor">Realtor</s:String>
+    <s:String x:Key="MyAppt.AlreadyReviewed">✓ Reviewed</s:String>
     <s:String x:Key="Appt.New">New</s:String>
     <s:String x:Key="Appt.Confirmed">Confirmed</s:String>
     <s:String x:Key="Appt.Cancelled">Cancelled</s:String>
@@ -116,17 +128,21 @@
     <s:String x:Key="Realtor.Confirm">Confirm</s:String>
     <s:String x:Key="Realtor.Cancel">Cancel</s:String>
     <s:String x:Key="Realtor.NoAppt">No appointments</s:String>
+    <s:String x:Key="Realtor.RestoreActive">↩ Back to Sale</s:String>
+    <s:String x:Key="Realtor.ClientContact">Contact:</s:String>
 
     <!-- Property form -->
     <s:String x:Key="PropForm.Title">Title *</s:String>
     <s:String x:Key="PropForm.Description">Description *</s:String>
-    <s:String x:Key="PropForm.Price">Price, ₽ *</s:String>
+    <s:String x:Key="PropForm.Price">Price, BYN *</s:String>
     <s:String x:Key="PropForm.Area">Area, m² *</s:String>
     <s:String x:Key="PropForm.Rooms">Rooms *</s:String>
+    <s:String x:Key="PropForm.Bathrooms">Bathrooms</s:String>
     <s:String x:Key="PropForm.Floor">Floor</s:String>
     <s:String x:Key="PropForm.TotalFloors">Total floors</s:String>
     <s:String x:Key="PropForm.YearBuilt">Year built</s:String>
     <s:String x:Key="PropForm.City">City *</s:String>
+    <s:String x:Key="PropForm.District">District</s:String>
     <s:String x:Key="PropForm.Address">Address *</s:String>
     <s:String x:Key="PropForm.Type">Property type *</s:String>
     <s:String x:Key="PropForm.HasRepair">Has renovation</s:String>
@@ -143,7 +159,8 @@
     <s:String x:Key="RealtorProfile.Rating">Rating</s:String>
     <s:String x:Key="RealtorProfile.Reviews">Client Reviews</s:String>
     <s:String x:Key="RealtorProfile.NoReviews">No reviews yet</s:String>
-    <s:String x:Key="Detail.RealtorProfile">👤 Realtor Profile</s:String>
+    <s:String x:Key="Detail.RealtorProfile">Realtor Profile</s:String>
+    <s:String x:Key="Detail.PriceHistory">Price History</s:String>
 
     <!-- Admin panel -->
     <s:String x:Key="Admin.Title">Admin Dashboard</s:String>
@@ -165,13 +182,15 @@
     <s:String x:Key="Admin.RatingByRealtor">Realtor ratings</s:String>
 
     <!-- Client profile -->
+    <s:String x:Key="ClientProfile.TabProfile">Profile</s:String>
+    <s:String x:Key="ClientProfile.TabMyAppt">My Bookings</s:String>
     <s:String x:Key="ClientProfile.Title">My Profile</s:String>
     <s:String x:Key="ClientProfile.PersonalData">Personal Information</s:String>
     <s:String x:Key="ClientProfile.FullName">Full name *</s:String>
     <s:String x:Key="ClientProfile.Email">E-mail *</s:String>
     <s:String x:Key="ClientProfile.Phone">Phone</s:String>
     <s:String x:Key="ClientProfile.Login">Login:</s:String>
-    <s:String x:Key="ClientProfile.UploadPhoto">📷 Upload photo</s:String>
+    <s:String x:Key="ClientProfile.UploadPhoto">Upload photo</s:String>
     <s:String x:Key="ClientProfile.RemovePhoto">Remove</s:String>
     <s:String x:Key="ClientProfile.Save">Save changes</s:String>
     <s:String x:Key="ClientProfile.ChangePassword">Change Password</s:String>
@@ -179,13 +198,51 @@
     <s:String x:Key="ClientProfile.NewPassword">New password</s:String>
     <s:String x:Key="ClientProfile.ConfirmPassword">Confirm new password</s:String>
     <s:String x:Key="ClientProfile.ChangePasswordBtn">Change password</s:String>
+    <s:String x:Key="ClientProfile.TabStats">My Stats</s:String>
+    <s:String x:Key="ClientProfile.StatsTitle">My Statistics</s:String>
+    <s:String x:Key="ClientProfile.ViewFullStats">Full Statistics →</s:String>
+
+    <!-- Review sort -->
+    <s:String x:Key="Review.SortLabel">Sort:</s:String>
+    <s:String x:Key="Review.SortDateDesc">Newest first</s:String>
+    <s:String x:Key="Review.SortDateAsc">Oldest first</s:String>
+    <s:String x:Key="Review.SortRatingDesc">High rating</s:String>
+    <s:String x:Key="Review.SortRatingAsc">Low rating</s:String>
+
+    <!-- About page -->
+    <s:String x:Key="About.Hero">Your Dream Real Estate Agency</s:String>
+    <s:String x:Key="About.HeroSub">In business since 2010 — helping you find a home you'll love to come back to</s:String>
+    <s:String x:Key="About.StatProps">500+</s:String>
+    <s:String x:Key="About.StatPropsLabel">properties listed</s:String>
+    <s:String x:Key="About.StatClients">1,200+</s:String>
+    <s:String x:Key="About.StatClientsLabel">happy clients</s:String>
+    <s:String x:Key="About.StatRealtors">15</s:String>
+    <s:String x:Key="About.StatRealtorsLabel">expert agents</s:String>
+    <s:String x:Key="About.ServicesTitle">What We Offer</s:String>
+    <s:String x:Key="About.S1Title">Buy &amp; Sell</s:String>
+    <s:String x:Key="About.S1Body">We guide you through every step, from the first call to closing</s:String>
+    <s:String x:Key="About.S2Title">Mortgage Consulting</s:String>
+    <s:String x:Key="About.S2Body">Find the best loan program with our expert guidance and paperwork help</s:String>
+    <s:String x:Key="About.S3Title">Online Scheduling</s:String>
+    <s:String x:Key="About.S3Body">Book a viewing directly in the app — no waiting in line</s:String>
+    <s:String x:Key="About.ContactsTitle">Contact Us</s:String>
+    <s:String x:Key="About.Phone">+7 (495) 000-00-00</s:String>
+    <s:String x:Key="About.Email">info@msm-realty.ru</s:String>
+    <s:String x:Key="About.Address">Moscow, Primernaya St., 1, office 42</s:String>
+    <s:String x:Key="About.Hours">Mon–Fri: 09:00 – 20:00,  Sat: 10:00 – 17:00</s:String>
+    <s:String x:Key="About.MapHint">Located in the city center, easy parking nearby</s:String>
+    <s:String x:Key="About.ViewOnMap">View on Map</s:String>
 
     <!-- Role navigation -->
-    <s:String x:Key="Nav.Profile">👤 Profile</s:String>
-    <s:String x:Key="Nav.Favorites">⭐ Favorites</s:String>
-    <s:String x:Key="Nav.MyAppt">📅 My Bookings</s:String>
-    <s:String x:Key="Nav.Realtor">📋 Dashboard</s:String>
-    <s:String x:Key="Nav.Admin">⚙ Admin</s:String>
+    <s:String x:Key="Nav.Home">Home</s:String>
+    <s:String x:Key="Nav.Catalog">Catalog</s:String>
+    <s:String x:Key="Nav.About">About</s:String>
+    <s:String x:Key="Nav.Profile">Profile</s:String>
+    <s:String x:Key="Nav.MyProfile">My Profile</s:String>
+    <s:String x:Key="Nav.Favorites">Favorites</s:String>
+    <s:String x:Key="Nav.MyAppt">My Bookings</s:String>
+    <s:String x:Key="Nav.Realtor">Dashboard</s:String>
+    <s:String x:Key="Nav.Admin">Admin</s:String>
 
     <!-- HomeView -->
     <s:String x:Key="Home.LogoutButton">Sign Out</s:String>

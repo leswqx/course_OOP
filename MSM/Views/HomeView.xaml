@@ -7,7 +7,9 @@
              Background="{DynamicResource BackgroundBrush}"
              d:DesignHeight="600" d:DesignWidth="900">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
-        <TextBlock Text="🏠" FontSize="64" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+        <Path Width="64" Height="64" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,20"
+              Fill="{DynamicResource PrimaryBrush}"
+              Data="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/>
         <TextBlock Text="{Binding WelcomeText}"
                    FontSize="18" FontWeight="SemiBold"
                    TextAlignment="Center" TextWrapping="Wrap"

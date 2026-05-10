@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,7 +12,10 @@ public partial class ClientProfileViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
     private readonly INavigationService _navigationService;
+    private readonly IAppointmentService _appointmentService;
+    private readonly IReviewService _reviewService;
 
+    // Profile
     [ObservableProperty] private string _fullName = "";
     [ObservableProperty] private string _email = "";
     [ObservableProperty] private string _phone = "";
@@ -36,13 +40,37 @@ public partial class ClientProfileViewModel : ViewModelBase
 
     public bool HasProfileResult => ProfileResult != null;
     public bool HasPasswordResult => PasswordResult != null;
-
     public string Login => Session.CurrentUser?.Login ?? "";
 
-    public ClientProfileViewModel(IAuthService authService, INavigationService navigationService)
+    // Tabs
+    [ObservableProperty] private bool _showTab0 = true;
+    [ObservableProperty] private bool _showTab1;
+
+    // Appointments
+    [ObservableProperty] private ObservableCollection<AppointmentRowViewModel> _appointments = new();
+    [ObservableProperty] private bool _isApptLoading;
+    [ObservableProperty] private bool _isApptEmpty;
+
+    // Review form
+    [ObservableProperty] private bool _isReviewFormVisible;
+    [ObservableProperty] private int _reviewTargetAppointmentId;
+    [ObservableProperty] private int _reviewTargetRealtorId;
+    [ObservableProperty] private int _reviewRating = 5;
+    [ObservableProperty] private string _reviewComment = "";
+    [ObservableProperty] private bool _isSubmittingReview;
+    [ObservableProperty] private bool _reviewSuccess;
+    [ObservableProperty] private string? _reviewError;
+
+    public ClientProfileViewModel(
+        IAuthService authService,
+        INavigationService navigationService,
+        IAppointmentService appointmentService,
+        IReviewService reviewService)
     {
         _authService = authService;
         _navigationService = navigationService;
+        _appointmentService = appointmentService;
+        _reviewService = reviewService;
     }
 
     public override void OnNavigatedTo(object? parameter)
@@ -55,6 +83,96 @@ public partial class ClientProfileViewModel : ViewModelBase
         AvatarPhoto = user.AvatarPhoto;
         ProfileResult = null;
         PasswordResult = null;
+        ShowTab0 = true;
+        ShowTab1 = false;
+    }
+
+    [RelayCommand]
+    private void SetTab0()
+    {
+        ShowTab0 = true;
+        ShowTab1 = false;
+    }
+
+    [RelayCommand]
+    private void SetTab1()
+    {
+        ShowTab0 = false;
+        ShowTab1 = true;
+        _ = LoadAppointmentsAsync();
+    }
+
+    private async Task LoadAppointmentsAsync()
+    {
+        if (Session.CurrentUser == null) return;
+        IsApptLoading = true;
+        try
+        {
+            var items = await _appointmentService.GetByClientIdAsync(Session.CurrentUser.Id);
+            var myReviews = await _reviewService.GetUserReviewsAsync(Session.CurrentUser.Id);
+            var reviewedRealtorIds = myReviews.Where(r => r.RealtorId.HasValue)
+                                               .Select(r => r.RealtorId!.Value).ToHashSet();
+            Appointments.Clear();
+            foreach (var a in items)
+                Appointments.Add(new AppointmentRowViewModel(a, reviewedRealtorIds.Contains(a.RealtorId)));
+            IsApptEmpty = Appointments.Count == 0;
+        }
+        catch { IsApptEmpty = true; }
+        finally { IsApptLoading = false; }
+    }
+
+    [RelayCommand]
+    private async Task CancelAppointmentAsync(int appointmentId)
+    {
+        var result = System.Windows.MessageBox.Show(
+            "Вы уверены, что хотите отменить запись?",
+            "Подтверждение отмены",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Question);
+        if (result != System.Windows.MessageBoxResult.Yes) return;
+
+        try { await _appointmentService.UpdateStatusAsync(appointmentId, "cancelled"); }
+        catch { }
+        await LoadAppointmentsAsync();
+    }
+
+    [RelayCommand]
+    private void OpenReviewForm(AppointmentRowViewModel row)
+    {
+        ReviewTargetAppointmentId = row.Id;
+        ReviewTargetRealtorId = row.RealtorId;
+        ReviewRating = 5;
+        ReviewComment = "";
+        ReviewError = null;
+        ReviewSuccess = false;
+        IsReviewFormVisible = true;
+    }
+
+    [RelayCommand]
+    private void CloseReviewForm() { IsReviewFormVisible = false; ReviewSuccess = false; }
+
+    [RelayCommand]
+    private async Task SubmitReviewAsync()
+    {
+        if (Session.CurrentUser == null) return;
+        ReviewError = null;
+        if (ReviewRating < 1 || ReviewRating > 5)
+        { ReviewError = "Оценка должна быть от 1 до 5."; return; }
+
+        IsSubmittingReview = true;
+        try
+        {
+            await _reviewService.CreateAsync(
+                userId: Session.CurrentUser.Id,
+                propertyId: null,
+                realtorId: ReviewTargetRealtorId,
+                rating: ReviewRating,
+                comment: string.IsNullOrWhiteSpace(ReviewComment) ? null : ReviewComment.Trim());
+            ReviewSuccess = true;
+            IsReviewFormVisible = false;
+        }
+        catch (Exception ex) { ReviewError = $"Ошибка: {ex.Message}"; }
+        finally { IsSubmittingReview = false; }
     }
 
     [RelayCommand]
@@ -140,6 +258,10 @@ public partial class ClientProfileViewModel : ViewModelBase
 
     [RelayCommand]
     private void RemoveAvatar() => AvatarPhoto = null;
+
+    [RelayCommand]
+    private void GoToRealtorProfile(AppointmentRowViewModel row) =>
+        _navigationService.NavigateTo<RealtorProfileViewModel>(row.RealtorId);
 
     [RelayCommand]
     private void GoBack() => _navigationService.NavigateTo<PropertyListViewModel>();

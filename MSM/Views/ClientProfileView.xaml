@@ -1,149 +1,192 @@
-<UserControl x:Class="MSM.Views.ClientProfileView"
+﻿<UserControl x:Class="MSM.Views.ClientProfileView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:helpers="clr-namespace:MSM.Helpers"
              Background="{DynamicResource BackgroundBrush}">
 
-    <Grid>
+    <Grid Margin="0,70,0,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>  <!-- Карточка профиля + аватар -->
+            <RowDefinition Height="Auto"/>  <!-- Вкладки -->
+            <RowDefinition Height="*"/>     <!-- Контент вкладки -->
         </Grid.RowDefinitions>
 
-        <!-- Шапка -->
-        <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
-            <Border.Effect>
-                <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
-            </Border.Effect>
-            <Grid Margin="16,0">
+        <!-- ══════════ ПРОФИЛЬ-КАРТОЧКА (шапка страницы) ══════════ -->
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
+                Padding="32,24">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="{DynamicResource Common.Back}"
-                        Command="{Binding GoBackCommand}"
-                        Height="32" Padding="12,0" FontSize="13"
-                        Background="Transparent" Foreground="{DynamicResource AccentBrush}"
-                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                <!-- Аватар -->
+                <Border Grid.Column="0" Width="90" Height="90" CornerRadius="45"
+                        BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="2"
+                        Margin="0,0,24,0">
+                    <Border.Clip>
+                        <EllipseGeometry Center="45,45" RadiusX="45" RadiusY="45"/>
+                    </Border.Clip>
+                    <Grid>
+                        <Image Source="{Binding AvatarPhoto, Converter={StaticResource ByteArrayToImage}}"
+                               Stretch="UniformToFill"/>
+                        <Path Width="40" Height="40" Stretch="Uniform"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"
+                              Fill="{DynamicResource TextSecondaryBrush}"
+                              Data="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AvatarPhoto}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                    </Grid>
+                </Border>
 
-                <TextBlock Grid.Column="1" Text="{DynamicResource ClientProfile.Title}"
-                           FontSize="17" FontWeight="SemiBold"
-                           Foreground="{DynamicResource TextPrimaryBrush}"
-                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Button Content="{Binding ThemeIcon}"
-                            Command="{Binding ToggleThemeCommand}"
-                            Width="32" Height="32" Margin="0,0,6,0" FontSize="16"
-                            Background="Transparent" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                    <Button Content="{Binding LanguageIcon}"
-                            Command="{Binding ToggleLanguageCommand}"
-                            Width="36" Height="32" FontSize="12" FontWeight="SemiBold"
-                            Background="Transparent" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                <!-- Имя + логин + кнопки аватара -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding FullName}"
+                               FontSize="20" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                        <TextBlock Text="{DynamicResource ClientProfile.Login}"
+                                   FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding Login}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="{DynamicResource ClientProfile.UploadPhoto}"
+                                Command="{Binding UploadAvatarCommand}"
+                                Height="30" Padding="14,0" FontSize="12" Margin="0,0,8,0"
+                                Background="{DynamicResource PrimaryBrush}"
+                                Foreground="White" BorderThickness="0"/>
+                        <Button Content="{DynamicResource ClientProfile.RemovePhoto}"
+                                Command="{Binding RemoveAvatarCommand}"
+                                Height="30" Padding="14,0" FontSize="12"
+                                Background="Transparent"
+                                Foreground="{DynamicResource TextSecondaryBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <!-- Основной контент -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel MaxWidth="560" HorizontalAlignment="Center" Margin="0,32,0,40">
+        <!-- ══════════ ВКЛАДКИ ══════════ -->
+        <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
+                Height="52">
+            <StackPanel Orientation="Horizontal" Margin="24,0">
+                <Button Content="{DynamicResource ClientProfile.TabProfile}"
+                        Command="{Binding SetTab0Command}"
+                        Padding="16,0" FontSize="14" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="12,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab0}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="{DynamicResource ClientProfile.TabMyAppt}"
+                        Command="{Binding SetTab1Command}"
+                        Padding="16,0" FontSize="14" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Padding="16,0" BorderThickness="0,0,0,3"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowTab1}" Value="True">
+                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Border>
 
-                <!-- Аватар + логин -->
-                <Border Background="{DynamicResource SurfaceBrush}"
-                        CornerRadius="12" Padding="32,24" Margin="0,0,0,20">
+        <!-- ══════════ ВКЛАДКА 0: ЛИЧНЫЕ ДАННЫЕ + ПАРОЛЬ ══════════ -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
+                      Visibility="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}">
+            <Grid Margin="24,24,24,32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Левая колонка: Личные данные -->
+                <Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}"
+                        CornerRadius="12" Padding="28,24">
                     <Border.Effect>
-                        <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="12" ShadowDepth="2" Opacity="0.1"/>
-                    </Border.Effect>
-                    <StackPanel HorizontalAlignment="Center">
-
-                        <!-- Аватар -->
-                        <Border Width="100" Height="100" CornerRadius="50"
-                                BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="2"
-                                HorizontalAlignment="Center" Margin="0,0,0,12">
-                            <Border.Clip>
-                                <EllipseGeometry Center="50,50" RadiusX="50" RadiusY="50"/>
-                            </Border.Clip>
-                            <Grid>
-                                <!-- Аватар из базы -->
-                                <Image Source="{Binding AvatarPhoto, Converter={StaticResource ByteArrayToImage}}"
-                                       Stretch="UniformToFill"/>
-                                <!-- Placeholder если нет фото -->
-                                <TextBlock Text="👤" FontSize="48"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding AvatarPhoto}" Value="{x:Null}">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </Grid>
-                        </Border>
-
-                        <!-- Кнопки аватара -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,16">
-                            <Button Content="{DynamicResource ClientProfile.UploadPhoto}"
-                                    Command="{Binding UploadAvatarCommand}"
-                                    Height="30" Padding="12,0" FontSize="12" Margin="0,0,8,0"
-                                    Background="{DynamicResource PrimaryBrush}"
-                                    Foreground="White" BorderThickness="0"/>
-                            <Button Content="{DynamicResource ClientProfile.RemovePhoto}"
-                                    Command="{Binding RemoveAvatarCommand}"
-                                    Height="30" Padding="12,0" FontSize="12"
-                                    Background="Transparent" Foreground="{DynamicResource TextSecondaryBrush}"
-                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                        </StackPanel>
-
-                        <!-- Логин (не редактируемый) -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="{DynamicResource ClientProfile.Login}"
-                                       FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
-                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock Text="{Binding Login}"
-                                       FontSize="14" FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-
-                <!-- Личные данные -->
-                <Border Background="{DynamicResource SurfaceBrush}"
-                        CornerRadius="12" Padding="32,24" Margin="0,0,0,20">
-                    <Border.Effect>
-                        <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="12" ShadowDepth="2" Opacity="0.1"/>
+                        <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="14" ShadowDepth="2" Opacity="0.08"/>
                     </Border.Effect>
                     <StackPanel>
                         <TextBlock Text="{DynamicResource ClientProfile.PersonalData}"
                                    FontSize="16" FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                   Margin="0,0,0,20"/>
+                                   Margin="0,0,0,22"/>
 
                         <TextBlock Text="{DynamicResource ClientProfile.FullName}"
-                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                         <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="40" FontSize="14" Padding="12,0" Margin="0,0,0,16"
+                                 Height="42" FontSize="14" Padding="12,0" Margin="0,0,0,18"
                                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
 
                         <TextBlock Text="{DynamicResource ClientProfile.Email}"
-                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                         <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="40" FontSize="14" Padding="12,0" Margin="0,0,0,16"
+                                 Height="42" FontSize="14" Padding="12,0" Margin="0,0,0,18"
                                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
 
                         <TextBlock Text="{DynamicResource ClientProfile.Phone}"
-                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                         <TextBox Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="40" FontSize="14" Padding="12,0" Margin="0,0,0,20"
+                                 Height="42" FontSize="14" Padding="12,0" Margin="0,0,0,22"
                                  BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
 
-                        <!-- Сообщение о результате -->
-                        <TextBlock Text="{Binding ProfileResult}" FontSize="13" Margin="0,0,0,12"
+                        <TextBlock Text="{Binding ProfileResult}" FontSize="13" Margin="0,0,0,14"
                                    Visibility="{Binding HasProfileResult, Converter={StaticResource BoolToVisibility}}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -159,47 +202,46 @@
 
                         <Button Content="{DynamicResource ClientProfile.Save}"
                                 Command="{Binding SaveProfileCommand}"
-                                Height="42" FontSize="14" FontWeight="SemiBold"
+                                Height="44" FontSize="14" FontWeight="SemiBold"
                                 Background="{DynamicResource PrimaryBrush}"
                                 Foreground="White" BorderThickness="0"/>
                     </StackPanel>
                 </Border>
 
-                <!-- Смена пароля -->
-                <Border Background="{DynamicResource SurfaceBrush}"
-                        CornerRadius="12" Padding="32,24">
+                <!-- Правая колонка: Смена пароля -->
+                <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}"
+                        CornerRadius="12" Padding="28,24">
                     <Border.Effect>
-                        <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="12" ShadowDepth="2" Opacity="0.1"/>
+                        <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="14" ShadowDepth="2" Opacity="0.08"/>
                     </Border.Effect>
                     <StackPanel>
                         <TextBlock Text="{DynamicResource ClientProfile.ChangePassword}"
                                    FontSize="16" FontWeight="SemiBold"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                   Margin="0,0,0,20"/>
+                                   Margin="0,0,0,22"/>
 
                         <TextBlock Text="{DynamicResource ClientProfile.OldPassword}"
-                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                         <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
                                      helpers:PasswordBoxHelper.BoundPassword="{Binding OldPassword, Mode=TwoWay}"
-                                     Height="40" FontSize="14" Padding="12,0" Margin="0,0,0,16"
+                                     Height="42" FontSize="14" Padding="12,0" Margin="0,0,0,18"
                                      BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
 
                         <TextBlock Text="{DynamicResource ClientProfile.NewPassword}"
-                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                         <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
                                      helpers:PasswordBoxHelper.BoundPassword="{Binding NewPassword, Mode=TwoWay}"
-                                     Height="40" FontSize="14" Padding="12,0" Margin="0,0,0,16"
+                                     Height="42" FontSize="14" Padding="12,0" Margin="0,0,0,18"
                                      BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
 
                         <TextBlock Text="{DynamicResource ClientProfile.ConfirmPassword}"
-                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                   FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                         <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
                                      helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmPassword, Mode=TwoWay}"
-                                     Height="40" FontSize="14" Padding="12,0" Margin="0,0,0,20"
+                                     Height="42" FontSize="14" Padding="12,0" Margin="0,0,0,22"
                                      BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
 
-                        <!-- Сообщение о результате смены пароля -->
-                        <TextBlock Text="{Binding PasswordResult}" FontSize="13" Margin="0,0,0,12"
+                        <TextBlock Text="{Binding PasswordResult}" FontSize="13" Margin="0,0,0,14"
                                    Visibility="{Binding HasPasswordResult, Converter={StaticResource BoolToVisibility}}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -215,13 +257,181 @@
 
                         <Button Content="{DynamicResource ClientProfile.ChangePasswordBtn}"
                                 Command="{Binding ChangePasswordCommand}"
-                                Height="42" FontSize="14" FontWeight="SemiBold"
-                                Background="{DynamicResource AccentBrush}"
-                                Foreground="White" BorderThickness="0"/>
+                                Height="44" FontSize="14" FontWeight="SemiBold"
+                                Background="Transparent"
+                                Foreground="{DynamicResource AccentBrush}"
+                                BorderBrush="{DynamicResource AccentBrush}"
+                                BorderThickness="1"/>
                     </StackPanel>
                 </Border>
-
-            </StackPanel>
+            </Grid>
         </ScrollViewer>
+
+        <!-- ══════════ ВКЛАДКА 1: МОИ ЗАПИСИ ══════════ -->
+        <Grid Grid.Row="2" Margin="24,16"
+              Visibility="{Binding ShowTab1, Converter={StaticResource BoolToVisibility}}">
+
+            <TextBlock Text="{DynamicResource Common.Loading}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
+                       Visibility="{Binding IsApptLoading, Converter={StaticResource BoolToVisibility}}"/>
+
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Visibility="{Binding IsApptEmpty, Converter={StaticResource BoolToVisibility}}">
+                <Path Width="52" Height="52" Stretch="Uniform" HorizontalAlignment="Center"
+                      Fill="{DynamicResource TextSecondaryBrush}"
+                      Data="M19,4H18V2H16V4H8V2H6V4H5C3.89,4 3,4.9 3,6V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V6A2,2 0 0,0 19,4M19,20H5V10H19V20M19,8H5V6H19V8Z"/>
+                <TextBlock Text="{DynamicResource MyAppt.Empty}" FontSize="16"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           HorizontalAlignment="Center" Margin="0,10,0,0"/>
+            </StackPanel>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Visibility="{Binding IsApptLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
+                <StackPanel MaxWidth="780" HorizontalAlignment="Center">
+
+                    <!-- Баннер успешного отзыва -->
+                    <Border Background="{DynamicResource SuccessBrush}" CornerRadius="8" Padding="14,10"
+                            Margin="0,0,0,12"
+                            Visibility="{Binding ReviewSuccess, Converter={StaticResource BoolToVisibility}}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Width="14" Height="14" Stretch="Uniform" Margin="0,0,6,0" VerticalAlignment="Center"
+                                  Fill="White"
+                                  Data="M9,20.42L2.79,14.21L4.21,12.79L9,17.58L19.79,6.79L21.21,8.21L9,20.42Z"/>
+                            <TextBlock Text="{DynamicResource MyAppt.ReviewSent}" FontSize="13"
+                                       Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Форма отзыва -->
+                    <Border Visibility="{Binding IsReviewFormVisible, Converter={StaticResource BoolToVisibility}}"
+                            Background="{DynamicResource CardBrush}" CornerRadius="10"
+                            BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
+                            Padding="24,20" Margin="0,0,0,16">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="12" ShadowDepth="2" Opacity="0.12"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource MyAppt.LeaveReview}"
+                                       FontSize="15" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,14"/>
+
+                            <TextBlock Text="{DynamicResource MyAppt.Rating}"
+                                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                                <Slider Value="{Binding ReviewRating}" Minimum="1" Maximum="5"
+                                        IsSnapToTickEnabled="True" TickFrequency="1"
+                                        Width="220" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding ReviewRating, Converter={StaticResource RatingToStars}}"
+                                           FontSize="22" Foreground="{DynamicResource RatingBrush}"
+                                           VerticalAlignment="Center" Margin="14,0,0,0"/>
+                            </StackPanel>
+
+                            <TextBlock Text="{DynamicResource MyAppt.ReviewComment}"
+                                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                            <TextBox Text="{Binding ReviewComment, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="90" Padding="12,10" TextWrapping="Wrap"
+                                     AcceptsReturn="True" VerticalContentAlignment="Top"
+                                     Margin="0,0,0,12"/>
+
+                            <TextBlock Text="{Binding ReviewError}"
+                                       Foreground="{DynamicResource ErrorBrush}"
+                                       FontSize="12" Margin="0,0,0,10"
+                                       Visibility="{Binding ReviewError, Converter={StaticResource BoolToVisibility}}"/>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Content="{DynamicResource Common.Cancel}"
+                                        Command="{Binding CloseReviewFormCommand}"
+                                        Height="36" Padding="16,0" Margin="0,0,8,0"
+                                        Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                                <Button Content="{DynamicResource MyAppt.SendReview}"
+                                        Command="{Binding SubmitReviewCommand}"
+                                        Height="36" Padding="20,0"
+                                        Background="{DynamicResource PrimaryBrush}"
+                                        Foreground="White" BorderThickness="0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Список записей -->
+                    <ItemsControl ItemsSource="{Binding Appointments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{DynamicResource CardBrush}" CornerRadius="10"
+                                        Padding="20,16" Margin="0,0,0,10">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.07"/>
+                                    </Border.Effect>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding PropertyTitle}"
+                                                       FontSize="15" FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock Text="{Binding RealtorName}"
+                                                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding DateTime}"
+                                                       FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       Margin="0,4,0,0"/>
+                                            <TextBlock Text="{Binding Comment}" FontSize="13"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       Visibility="{Binding Comment, Converter={StaticResource BoolToVisibility}}"
+                                                       FontStyle="Italic" Margin="0,2,0,0"/>
+                                        </StackPanel>
+
+                                        <Border Grid.Column="1" CornerRadius="5" Padding="12,5"
+                                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                Background="{DynamicResource BadgePlaceholderBrush}"
+                                                Margin="14,0">
+                                            <TextBlock Text="{Binding StatusDisplay}"
+                                                       FontSize="12" FontWeight="SemiBold"
+                                                       Foreground="{Binding StatusColor, Converter={StaticResource StringToBrush}}"/>
+                                        </Border>
+
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Content="{DynamicResource MyAppt.GoToRealtor}"
+                                                    Command="{Binding DataContext.GoToRealtorProfileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Height="34" Padding="12,0" FontSize="12" Margin="0,0,8,0"
+                                                    Background="Transparent"
+                                                    Foreground="{DynamicResource AccentBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
+                                            <Button Content="✕ Отменить"
+                                                    Command="{Binding DataContext.CancelAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Visibility="{Binding CanCancel, Converter={StaticResource BoolToVisibility}}"
+                                                    Height="34" Padding="14,0" FontSize="12" Margin="0,0,8,0"
+                                                    Background="Transparent" Foreground="#EF5350"
+                                                    BorderBrush="#EF5350" BorderThickness="1"/>
+                                            <TextBlock Text="{DynamicResource MyAppt.AlreadyReviewed}"
+                                                       FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
+                                                       VerticalAlignment="Center" Margin="0,0,8,0"
+                                                       Visibility="{Binding IsCompletedAndReviewed, Converter={StaticResource BoolToVisibility}}"/>
+                                            <Button Content="{DynamicResource MyAppt.Review}"
+                                                    Command="{Binding DataContext.OpenReviewFormCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding CanReview, Converter={StaticResource BoolToVisibility}}"
+                                                    Height="34" Padding="16,0" FontSize="13"
+                                                    Background="{DynamicResource PrimaryBrush}"
+                                                    Foreground="White" BorderThickness="0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+
     </Grid>
 </UserControl>
+

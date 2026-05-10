@@ -13,15 +13,18 @@ public class PropertyCardViewModel
     public decimal Price { get; }
     public double Area { get; }
     public int Rooms { get; }
+    public int? Bathrooms { get; }
     public string City { get; }
     public string PropertyType { get; }
     public string RealtorName { get; }
     public BitmapImage? MainImage { get; }
 
     public string Status { get; }
+    public bool IsFavorite { get; init; }
     public bool HasImage => MainImage != null;
     public bool IsSoldable => Status == "active";
     public bool IsSold => Status == "sold";
+    public bool IsRestorable => Status == "sold";
     public bool IsToggleHideVisible => Status != "sold";
     public string ToggleHideLabel => Status == "hidden" ? "👁 Показать" : "🙈 Скрыть";
     public string AreaRoomsInfo => $"{Area:F0} м²  •  {Rooms} комн.";
@@ -41,6 +44,7 @@ public class PropertyCardViewModel
         Price = property.Price;
         Area = property.Area;
         Rooms = property.Rooms;
+        Bathrooms = property.Bathrooms;
         City = property.City;
         PropertyType = property.PropertyType;
         RealtorName = property.Realtor?.FullName ?? "";

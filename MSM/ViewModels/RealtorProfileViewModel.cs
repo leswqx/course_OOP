@@ -12,15 +12,23 @@ public class ReviewDisplayRow
 {
     public string Author { get; }
     public string Stars { get; }
+    public string FilledStars { get; }
+    public string EmptyStars  { get; }
     public string? Comment { get; }
     public string Date { get; }
+    public int RatingValue { get; }
+    public System.DateTime CreatedAt { get; }
 
     public ReviewDisplayRow(MSM.Models.Entities.Review r)
     {
-        Author  = r.User?.FullName ?? "—";
-        Stars   = new string('★', r.Rating) + new string('☆', 5 - r.Rating);
-        Comment = r.Comment;
-        Date    = r.CreatedAt.ToString("dd.MM.yyyy");
+        Author      = r.User?.FullName ?? "—";
+        RatingValue = r.Rating;
+        Stars       = new string('★', r.Rating) + new string('☆', 5 - r.Rating);
+        FilledStars = new string('★', r.Rating);
+        EmptyStars  = new string('☆', 5 - r.Rating);
+        Comment     = r.Comment;
+        CreatedAt   = r.CreatedAt;
+        Date        = r.CreatedAt.ToString("dd.MM.yyyy");
     }
 }
 
@@ -42,10 +50,21 @@ public partial class RealtorProfileViewModel : ViewModelBase
     [ObservableProperty] private int _statSold;
     [ObservableProperty] private double _statRating;
     [ObservableProperty] private string _statRatingStars = "☆☆☆☆☆";
+    [ObservableProperty] private string _statFilledStars = "";
+    [ObservableProperty] private string _statEmptyStars  = "☆☆☆☆☆";
 
     [ObservableProperty] private ObservableCollection<ReviewDisplayRow> _reviews = new();
     [ObservableProperty] private bool _noReviews;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSortDateDesc), nameof(IsSortDateAsc), nameof(IsSortRatingDesc), nameof(IsSortRatingAsc))]
+    private string _sortMode = "date_desc";
+    public bool IsSortDateDesc   => SortMode == "date_desc";
+    public bool IsSortDateAsc    => SortMode == "date_asc";
+    public bool IsSortRatingDesc => SortMode == "rating_desc";
+    public bool IsSortRatingAsc  => SortMode == "rating_asc";
+
+    private List<ReviewDisplayRow> _allReviews = new();
     private int _realtorId;
 
     public RealtorProfileViewModel(
@@ -104,19 +123,38 @@ public partial class RealtorProfileViewModel : ViewModelBase
             StatRating = await _reviewService.GetAverageRatingAsync(realtorId: _realtorId);
             var rounded = (int)Math.Round(StatRating);
             StatRatingStars = new string('★', rounded) + new string('☆', 5 - rounded);
+            StatFilledStars = new string('★', rounded);
+            StatEmptyStars  = new string('☆', 5 - rounded);
 
             var reviewEntities = await _context.Reviews
                 .Include(r => r.User)
                 .Where(r => r.RealtorId == _realtorId && r.IsApproved)
-                .OrderByDescending(r => r.CreatedAt)
                 .ToListAsync();
 
-            Reviews.Clear();
-            foreach (var r in reviewEntities) Reviews.Add(new ReviewDisplayRow(r));
-            NoReviews = Reviews.Count == 0;
+            _allReviews = reviewEntities.Select(r => new ReviewDisplayRow(r)).ToList();
+            ApplySort();
+            NoReviews = _allReviews.Count == 0;
         }
         finally { IsLoading = false; }
     }
+
+    private void ApplySort()
+    {
+        var sorted = SortMode switch
+        {
+            "date_asc"    => _allReviews.OrderBy(r => r.CreatedAt),
+            "rating_desc" => _allReviews.OrderByDescending(r => r.RatingValue),
+            "rating_asc"  => _allReviews.OrderBy(r => r.RatingValue),
+            _             => _allReviews.OrderByDescending(r => r.CreatedAt)
+        };
+        Reviews.Clear();
+        foreach (var r in sorted) Reviews.Add(r);
+    }
+
+    [RelayCommand] private void SortDateDesc()   { SortMode = "date_desc";   ApplySort(); }
+    [RelayCommand] private void SortDateAsc()    { SortMode = "date_asc";    ApplySort(); }
+    [RelayCommand] private void SortRatingDesc() { SortMode = "rating_desc"; ApplySort(); }
+    [RelayCommand] private void SortRatingAsc()  { SortMode = "rating_asc";  ApplySort(); }
 
     [RelayCommand]
     private void GoBack() => _navigationService.GoBack();

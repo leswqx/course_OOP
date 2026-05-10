@@ -6,81 +6,107 @@
              xmlns:helpers="clr-namespace:MSM.Helpers"
              mc:Ignorable="d"
              Background="{DynamicResource BackgroundBrush}"
-             d:DesignHeight="560" d:DesignWidth="380">
+             d:DesignHeight="600" d:DesignWidth="900">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="40,30">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+    <Grid Margin="0,70,0,0">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="420"
+                    Margin="0,20,0,20"
+                    Background="{DynamicResource SurfaceBrush}"
+                    CornerRadius="18"
+                    Padding="44,36">
+                <Border.Effect>
+                    <DropShadowEffect Color="#000000" Opacity="0.13"
+                                      BlurRadius="36" ShadowDepth="6"/>
+                </Border.Effect>
 
-            <!-- Заголовок -->
-            <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,24">
-                <TextBlock Text="🏠" FontSize="40" HorizontalAlignment="Center"/>
-                <TextBlock Text="{DynamicResource App.Title}"
-                           FontSize="18" FontWeight="Bold"
-                           Foreground="{DynamicResource TextPrimaryBrush}"
-                           HorizontalAlignment="Center" Margin="0,8,0,4"/>
-                <TextBlock Text="{DynamicResource Register.Subtitle}"
-                           FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"
-                           HorizontalAlignment="Center"/>
-            </StackPanel>
+                <StackPanel>
+                    <!-- Название -->
+                    <TextBlock Text="{DynamicResource App.Title}"
+                               FontSize="19" FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,4"/>
 
-            <!-- Форма -->
-            <StackPanel Grid.Row="1">
+                    <!-- Подзаголовок -->
+                    <TextBlock Text="{DynamicResource Register.Subtitle}"
+                               FontSize="13"
+                               HorizontalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="0,0,0,24"/>
 
-                <TextBlock Text="{DynamicResource Register.FullName}"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
-                         Height="36" Padding="10,0" FontSize="13" Margin="0,0,0,12"/>
+                    <!-- Полное имя -->
+                    <TextBlock Text="{DynamicResource Register.FullName}"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBox Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"
+                             Height="42" Padding="12,0,0,0" FontSize="14" Margin="0,0,0,14"/>
 
-                <TextBlock Text="{DynamicResource Login.LoginLabel}"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                <TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"
-                         Height="36" Padding="10,0" FontSize="13" Margin="0,0,0,12"/>
+                    <!-- Логин -->
+                    <TextBlock Text="{DynamicResource Login.LoginLabel}"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}"
+                             Height="42" Padding="12,0,0,0" FontSize="14" Margin="0,0,0,14"/>
 
-                <TextBlock Text="{DynamicResource Register.Email}"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                         Height="36" Padding="10,0" FontSize="13" Margin="0,0,0,12"/>
+                    <!-- E-mail -->
+                    <TextBlock Text="{DynamicResource Register.Email}"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
+                             Height="42" Padding="12,0,0,0" FontSize="14" Margin="0,0,0,14"/>
 
-                <TextBlock Text="{DynamicResource Register.Phone}"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                <TextBox Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
-                         Height="36" Padding="10,0" FontSize="13" Margin="0,0,0,12"/>
+                    <!-- Телефон -->
+                    <TextBlock Text="{DynamicResource Register.Phone}"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBox Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}"
+                             Height="42" Padding="12,0,0,0" FontSize="14" Margin="0,0,0,14"/>
 
-                <TextBlock Text="{DynamicResource Login.PasswordLabel}"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
-                             helpers:PasswordBoxHelper.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Height="36" Padding="10,0" FontSize="13" Margin="0,0,0,12"/>
+                    <!-- Пароль -->
+                    <TextBlock Text="{DynamicResource Login.PasswordLabel}"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
+                                 helpers:PasswordBoxHelper.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="42" Padding="12,0,0,0" FontSize="14" Margin="0,0,0,14"/>
 
-                <TextBlock Text="{DynamicResource Register.ConfirmPassword}"
-                           FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
-                             helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Height="36" Padding="10,0" FontSize="13" Margin="0,0,0,8"/>
+                    <!-- Подтверждение пароля -->
+                    <TextBlock Text="{DynamicResource Register.ConfirmPassword}"
+                               Margin="0,0,0,5"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
+                                 helpers:PasswordBoxHelper.BoundPassword="{Binding ConfirmPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="42" Padding="12,0,0,0" FontSize="14" Margin="0,0,0,8"/>
 
-                <TextBlock Text="{Binding ErrorMessage}"
-                           Foreground="{DynamicResource ErrorBrush}"
-                           FontSize="12" TextWrapping="Wrap" Margin="0,0,0,12"
-                           Visibility="{Binding ErrorMessage, Converter={StaticResource BoolToVisibility}}"/>
+                    <!-- Ошибка -->
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="{DynamicResource ErrorBrush}"
+                               Margin="0,0,0,14"
+                               TextWrapping="Wrap"
+                               MinHeight="18"
+                               Visibility="{Binding ErrorMessage, Converter={StaticResource BoolToVisibility}}"/>
 
-                <Button Content="{DynamicResource Register.Submit}"
-                        Command="{Binding RegisterCommand}"
-                        Height="40" FontSize="14" Margin="0,0,0,8"
-                        Background="{DynamicResource PrimaryBrush}"
-                        Foreground="White" BorderThickness="0"/>
+                    <!-- Зарегистрироваться -->
+                    <Button Content="{DynamicResource Register.Submit}"
+                            Command="{Binding RegisterCommand}"
+                            Height="42" FontSize="16" Margin="0,0,0,10"
+                            Background="{DynamicResource PrimaryBrush}"
+                            Foreground="White"
+                            BorderThickness="0"/>
 
-                <Button Content="{DynamicResource Common.Back}"
-                        Command="{Binding GoBackCommand}"
-                        Height="36" FontSize="13"
-                        Background="Transparent"
-                        Foreground="{DynamicResource AccentBrush}"
-                        BorderBrush="{DynamicResource BorderBrush}"
-                        BorderThickness="1"/>
-            </StackPanel>
-        </Grid>
-    </ScrollViewer>
+                    <!-- Войти -->
+                    <Button Content="{DynamicResource Login.SignIn}"
+                            Command="{Binding GoBackCommand}"
+                            Height="40" FontSize="14"
+                            Background="Transparent"
+                            Foreground="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource AccentBrush}"
+                            BorderThickness="1"/>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

@@ -11,16 +11,25 @@
             <!-- Заглушка когда нет фото -->
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                         Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
-                <TextBlock Text="🏠" FontSize="72" HorizontalAlignment="Center"/>
+                <Path Width="72" Height="72" Stretch="Uniform" HorizontalAlignment="Center"
+                      Fill="{DynamicResource TextSecondaryBrush}"
+                      Data="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/>
                 <TextBlock Text="{DynamicResource Common.NoPhotos}"
                            Foreground="{DynamicResource TextSecondaryBrush}" FontSize="14"
-                           HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                           HorizontalAlignment="Center" Margin="0,12,0,0"/>
             </StackPanel>
 
             <!-- Изображение -->
             <Image Source="{Binding CurrentImage}"
                    Stretch="UniformToFill"
                    Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibility}}"/>
+
+            <!-- Кнопка открыть лайтбокс -->
+            <Button Command="{Binding OpenPhotoViewerCommand}"
+                    Background="Transparent" BorderThickness="0" Cursor="Hand"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibility}}"
+                    ToolTip="Открыть фото на весь экран"/>
 
             <!-- Кнопка «Назад» (❮) -->
             <Button Command="{Binding PreviousImageCommand}"

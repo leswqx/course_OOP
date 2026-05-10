@@ -40,24 +40,33 @@
     <!-- Детальная страница -->
     <s:String x:Key="Detail.Area">Площадь</s:String>
     <s:String x:Key="Detail.Rooms">Комнат</s:String>
+    <s:String x:Key="Detail.Bathrooms">С/У</s:String>
     <s:String x:Key="Detail.Floor">Этаж</s:String>
     <s:String x:Key="Detail.YearBuilt">Год постройки</s:String>
     <s:String x:Key="Detail.Renovation">Ремонт</s:String>
     <s:String x:Key="Detail.Mortgage">Ипотека</s:String>
-    <s:String x:Key="Detail.Address">📍  Адрес</s:String>
-    <s:String x:Key="Detail.Realtor">👤  Риелтор</s:String>
+    <s:String x:Key="Detail.Address">Адрес</s:String>
+    <s:String x:Key="Detail.Realtor">Риелтор</s:String>
     <s:String x:Key="Detail.Description">Описание</s:String>
     <s:String x:Key="Detail.AddFavorite">☆  В избранное</s:String>
     <s:String x:Key="Detail.InFavorite">★  В избранном</s:String>
-    <s:String x:Key="Detail.Schedule">📅  Записаться на просмотр</s:String>
+    <s:String x:Key="Detail.Schedule">Записаться на просмотр</s:String>
     <s:String x:Key="Detail.ComingSoon">Будет доступно в следующей версии</s:String>
 
     <!-- Фильтры (Phase 9) -->
     <s:String x:Key="Filter.Title">Фильтры</s:String>
-    <s:String x:Key="Filter.Price">Цена, ₽</s:String>
+    <s:String x:Key="Filter.Sort">Сортировка</s:String>
+    <s:String x:Key="Filter.Sort.DateDesc">Сначала новые</s:String>
+    <s:String x:Key="Filter.Sort.PriceAsc">Цена ↑</s:String>
+    <s:String x:Key="Filter.Sort.PriceDesc">Цена ↓</s:String>
+    <s:String x:Key="Filter.Sort.AreaAsc">Площадь ↑</s:String>
+    <s:String x:Key="Filter.Sort.AreaDesc">Площадь ↓</s:String>
+    <s:String x:Key="Filter.Price">Цена, BYN</s:String>
     <s:String x:Key="Filter.Area">Площадь, м²</s:String>
     <s:String x:Key="Filter.Rooms">Комнат</s:String>
+    <s:String x:Key="Filter.Bathrooms">Сан. узлов</s:String>
     <s:String x:Key="Filter.City">Город</s:String>
+    <s:String x:Key="Filter.District">Район</s:String>
     <s:String x:Key="Filter.Type">Тип объекта</s:String>
     <s:String x:Key="Filter.From">от</s:String>
     <s:String x:Key="Filter.To">до</s:String>
@@ -90,6 +99,9 @@
     <s:String x:Key="Favorites.Title">Избранное</s:String>
     <s:String x:Key="Favorites.Empty">Вы ещё не добавили объекты в избранное</s:String>
 
+    <!-- Избранное — убрать из списка -->
+    <s:String x:Key="Favorites.Remove">✕ Убрать</s:String>
+
     <!-- Мои записи (клиент) -->
     <s:String x:Key="MyAppt.Title">Мои записи на просмотр</s:String>
     <s:String x:Key="MyAppt.Empty">У вас пока нет записей на просмотр</s:String>
@@ -103,6 +115,8 @@
     <s:String x:Key="MyAppt.ReviewComment">Комментарий (необязательно)</s:String>
     <s:String x:Key="MyAppt.SendReview">Отправить</s:String>
     <s:String x:Key="MyAppt.ReviewSent">Отзыв отправлен на модерацию!</s:String>
+    <s:String x:Key="MyAppt.GoToRealtor">Риелтор</s:String>
+    <s:String x:Key="MyAppt.AlreadyReviewed">✓ Отзыв оставлен</s:String>
     <s:String x:Key="Appt.New">Новая</s:String>
     <s:String x:Key="Appt.Confirmed">Подтверждена</s:String>
     <s:String x:Key="Appt.Cancelled">Отменена</s:String>
@@ -116,17 +130,21 @@
     <s:String x:Key="Realtor.Confirm">Подтвердить</s:String>
     <s:String x:Key="Realtor.Cancel">Отменить</s:String>
     <s:String x:Key="Realtor.NoAppt">Нет записей</s:String>
+    <s:String x:Key="Realtor.RestoreActive">↩ В продажу</s:String>
+    <s:String x:Key="Realtor.ClientContact">Контакты клиента</s:String>
 
     <!-- Форма объекта -->
     <s:String x:Key="PropForm.Title">Название *</s:String>
     <s:String x:Key="PropForm.Description">Описание *</s:String>
-    <s:String x:Key="PropForm.Price">Цена, ₽ *</s:String>
+    <s:String x:Key="PropForm.Price">Цена, BYN *</s:String>
     <s:String x:Key="PropForm.Area">Площадь, м² *</s:String>
     <s:String x:Key="PropForm.Rooms">Комнат *</s:String>
+    <s:String x:Key="PropForm.Bathrooms">Сан. узлов</s:String>
     <s:String x:Key="PropForm.Floor">Этаж</s:String>
     <s:String x:Key="PropForm.TotalFloors">Всего этажей</s:String>
     <s:String x:Key="PropForm.YearBuilt">Год постройки</s:String>
     <s:String x:Key="PropForm.City">Город *</s:String>
+    <s:String x:Key="PropForm.District">Район</s:String>
     <s:String x:Key="PropForm.Address">Адрес *</s:String>
     <s:String x:Key="PropForm.Type">Тип объекта *</s:String>
     <s:String x:Key="PropForm.HasRepair">Есть ремонт</s:String>
@@ -143,9 +161,15 @@
     <s:String x:Key="RealtorProfile.Rating">Рейтинг</s:String>
     <s:String x:Key="RealtorProfile.Reviews">Отзывы клиентов</s:String>
     <s:String x:Key="RealtorProfile.NoReviews">Отзывов пока нет</s:String>
+    <s:String x:Key="Review.SortLabel">Сортировка:</s:String>
+    <s:String x:Key="Review.SortDateDesc">Сначала новые</s:String>
+    <s:String x:Key="Review.SortDateAsc">Сначала старые</s:String>
+    <s:String x:Key="Review.SortRatingDesc">Высокий рейтинг</s:String>
+    <s:String x:Key="Review.SortRatingAsc">Низкий рейтинг</s:String>
 
     <!-- Кнопка профиля в детальной карточке -->
-    <s:String x:Key="Detail.RealtorProfile">👤 Профиль риелтора</s:String>
+    <s:String x:Key="Detail.RealtorProfile">Профиль риелтора</s:String>
+    <s:String x:Key="Detail.PriceHistory">История изменений цены</s:String>
 
     <!-- Панель администратора -->
     <s:String x:Key="Admin.Title">Панель администратора</s:String>
@@ -167,13 +191,15 @@
     <s:String x:Key="Admin.RatingByRealtor">Рейтинг риелторов</s:String>
 
     <!-- Профиль клиента -->
+    <s:String x:Key="ClientProfile.TabProfile">Профиль</s:String>
+    <s:String x:Key="ClientProfile.TabMyAppt">Мои записи</s:String>
     <s:String x:Key="ClientProfile.Title">Мой профиль</s:String>
     <s:String x:Key="ClientProfile.PersonalData">Личные данные</s:String>
     <s:String x:Key="ClientProfile.FullName">Полное имя *</s:String>
     <s:String x:Key="ClientProfile.Email">E-mail *</s:String>
     <s:String x:Key="ClientProfile.Phone">Телефон</s:String>
     <s:String x:Key="ClientProfile.Login">Логин:</s:String>
-    <s:String x:Key="ClientProfile.UploadPhoto">📷 Загрузить фото</s:String>
+    <s:String x:Key="ClientProfile.UploadPhoto">Загрузить фото</s:String>
     <s:String x:Key="ClientProfile.RemovePhoto">Удалить</s:String>
     <s:String x:Key="ClientProfile.Save">Сохранить изменения</s:String>
     <s:String x:Key="ClientProfile.ChangePassword">Смена пароля</s:String>
@@ -181,13 +207,44 @@
     <s:String x:Key="ClientProfile.NewPassword">Новый пароль</s:String>
     <s:String x:Key="ClientProfile.ConfirmPassword">Подтвердите новый пароль</s:String>
     <s:String x:Key="ClientProfile.ChangePasswordBtn">Изменить пароль</s:String>
+    <s:String x:Key="ClientProfile.TabStats">Моя статистика</s:String>
+    <s:String x:Key="ClientProfile.StatsTitle">Моя статистика</s:String>
+    <s:String x:Key="ClientProfile.ViewFullStats">Подробная статистика →</s:String>
+
+    <!-- О компании -->
+    <s:String x:Key="About.Hero">Агентство недвижимости вашей мечты</s:String>
+    <s:String x:Key="About.HeroSub">Работаем с 2010 года — помогаем найти дом, в который хочется возвращаться</s:String>
+    <s:String x:Key="About.StatProps">500+</s:String>
+    <s:String x:Key="About.StatPropsLabel">объектов в базе</s:String>
+    <s:String x:Key="About.StatClients">1 200+</s:String>
+    <s:String x:Key="About.StatClientsLabel">довольных клиентов</s:String>
+    <s:String x:Key="About.StatRealtors">15</s:String>
+    <s:String x:Key="About.StatRealtorsLabel">опытных риелторов</s:String>
+    <s:String x:Key="About.ServicesTitle">Что мы предлагаем</s:String>
+    <s:String x:Key="About.S1Title">Покупка и продажа</s:String>
+    <s:String x:Key="About.S1Body">Сопровождаем сделку от первого звонка до подписания договора</s:String>
+    <s:String x:Key="About.S2Title">Ипотечное консультирование</s:String>
+    <s:String x:Key="About.S2Body">Подберём лучшую программу и поможем собрать пакет документов</s:String>
+    <s:String x:Key="About.S3Title">Онлайн-запись на просмотр</s:String>
+    <s:String x:Key="About.S3Body">Записывайтесь на просмотр прямо в приложении — без очередей</s:String>
+    <s:String x:Key="About.ContactsTitle">Контакты</s:String>
+    <s:String x:Key="About.Phone">+7 (495) 000-00-00</s:String>
+    <s:String x:Key="About.Email">info@msm-realty.ru</s:String>
+    <s:String x:Key="About.Address">г. Москва, ул. Примерная, д. 1, офис 42</s:String>
+    <s:String x:Key="About.Hours">Пн–Пт: 09:00 – 20:00,  Сб: 10:00 – 17:00</s:String>
+    <s:String x:Key="About.MapHint">Мы находимся в центре города, удобная парковка</s:String>
+    <s:String x:Key="About.ViewOnMap">Посмотреть на карте</s:String>
 
     <!-- Навигация (роль) -->
-    <s:String x:Key="Nav.Profile">👤 Профиль</s:String>
-    <s:String x:Key="Nav.Favorites">⭐ Избранное</s:String>
-    <s:String x:Key="Nav.MyAppt">📅 Мои записи</s:String>
-    <s:String x:Key="Nav.Realtor">📋 Кабинет</s:String>
-    <s:String x:Key="Nav.Admin">⚙ Админ</s:String>
+    <s:String x:Key="Nav.Home">Главная</s:String>
+    <s:String x:Key="Nav.Catalog">Каталог</s:String>
+    <s:String x:Key="Nav.About">О компании</s:String>
+    <s:String x:Key="Nav.Profile">Профиль</s:String>
+    <s:String x:Key="Nav.MyProfile">Мой профиль</s:String>
+    <s:String x:Key="Nav.Favorites">Избранное</s:String>
+    <s:String x:Key="Nav.MyAppt">Мои записи</s:String>
+    <s:String x:Key="Nav.Realtor">Кабинет</s:String>
+    <s:String x:Key="Nav.Admin">Админ</s:String>
 
     <!-- HomeView -->
     <s:String x:Key="Home.LogoutButton">Выйти из системы</s:String>

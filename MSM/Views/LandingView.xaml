@@ -1,325 +1,232 @@
-<UserControl x:Class="MSM.Views.LandingView"
+﻿<UserControl x:Class="MSM.Views.LandingView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             d:DesignHeight="700" d:DesignWidth="1200">
-    <Grid>
+             d:DesignHeight="590" d:DesignWidth="1000">
 
-        <!-- ===== Фоновый градиент (замени Fill на ImageBrush когда будет фото) ===== -->
+    <Grid Focusable="False">
+        <!-- Фоновое фото -->
         <Rectangle>
             <Rectangle.Fill>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#0D0404" Offset="0"/>
-                    <GradientStop Color="#2A0E0E" Offset="0.5"/>
-                    <GradientStop Color="#180808" Offset="1"/>
+                <ImageBrush ImageSource="/Resources/Images/main.png" Stretch="UniformToFill"/>
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <!-- Градиентный оверлей -->
+        <Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#78000000" Offset="0"/>
+                    <GradientStop Color="#42000000" Offset="0.5"/>
+                    <GradientStop Color="#62000000" Offset="1"/>
                 </LinearGradientBrush>
             </Rectangle.Fill>
         </Rectangle>
 
-        <!-- Декоративные круги -->
-        <Ellipse Width="550" Height="550" Opacity="0.12"
-                 HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                 Margin="0,0,-120,-150">
-            <Ellipse.Fill><SolidColorBrush Color="#D4A5A5"/></Ellipse.Fill>
-        </Ellipse>
-        <Ellipse Width="350" Height="350" Opacity="0.08"
-                 HorizontalAlignment="Left" VerticalAlignment="Top"
-                 Margin="-80,-80,0,0">
-            <Ellipse.Fill><SolidColorBrush Color="#D4A5A5"/></Ellipse.Fill>
-        </Ellipse>
-        <Ellipse Width="180" Height="180" Opacity="0.06"
-                 HorizontalAlignment="Center" VerticalAlignment="Top"
-                 Margin="300,-60,0,0">
-            <Ellipse.Fill><SolidColorBrush Color="#D4A5A5"/></Ellipse.Fill>
-        </Ellipse>
-
-        <!-- ===== ХЕДЕР (прозрачный, поверх фона) ===== -->
-        <Border VerticalAlignment="Top" Height="80">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Color="#60000000" Offset="0"/>
-                    <GradientStop Color="#00000000" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
-            <Grid Margin="60,0">
-                <!-- Логотип -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-                    <TextBlock Text="🏠" FontSize="24" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBlock Text="HomeEstate" FontSize="22" FontWeight="Bold"
-                               Foreground="White" VerticalAlignment="Center"/>
-                </StackPanel>
-
-                <!-- Навигация по центру -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button Content="Каталог" Command="{Binding ShowPropertiesCommand}"
-                            Background="Transparent" BorderThickness="0"
-                            Foreground="White" FontSize="16" Cursor="Hand"
-                            Padding="0" Margin="0,0,50,0">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="BorderThickness" Value="0"/>
-                                <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="FontSize" Value="16"/>
-                                <Setter Property="Cursor" Value="Hand"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <TextBlock Text="{TemplateBinding Content}"
-                                                       Foreground="{TemplateBinding Foreground}"
-                                                       FontSize="{TemplateBinding FontSize}"/>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                    <Button Content="О компании"
-                            Background="Transparent" BorderThickness="0"
-                            Foreground="#CCffffff" FontSize="16" Cursor="Hand" Padding="0">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <TextBlock Text="{TemplateBinding Content}"
-                                                       Foreground="{TemplateBinding Foreground}"
-                                                       FontSize="{TemplateBinding FontSize}"/>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="Foreground" Value="#CCffffff"/>
-                                <Setter Property="FontSize" Value="16"/>
-                                <Setter Property="Cursor" Value="Hand"/>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </StackPanel>
-
-                <!-- Правая часть: язык + тема + войти -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <!-- Язык -->
-                    <Button Command="{Binding SwitchLanguageCommand}"
-                            Margin="0,0,16,0" Cursor="Hand">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="#30ffffff" CornerRadius="6"
-                                                    Padding="10,4">
-                                                <TextBlock Text="{Binding CurrentLanguage}"
-                                                           Foreground="White" FontSize="13" FontWeight="SemiBold"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-
-                    <!-- Тема -->
-                    <Button Command="{Binding SwitchThemeCommand}"
-                            Margin="0,0,16,0" Cursor="Hand">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="#30ffffff" CornerRadius="6"
-                                                    Padding="8,4">
-                                                <TextBlock Text="{Binding ThemeIcon}"
-                                                           Foreground="White" FontSize="16"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-
-                    <!-- Войти -->
-                    <Button Command="{Binding GoToLoginCommand}" Cursor="Hand">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="Bd" Background="#D4A5A5" CornerRadius="8"
-                                                    Padding="28,8">
-                                                <TextBlock Text="Войти" Foreground="White"
-                                                           FontSize="15" FontWeight="SemiBold"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Bd" Property="Background" Value="#C49595"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- ===== HERO КОНТЕНТ (центрированный) ===== -->
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                    MaxWidth="960" Margin="60,0">
-
-            <!-- Бейдж -->
-            <Border Background="#30D4A5A5" CornerRadius="20" Padding="16,6"
-                    HorizontalAlignment="Center" Margin="0,0,0,24">
-                <TextBlock Text="🏆 Агентство недвижимости №1 в вашем городе"
-                           Foreground="#D4A5A5" FontSize="13" FontWeight="SemiBold"/>
-            </Border>
+        <!-- Герой-контент -->
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                    MaxWidth="1000" Margin="24,0">
 
             <!-- Заголовок -->
             <TextBlock Text="Найдите дом своей мечты"
-                       FontSize="62" FontWeight="Bold" Foreground="White"
+                       FontSize="58" FontWeight="Bold" Foreground="White"
                        TextAlignment="Center" TextWrapping="Wrap"
-                       LineHeight="72" Margin="0,0,0,20"/>
+                       LineHeight="68" Margin="0,0,0,14"/>
 
             <!-- Подзаголовок -->
-            <TextBlock Text="Тысячи объектов недвижимости — квартиры, дома, коммерческие помещения.&#10;Профессиональные риелторы помогут найти идеальный вариант."
-                       FontSize="17" Foreground="#BBFFFFFF"
+            <TextBlock Text="Квартиры, дома и коммерческая недвижимость — поможем найти идеальный вариант."
+                       FontSize="17" Foreground="#CCFFFFFF"
                        TextAlignment="Center" TextWrapping="Wrap"
-                       LineHeight="26" Margin="0,0,0,48"/>
+                       LineHeight="26" Margin="0,0,0,32"/>
 
-            <!-- ===== ПОИСКОВАЯ ПАНЕЛЬ ===== -->
-            <Border Background="White" CornerRadius="12">
-                <Border.Effect>
-                    <DropShadowEffect Color="#000000" Opacity="0.25" BlurRadius="30" ShadowDepth="8"/>
-                </Border.Effect>
-                <Grid Height="60">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="1"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="1"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+            <!-- Поисковая панель -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MaxWidth="900"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                    <!-- Тип объекта -->
-                    <Grid Grid.Column="0" Margin="20,0,20,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Тип объекта" FontSize="11"
-                                   Foreground="#999" Margin="0,10,0,2"/>
-                        <ComboBox Grid.Row="1" ItemsSource="{Binding PropertyTypes}"
+                <!-- Поля поиска -->
+                <Border Grid.Column="0" Background="White" CornerRadius="14" Height="62">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#000000" Opacity="0.25" BlurRadius="28" ShadowDepth="4"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Тип объекта -->
+                        <ComboBox Grid.Column="0"
+                                  Style="{StaticResource TransparentComboBox}"
+                                  ItemsSource="{Binding PropertyTypes}"
                                   SelectedItem="{Binding SelectedPropertyType}"
-                                  BorderThickness="0" Background="Transparent"
-                                  FontSize="14" Foreground="#333" Padding="0"
-                                  VerticalContentAlignment="Center"/>
-                    </Grid>
+                                  Margin="20,0"/>
 
-                    <!-- Разделитель -->
-                    <Rectangle Grid.Column="1" Fill="#E5E5E5" Margin="0,12"/>
+                        <Rectangle Grid.Column="1" Fill="#E0E0E0" Margin="0,16"/>
 
-                    <!-- Комнат -->
-                    <Grid Grid.Column="2" Margin="20,0,20,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Комнат" FontSize="11"
-                                   Foreground="#999" Margin="0,10,0,2"/>
-                        <ComboBox Grid.Row="1" ItemsSource="{Binding RoomOptions}"
+                        <!-- Комнат -->
+                        <ComboBox Grid.Column="2"
+                                  Style="{StaticResource TransparentComboBox}"
+                                  ItemsSource="{Binding RoomOptions}"
                                   SelectedItem="{Binding SelectedRooms}"
-                                  BorderThickness="0" Background="Transparent"
-                                  FontSize="14" Foreground="#333" Padding="0"
-                                  VerticalContentAlignment="Center"/>
+                                  Margin="20,0"/>
+
+                        <Rectangle Grid.Column="3" Fill="#E0E0E0" Margin="0,16"/>
+
+                        <!-- Цена до (с плейсхолдером) -->
+                        <Grid Grid.Column="4" Margin="20,0">
+                            <TextBox Text="{Binding MaxPrice, UpdateSourceTrigger=PropertyChanged}"
+                                     BorderThickness="0" Background="Transparent"
+                                     FontSize="15" Foreground="#222"
+                                     HorizontalContentAlignment="Left"
+                                     VerticalContentAlignment="Center"/>
+                            <TextBlock Text="Цена до, BYN"
+                                       IsHitTestVisible="False"
+                                       HorizontalAlignment="Left" VerticalAlignment="Center"
+                                       Foreground="Black" Opacity="0.60" FontSize="15">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding MaxPrice}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
                     </Grid>
+                </Border>
 
-                    <!-- Разделитель -->
-                    <Rectangle Grid.Column="3" Fill="#E5E5E5" Margin="0,12"/>
+                <!-- Кнопка Показать объекты (отдельная) -->
+                <Button Grid.Column="2" Command="{Binding ShowPropertiesCommand}" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" Background="#3A7D4F"
+                                                CornerRadius="14" Padding="36,0" Height="62">
+                                            <Border.Effect>
+                                                <DropShadowEffect Color="#000000" Opacity="0.25" BlurRadius="28" ShadowDepth="4"/>
+                                            </Border.Effect>
+                                            <TextBlock Text="Показать объекты"
+                                                       Foreground="White" FontSize="15" FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#4A9061"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#2D6340"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
 
-                    <!-- Цена -->
-                    <Grid Grid.Column="4" Margin="20,0,20,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Цена до, ₽" FontSize="11"
-                                   Foreground="#999" Margin="0,10,0,2"/>
-                        <TextBox Grid.Row="1" Text="{Binding MaxPrice, UpdateSourceTrigger=PropertyChanged}"
-                                 BorderThickness="0" Background="Transparent"
-                                 FontSize="14" Foreground="#333" Padding="0"
-                                 VerticalContentAlignment="Center"/>
-                    </Grid>
-
-                    <!-- Кнопка поиска -->
-                    <Button Grid.Column="5" Command="{Binding ShowPropertiesCommand}"
-                            Cursor="Hand" Height="60">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="Bd" Background="#D4A5A5"
-                                                    CornerRadius="0,12,12,0" Padding="36,0">
-                                                <TextBlock Text="Показать объекты"
-                                                           Foreground="White" FontSize="15"
-                                                           FontWeight="SemiBold"
-                                                           VerticalAlignment="Center"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Bd" Property="Background" Value="#C49595"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </Grid>
-            </Border>
-
-            <!-- Подсказка под поиском -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <TextBlock Text="Популярные запросы: " Foreground="#80FFFFFF" FontSize="13"/>
-                <TextBlock Text="Квартира 2к" Foreground="#D4A5A5" FontSize="13"
-                           Cursor="Hand" Margin="0,0,16,0"/>
-                <TextBlock Text="Новостройки" Foreground="#D4A5A5" FontSize="13"
-                           Cursor="Hand" Margin="0,0,16,0"/>
-                <TextBlock Text="Дом с участком" Foreground="#D4A5A5" FontSize="13"
-                           Cursor="Hand"/>
+            <!-- Популярные запросы -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+                <TextBlock Text="Популярное:" Foreground="#80FFFFFF" FontSize="13"
+                           VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <Button Command="{Binding SetTagSearchCommand}" CommandParameter="apartment_2k"
+                        Cursor="Hand" Margin="0,0,8,0">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" Background="#20FFFFFF" CornerRadius="20" Padding="16,6">
+                                            <TextBlock Text="Квартира 2к" Foreground="White" FontSize="13"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#38FFFFFF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Command="{Binding SetTagSearchCommand}" CommandParameter="apartment_new"
+                        Cursor="Hand" Margin="0,0,8,0">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" Background="#20FFFFFF" CornerRadius="20" Padding="16,6">
+                                            <TextBlock Text="Новостройки" Foreground="White" FontSize="13"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#38FFFFFF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Command="{Binding SetTagSearchCommand}" CommandParameter="house"
+                        Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="Bd" Background="#20FFFFFF" CornerRadius="20" Padding="16,6">
+                                            <TextBlock Text="Дом с участком" Foreground="White" FontSize="13"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#38FFFFFF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </StackPanel>
         </StackPanel>
 
-        <!-- Статистика внизу -->
+        <!-- Статистика снизу -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom"
-                    HorizontalAlignment="Center" Margin="0,0,0,40">
-            <StackPanel HorizontalAlignment="Center" Margin="40,0">
-                <TextBlock Text="500+" FontSize="32" FontWeight="Bold" Foreground="White"
-                           HorizontalAlignment="Center"/>
-                <TextBlock Text="Объектов в каталоге" FontSize="13" Foreground="#80FFFFFF"
-                           HorizontalAlignment="Center"/>
+                    HorizontalAlignment="Center" Margin="0,0,0,28">
+            <StackPanel HorizontalAlignment="Center" Margin="36,0">
+                <TextBlock Text="500+" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                <TextBlock Text="Объектов в каталоге" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
             </StackPanel>
-            <Rectangle Width="1" Height="40" Fill="#30FFFFFF" Margin="0,8"/>
-            <StackPanel HorizontalAlignment="Center" Margin="40,0">
-                <TextBlock Text="150+" FontSize="32" FontWeight="Bold" Foreground="White"
-                           HorizontalAlignment="Center"/>
-                <TextBlock Text="Довольных клиентов" FontSize="13" Foreground="#80FFFFFF"
-                           HorizontalAlignment="Center"/>
+            <Rectangle Width="1" Height="32" Fill="#28FFFFFF" Margin="0,6"/>
+            <StackPanel HorizontalAlignment="Center" Margin="36,0">
+                <TextBlock Text="150+" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                <TextBlock Text="Довольных клиентов" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
             </StackPanel>
-            <Rectangle Width="1" Height="40" Fill="#30FFFFFF" Margin="0,8"/>
-            <StackPanel HorizontalAlignment="Center" Margin="40,0">
-                <TextBlock Text="10+" FontSize="32" FontWeight="Bold" Foreground="White"
-                           HorizontalAlignment="Center"/>
-                <TextBlock Text="Опытных риелторов" FontSize="13" Foreground="#80FFFFFF"
-                           HorizontalAlignment="Center"/>
+            <Rectangle Width="1" Height="32" Fill="#28FFFFFF" Margin="0,6"/>
+            <StackPanel HorizontalAlignment="Center" Margin="36,0">
+                <TextBlock Text="10+" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                <TextBlock Text="Опытных риелторов" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
             </StackPanel>
         </StackPanel>
-
     </Grid>
 </UserControl>
+
