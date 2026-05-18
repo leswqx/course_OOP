@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using Microsoft.EntityFrameworkCore;
+using MSM.Data.Context;
 using MSM.Models;
 using MSM.Models.Entities;
 using MSM.Services.Interfaces;
@@ -34,7 +36,12 @@ public partial class PropertyDetailViewModel : ViewModelBase
     private readonly IFavoriteService    _favoriteService;
     private readonly IAppointmentService _appointmentService;
     private readonly INavigationService  _navigationService;
+    private readonly AppDbContext        _context;
 
+    private const int WorkdayStartHour = 9;
+    private const int WorkdayEndHour   = 18;
+
+    private readonly SemaphoreSlim   _calSem          = new(1, 1);
     private List<BitmapImage>       _images          = new();
     private List<Appointment>       _realtorAppts    = new();
     private HashSet<DateTime>       _blockedDates    = new();
@@ -128,12 +135,14 @@ public partial class PropertyDetailViewModel : ViewModelBase
         IPropertyService    propertyService,
         IFavoriteService    favoriteService,
         IAppointmentService appointmentService,
-        INavigationService  navigationService)
+        INavigationService  navigationService,
+        AppDbContext        context)
     {
         _propertyService    = propertyService;
         _favoriteService    = favoriteService;
         _appointmentService = appointmentService;
         _navigationService  = navigationService;
+        _context            = context;
     }
 
     public override void OnNavigatedTo(object? parameter)
@@ -170,6 +179,7 @@ public partial class PropertyDetailViewModel : ViewModelBase
 
             await LoadPriceHistoryAsync(id);
         }
+        catch (ObjectDisposedException) { }
         catch (Exception ex) { ErrorMessage = $"Ошибка: {ex.Message}"; }
         finally { IsLoading = false; }
     }
@@ -205,6 +215,8 @@ public partial class PropertyDetailViewModel : ViewModelBase
         {
             var values = history.Select(h => (double)h.Price).ToArray();
             var labels = history.Select(h => h.ChangedAt.ToString("dd.MM.yy")).ToArray();
+            // LiveCharts canvas needs a frame to initialize before Series data arrives
+            await Task.Delay(80);
             PriceHistorySeries = new ISeries[]
             {
                 new LineSeries<double>
@@ -271,11 +283,28 @@ public partial class PropertyDetailViewModel : ViewModelBase
 
     // ── Booking Calendar ──────────────────────────────────────
 
+    // Загружает только записи риелтора для текущего отображаемого месяца
+    private async Task LoadCalendarAppointmentsAsync()
+    {
+        if (Property == null) return;
+        var monthStart = new DateTime(BookCalYear, BookCalMonth, 1);
+        var monthEnd   = monthStart.AddMonths(1);
+        _realtorAppts = await _context.Appointments
+            .Where(a => a.RealtorId == Property.RealtorId
+                     && a.SlotStart >= monthStart
+                     && a.SlotStart < monthEnd
+                     && a.Status != AppointmentStatus.Cancelled)
+            .ToListAsync();
+    }
+
     [RelayCommand]
     private async Task OpenBookingCalendarAsync()
     {
         if (Property == null) return;
-        _realtorAppts = (await _appointmentService.GetByRealtorIdAsync(Property.RealtorId)).ToList();
+        BookCalYear  = DateTime.Today.Year;
+        BookCalMonth = DateTime.Today.Month;
+
+        await LoadCalendarAppointmentsAsync();
 
         var schedules = await _appointmentService.GetBlockedSchedulesAsync(Property.RealtorId);
         _blockedDates.Clear();
@@ -284,8 +313,6 @@ public partial class PropertyDetailViewModel : ViewModelBase
             for (var d = s.SlotStart.Date; d <= s.SlotEnd.Date; d = d.AddDays(1))
                 _blockedDates.Add(d);
         }
-        BookCalYear   = DateTime.Today.Year;
-        BookCalMonth  = DateTime.Today.Month;
         BookSelectedDate   = null;
         BookSelectedSlot   = "";
         ScheduleComment    = "";
@@ -305,27 +332,39 @@ public partial class PropertyDetailViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void BookCalPrev()
+    private async Task BookCalPrevAsync()
     {
-        if (BookCalMonth == 1) { BookCalMonth = 12; BookCalYear--; }
-        else BookCalMonth--;
-        BookSelectedDate = null;
-        BookSelectedSlot = "";
-        BookSlots.Clear();
-        OnPropertyChanged(nameof(BookCalMonthLabel));
-        BuildBookCalendar();
+        await _calSem.WaitAsync();
+        try
+        {
+            if (BookCalMonth == 1) { BookCalMonth = 12; BookCalYear--; }
+            else BookCalMonth--;
+            BookSelectedDate = null;
+            BookSelectedSlot = "";
+            BookSlots.Clear();
+            OnPropertyChanged(nameof(BookCalMonthLabel));
+            await LoadCalendarAppointmentsAsync();
+            BuildBookCalendar();
+        }
+        finally { _calSem.Release(); }
     }
 
     [RelayCommand]
-    private void BookCalNext()
+    private async Task BookCalNextAsync()
     {
-        if (BookCalMonth == 12) { BookCalMonth = 1; BookCalYear++; }
-        else BookCalMonth++;
-        BookSelectedDate = null;
-        BookSelectedSlot = "";
-        BookSlots.Clear();
-        OnPropertyChanged(nameof(BookCalMonthLabel));
-        BuildBookCalendar();
+        await _calSem.WaitAsync();
+        try
+        {
+            if (BookCalMonth == 12) { BookCalMonth = 1; BookCalYear++; }
+            else BookCalMonth++;
+            BookSelectedDate = null;
+            BookSelectedSlot = "";
+            BookSlots.Clear();
+            OnPropertyChanged(nameof(BookCalMonthLabel));
+            await LoadCalendarAppointmentsAsync();
+            BuildBookCalendar();
+        }
+        finally { _calSem.Release(); }
     }
 
     [RelayCommand]
@@ -340,9 +379,10 @@ public partial class PropertyDetailViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void SelectBookSlot(string time)
+    private void SelectBookSlot(BookingSlotVm slot)
     {
-        BookSelectedSlot  = time;
+        if (!slot.IsAvailable) return;
+        BookSelectedSlot  = slot.Time;
         ScheduleErrorText = null;
     }
 
@@ -356,34 +396,40 @@ public partial class PropertyDetailViewModel : ViewModelBase
         var slotStart = BookSelectedDate.Value.Date + time;
         var slotEnd   = slotStart.AddHours(1);
 
+        if (slotStart <= DateTime.Now)
+        {
+            ScheduleErrorText = "Нельзя записаться на прошедшее время.";
+            return;
+        }
+
         IsSubmittingSchedule = true;
         ScheduleSuccess = ScheduleSlotTaken = false;
         ScheduleErrorText = null;
 
         try
         {
-            // Проверка дубля: активная запись на этот объект у текущего клиента
-            var clientAppts = await _appointmentService.GetByClientIdAsync(Session.CurrentUser.Id);
-            var duplicate   = clientAppts.Any(a =>
-                a.PropertyId == Property.Id && a.Status is "new" or "confirmed");
-            if (duplicate)
-            {
-                ScheduleErrorText = "У вас уже есть активная запись на этот объект.";
-                return;
-            }
-
-            var available = await _appointmentService.IsSlotAvailableAsync(
-                Property.RealtorId, slotStart, slotEnd);
-            if (!available) { ScheduleSlotTaken = true; return; }
-
-            await _appointmentService.CreateAsync(
+            var result = await _appointmentService.BookSlotAsync(
                 Property.Id, Session.CurrentUser.Id, Property.RealtorId,
                 slotStart, slotEnd,
                 string.IsNullOrWhiteSpace(ScheduleComment) ? null : ScheduleComment);
 
-            ScheduleSuccess    = true;
-            ScheduleComment    = "";
-            BookSelectedSlot   = "";
+            if (result == MSM.Services.Interfaces.BookingStatus.AlreadyBooked)
+            {
+                ScheduleErrorText = "У вас уже есть активная запись на этот объект.";
+                return;
+            }
+            if (result == MSM.Services.Interfaces.BookingStatus.SlotTaken)
+            {
+                ScheduleSlotTaken = true;
+                return;
+            }
+
+            ScheduleSuccess  = true;
+            ScheduleComment  = "";
+            BookSelectedSlot = "";
+
+            await LoadCalendarAppointmentsAsync();
+            if (BookSelectedDate.HasValue) BuildBookSlots(BookSelectedDate.Value);
         }
         catch (Exception ex) { ScheduleErrorText = $"Ошибка: {ex.Message}"; }
         finally { IsSubmittingSchedule = false; }
@@ -407,11 +453,11 @@ public partial class PropertyDetailViewModel : ViewModelBase
 
             bool isBlocked = _blockedDates.Contains(date.Date);
             // Доступен ли день: не заблокирован, хотя бы один слот (9-18) не занят и дата не в прошлом
-            bool hasFreeSLot = !isPast && !isBlocked && Enumerable.Range(9, 10).Any(h =>
+            bool hasFreeSLot = !isPast && !isBlocked && Enumerable.Range(WorkdayStartHour, WorkdayEndHour - WorkdayStartHour + 1).Any(h =>
                 !_realtorAppts.Any(a =>
                     a.SlotStart.Date == date &&
                     a.SlotStart.Hour == h &&
-                    a.Status != "cancelled"));
+                    a.Status != AppointmentStatus.Cancelled));
 
             string dot = isPast        ? "#CCCCCC"
                        : isBlocked     ? "#9E9E9E"
@@ -439,10 +485,10 @@ public partial class PropertyDetailViewModel : ViewModelBase
     {
         BookSlots.Clear();
         bool isDayBlocked = _blockedDates.Contains(date.Date);
-        for (int h = 9; h <= 18; h++)
+        for (int h = WorkdayStartHour; h <= WorkdayEndHour; h++)
         {
             bool taken = isDayBlocked || _realtorAppts.Any(a =>
-                a.SlotStart.Date == date && a.SlotStart.Hour == h && a.Status != "cancelled");
+                a.SlotStart.Date == date && a.SlotStart.Hour == h && a.Status != AppointmentStatus.Cancelled);
             BookSlots.Add(new BookingSlotVm
             {
                 Time        = $"{h:D2}:00",
@@ -460,6 +506,18 @@ public partial class PropertyDetailViewModel : ViewModelBase
 
     [RelayCommand]
     private void GoBack() => _navigationService.GoBack();
+
+    [RelayCommand]
+    private void OpenMap()
+    {
+        if (Property == null) return;
+        var query = Uri.EscapeDataString($"{Property.City} {Property.Address}");
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+        {
+            FileName = $"https://yandex.ru/maps/?text={query}",
+            UseShellExecute = true
+        });
+    }
 
     private static BitmapImage? ToImage(byte[]? data)
     {

@@ -41,15 +41,6 @@ public class AuthService : IAuthService
         return null;
     }
 
-    public async Task SetBlockedAsync(int userId, bool isBlocked)
-    {
-        var user = await _unitOfWork.Users.GetByIdAsync(userId);
-        if (user == null) return;
-        user.IsBlocked = isBlocked;
-        _unitOfWork.Users.Update(user);
-        await _unitOfWork.SaveChangesAsync();
-    }
-
     public async Task<User?> RegisterAsync(string login, string password, string email, string fullName, string? phone = null)
     {
         if (await _unitOfWork.Users.AnyAsync(u => u.Login == login))
@@ -85,16 +76,6 @@ public class AuthService : IAuthService
         await _unitOfWork.SaveChangesAsync();
 
         return true;
-    }
-
-    public async Task<User?> GetUserByIdAsync(int id)
-    {
-        return await _unitOfWork.Users.GetByIdAsync(id);
-    }
-
-    public async Task<User?> GetUserByLoginAsync(string login)
-    {
-        return await _unitOfWork.Users.FirstOrDefaultAsync(u => u.Login == login);
     }
 
     public async Task UpdateProfileAsync(User user)
@@ -135,6 +116,32 @@ public class PropertyService : IPropertyService
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
+    private static IQueryable<Property> ApplyFilters(
+        IQueryable<Property> query,
+        decimal? minPrice, decimal? maxPrice,
+        double? minArea, double? maxArea,
+        int? minRooms, int? maxRooms,
+        int? minBathrooms, int? maxBathrooms,
+        string? city, string? district, string? propertyType,
+        string? searchQuery, bool? hasMortgage, bool? hasRenovation)
+    {
+        if (minPrice.HasValue)     query = query.Where(p => p.Price >= minPrice.Value);
+        if (maxPrice.HasValue)     query = query.Where(p => p.Price <= maxPrice.Value);
+        if (minArea.HasValue)      query = query.Where(p => p.Area >= minArea.Value);
+        if (maxArea.HasValue)      query = query.Where(p => p.Area <= maxArea.Value);
+        if (minRooms.HasValue)     query = query.Where(p => p.Rooms >= minRooms.Value);
+        if (maxRooms.HasValue)     query = query.Where(p => p.Rooms <= maxRooms.Value);
+        if (minBathrooms.HasValue) query = query.Where(p => p.Bathrooms.HasValue && p.Bathrooms >= minBathrooms.Value);
+        if (maxBathrooms.HasValue) query = query.Where(p => p.Bathrooms.HasValue && p.Bathrooms <= maxBathrooms.Value);
+        if (!string.IsNullOrEmpty(city))         query = query.Where(p => p.City == city);
+        if (!string.IsNullOrEmpty(district))     query = query.Where(p => p.District != null && p.District.Contains(district));
+        if (!string.IsNullOrEmpty(propertyType)) query = query.Where(p => p.PropertyType == propertyType);
+        if (!string.IsNullOrEmpty(searchQuery))  query = query.Where(p => p.Title.Contains(searchQuery) || p.Description.Contains(searchQuery));
+        if (hasMortgage == true)   query = query.Where(p => p.MortgageAvailable);
+        if (hasRenovation == true) query = query.Where(p => p.HasRepair);
+        return query;
+    }
+
     public async Task<IEnumerable<Property>> GetFilteredAsync(
         decimal? minPrice = null,
         decimal? maxPrice = null,
@@ -150,50 +157,57 @@ public class PropertyService : IPropertyService
         string? searchQuery = null,
         bool? hasMortgage = null,
         bool? hasRenovation = null,
-        string? sortBy = null)
+        string? sortBy = null,
+        int skip = 0,
+        int take = 0)
     {
-        var query = _unitOfWork.Properties.Query()
-            .Include(p => p.Realtor)
-            .Include(p => p.Images)
-            .Where(p => p.Status == "active");
+        var query = ApplyFilters(
+            _unitOfWork.Properties.Query()
+                .Include(p => p.Realtor)
+                .Include(p => p.Images)
+                .Where(p => p.Status == "active"),
+            minPrice, maxPrice, minArea, maxArea, minRooms, maxRooms,
+            minBathrooms, maxBathrooms, city, district, propertyType,
+            searchQuery, hasMortgage, hasRenovation);
 
-        if (minPrice.HasValue)
-            query = query.Where(p => p.Price >= minPrice.Value);
-        if (maxPrice.HasValue)
-            query = query.Where(p => p.Price <= maxPrice.Value);
-        if (minArea.HasValue)
-            query = query.Where(p => p.Area >= minArea.Value);
-        if (maxArea.HasValue)
-            query = query.Where(p => p.Area <= maxArea.Value);
-        if (minRooms.HasValue)
-            query = query.Where(p => p.Rooms >= minRooms.Value);
-        if (maxRooms.HasValue)
-            query = query.Where(p => p.Rooms <= maxRooms.Value);
-        if (minBathrooms.HasValue)
-            query = query.Where(p => p.Bathrooms.HasValue && p.Bathrooms >= minBathrooms.Value);
-        if (maxBathrooms.HasValue)
-            query = query.Where(p => p.Bathrooms.HasValue && p.Bathrooms <= maxBathrooms.Value);
-        if (!string.IsNullOrEmpty(city))
-            query = query.Where(p => p.City == city);
-        if (!string.IsNullOrEmpty(district))
-            query = query.Where(p => p.District != null && p.District.Contains(district));
-        if (!string.IsNullOrEmpty(propertyType))
-            query = query.Where(p => p.PropertyType == propertyType);
-        if (!string.IsNullOrEmpty(searchQuery))
-            query = query.Where(p => p.Title.Contains(searchQuery) || p.Description.Contains(searchQuery));
-        if (hasMortgage == true)
-            query = query.Where(p => p.MortgageAvailable);
-        if (hasRenovation == true)
-            query = query.Where(p => p.HasRepair);
-
-        return sortBy switch
+        IQueryable<Property> ordered = sortBy switch
         {
-            "price_asc"  => await query.OrderBy(p => p.Price).ToListAsync(),
-            "price_desc" => await query.OrderByDescending(p => p.Price).ToListAsync(),
-            "area_asc"   => await query.OrderBy(p => p.Area).ToListAsync(),
-            "area_desc"  => await query.OrderByDescending(p => p.Area).ToListAsync(),
-            _            => await query.OrderByDescending(p => p.CreatedAt).ToListAsync()
+            "price_asc"  => query.OrderBy(p => p.Price),
+            "price_desc" => query.OrderByDescending(p => p.Price),
+            "area_asc"   => query.OrderBy(p => p.Area),
+            "area_desc"  => query.OrderByDescending(p => p.Area),
+            _            => query.OrderByDescending(p => p.CreatedAt)
         };
+
+        if (skip > 0) ordered = ordered.Skip(skip);
+        if (take > 0) ordered = ordered.Take(take);
+
+        return await ordered.ToListAsync();
+    }
+
+    public async Task<int> GetFilteredCountAsync(
+        decimal? minPrice = null,
+        decimal? maxPrice = null,
+        double? minArea = null,
+        double? maxArea = null,
+        int? minRooms = null,
+        int? maxRooms = null,
+        int? minBathrooms = null,
+        int? maxBathrooms = null,
+        string? city = null,
+        string? district = null,
+        string? propertyType = null,
+        string? searchQuery = null,
+        bool? hasMortgage = null,
+        bool? hasRenovation = null)
+    {
+        var query = ApplyFilters(
+            _unitOfWork.Properties.Query().Where(p => p.Status == "active"),
+            minPrice, maxPrice, minArea, maxArea, minRooms, maxRooms,
+            minBathrooms, maxBathrooms, city, district, propertyType,
+            searchQuery, hasMortgage, hasRenovation);
+
+        return await query.CountAsync();
     }
 
     public async Task<IEnumerable<string>> GetDistinctCitiesAsync()
@@ -224,28 +238,39 @@ public class PropertyService : IPropertyService
         property.UpdatedAt = DateTime.Now;
         property.Status = "active";
 
-        await _unitOfWork.Properties.AddAsync(property);
-        await _unitOfWork.SaveChangesAsync();
-
-        await _unitOfWork.PriceHistories.AddAsync(new PriceHistory
+        await _unitOfWork.BeginTransactionAsync();
+        try
         {
-            PropertyId = property.Id,
-            Price = property.Price,
-            ChangedAt = property.CreatedAt
-        });
-        await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.Properties.AddAsync(property);
+            await _unitOfWork.SaveChangesAsync();
 
-        var imageList = images.Select((img, index) => new PropertyImage
+            await _unitOfWork.PriceHistories.AddAsync(new PriceHistory
+            {
+                PropertyId = property.Id,
+                Price = property.Price,
+                ChangedAt = property.CreatedAt
+            });
+            await _unitOfWork.SaveChangesAsync();
+
+            var imageList = images.Select((img, index) => new PropertyImage
+            {
+                PropertyId = property.Id,
+                ImageData = img.Data,
+                FileName = img.FileName,
+                IsMain = img.IsMain,
+                SortOrder = index
+            }).ToList();
+
+            await _unitOfWork.PropertyImages.AddRangeAsync(imageList);
+            await _unitOfWork.SaveChangesAsync();
+
+            await _unitOfWork.CommitTransactionAsync();
+        }
+        catch
         {
-            PropertyId = property.Id,
-            ImageData = img.Data,
-            FileName = img.FileName,
-            IsMain = img.IsMain,
-            SortOrder = index
-        }).ToList();
-
-        await _unitOfWork.PropertyImages.AddRangeAsync(imageList);
-        await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
 
         // Автооповещение клиентов когда активных объектов стало кратно 10
         var activeCount = await _unitOfWork.Properties.Query()
@@ -259,13 +284,6 @@ public class PropertyService : IPropertyService
         }
 
         return property;
-    }
-
-    public async Task UpdateAsync(Property property)
-    {
-        property.UpdatedAt = DateTime.Now;
-        _unitOfWork.Properties.Update(property);
-        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int id)
@@ -283,16 +301,6 @@ public class PropertyService : IPropertyService
         return await _unitOfWork.Properties.Query()
             .Include(p => p.Images)
             .Where(p => p.RealtorId == realtorId)
-            .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Property>> GetActivePropertiesAsync()
-    {
-        return await _unitOfWork.Properties.Query()
-            .Include(p => p.Realtor)
-            .Include(p => p.Images)
-            .Where(p => p.Status == "active")
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
     }
@@ -388,6 +396,54 @@ public class AppointmentService : IAppointmentService
         _notificationService = notificationService;
     }
 
+    public async Task<BookingStatus> BookSlotAsync(int propertyId, int clientId, int realtorId, DateTime slotStart, DateTime slotEnd, string? comment = null)
+    {
+        await _unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+        try
+        {
+            var duplicate = await _unitOfWork.Appointments.AnyAsync(a =>
+                a.ClientId == clientId &&
+                a.PropertyId == propertyId &&
+                (a.Status == AppointmentStatus.New || a.Status == AppointmentStatus.Confirmed));
+            if (duplicate)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return BookingStatus.AlreadyBooked;
+            }
+
+            var conflict = await _unitOfWork.Appointments.AnyAsync(a =>
+                a.RealtorId == realtorId &&
+                a.Status != AppointmentStatus.Cancelled &&
+                a.SlotStart < slotEnd && a.SlotEnd > slotStart);
+            if (conflict)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return BookingStatus.SlotTaken;
+            }
+
+            var appointment = new Appointment
+            {
+                PropertyId = propertyId,
+                ClientId   = clientId,
+                RealtorId  = realtorId,
+                SlotStart  = slotStart,
+                SlotEnd    = slotEnd,
+                Comment    = comment,
+                Status     = AppointmentStatus.New,
+                CreatedAt  = DateTime.Now
+            };
+            await _unitOfWork.Appointments.AddAsync(appointment);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+            return BookingStatus.Success;
+        }
+        catch
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
+    }
+
     public async Task<Appointment> CreateAsync(int propertyId, int clientId, int realtorId, DateTime slotStart, DateTime slotEnd, string? comment = null)
     {
         var appointment = new Appointment
@@ -398,7 +454,7 @@ public class AppointmentService : IAppointmentService
             SlotStart = slotStart,
             SlotEnd = slotEnd,
             Comment = comment,
-            Status = "new",
+            Status = AppointmentStatus.New,
             CreatedAt = DateTime.Now
         };
 
@@ -433,7 +489,7 @@ public class AppointmentService : IAppointmentService
             .ToListAsync();
     }
 
-    public async Task UpdateStatusAsync(int id, string status, string? comment = null)
+    public async Task UpdateStatusAsync(int id, AppointmentStatus status, string? comment = null)
     {
         var appointment = await _unitOfWork.Appointments.Query()
             .Include(a => a.Client)
@@ -448,7 +504,7 @@ public class AppointmentService : IAppointmentService
         await _unitOfWork.SaveChangesAsync();
 
         // Уведомляем клиента об изменении статуса
-        if (appointment.Client != null && status is "confirmed" or "cancelled")
+        if (appointment.Client != null && status is AppointmentStatus.Confirmed or AppointmentStatus.Cancelled or AppointmentStatus.Completed)
         {
             _ = _notificationService.SendAppointmentStatusChangedAsync(
                 appointment.Client,
@@ -463,7 +519,7 @@ public class AppointmentService : IAppointmentService
     {
         var query = _unitOfWork.Appointments.Query()
             .Where(a => a.RealtorId == realtorId)
-            .Where(a => a.Status != "cancelled")
+            .Where(a => a.Status != AppointmentStatus.Cancelled)
             .Where(a => a.SlotStart < slotEnd && a.SlotEnd > slotStart);
 
         if (excludeAppointmentId.HasValue)
@@ -507,6 +563,28 @@ public class FavoriteService : IFavoriteService
             .ThenInclude(p => p!.Realtor)
             .Select(f => f.Property!)
             .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Property>> GetUserFavoritesPagedAsync(int userId, int skip, int take)
+    {
+        return await _unitOfWork.Favorites.Query()
+            .Where(f => f.UserId == userId)
+            .OrderByDescending(f => f.AddedAt)
+            .Include(f => f.Property)
+            .ThenInclude(p => p!.Images)
+            .Include(f => f.Property)
+            .ThenInclude(p => p!.Realtor)
+            .Skip(skip)
+            .Take(take)
+            .Select(f => f.Property!)
+            .ToListAsync();
+    }
+
+    public async Task<int> GetUserFavoritesCountAsync(int userId)
+    {
+        return await _unitOfWork.Favorites.Query()
+            .Where(f => f.UserId == userId)
+            .CountAsync();
     }
 
     public async Task<bool> IsFavoriteAsync(int userId, int propertyId)
@@ -553,27 +631,39 @@ public class ReviewService : IReviewService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Review> CreateAsync(int userId, int? propertyId, int? realtorId, int rating, string? comment = null)
+    public async Task<Review> CreateAsync(int userId, int? propertyId, int? realtorId, int rating, string? comment = null, int? appointmentId = null)
     {
-        // Блокируем повторный отзыв одному риелтору от того же клиента
-        if (realtorId.HasValue && await HasReviewAsync(userId, realtorId.Value))
-            throw new InvalidOperationException("Вы уже оставляли отзыв этому риелтору.");
-
-        var review = new Review
+        await _unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+        try
         {
-            UserId = userId,
-            PropertyId = propertyId,
-            RealtorId = realtorId,
-            Rating = rating,
-            Comment = comment,
-            IsApproved = false,
-            CreatedAt = DateTime.Now
-        };
+            if (appointmentId.HasValue && await HasReviewForAppointmentAsync(appointmentId.Value))
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new InvalidOperationException("Вы уже оставляли отзыв по этой записи.");
+            }
 
-        await _unitOfWork.Reviews.AddAsync(review);
-        await _unitOfWork.SaveChangesAsync();
+            var review = new Review
+            {
+                UserId        = userId,
+                PropertyId    = propertyId,
+                RealtorId     = realtorId,
+                AppointmentId = appointmentId,
+                Rating        = rating,
+                Comment       = comment,
+                IsApproved    = false,
+                CreatedAt     = DateTime.Now
+            };
 
-        return review;
+            await _unitOfWork.Reviews.AddAsync(review);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+            return review;
+        }
+        catch
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            throw;
+        }
     }
 
     public async Task<IEnumerable<Review>> GetUserReviewsAsync(int userId)
@@ -583,9 +673,9 @@ public class ReviewService : IReviewService
             .ToListAsync();
     }
 
-    public async Task<bool> HasReviewAsync(int userId, int realtorId)
+    public async Task<bool> HasReviewForAppointmentAsync(int appointmentId)
     {
-        return await _unitOfWork.Reviews.AnyAsync(r => r.UserId == userId && r.RealtorId == realtorId);
+        return await _unitOfWork.Reviews.AnyAsync(r => r.AppointmentId == appointmentId);
     }
 
     public async Task<IEnumerable<Review>> GetPropertyReviewsAsync(int propertyId)
@@ -630,13 +720,8 @@ public class ReviewService : IReviewService
     public async Task<double> GetAverageRatingAsync(int? propertyId = null, int? realtorId = null)
     {
         var query = _unitOfWork.Reviews.Query().Where(r => r.IsApproved);
-
-        if (propertyId.HasValue)
-            query = query.Where(r => r.PropertyId == propertyId.Value);
-        if (realtorId.HasValue)
-            query = query.Where(r => r.RealtorId == realtorId.Value);
-
-        var reviews = await query.ToListAsync();
-        return reviews.Any() ? reviews.Average(r => r.Rating) : 0;
+        if (propertyId.HasValue) query = query.Where(r => r.PropertyId == propertyId.Value);
+        if (realtorId.HasValue)  query = query.Where(r => r.RealtorId  == realtorId.Value);
+        return await query.Select(r => (double?)r.Rating).AverageAsync() ?? 0;
     }
 }

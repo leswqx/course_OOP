@@ -10,7 +10,7 @@ public class Appointment : BaseEntity
     public int RealtorId { get; set; }
     public DateTime SlotStart { get; set; }
     public DateTime SlotEnd { get; set; }
-    public string Status { get; set; } = "new"; // new, confirmed, cancelled, completed
+    public AppointmentStatus Status { get; set; } = AppointmentStatus.New;
     public string? Comment { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
 

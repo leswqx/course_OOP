@@ -1,34 +1,32 @@
 using System.Globalization;
 using System.Windows.Data;
+using MSM.Models.Entities;
 
 namespace MSM.Converters;
 
-/// <summary>
-/// Конвертер статуса записи в русский текст
-/// </summary>
 public class AppointmentStatusToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value?.ToString() switch
+        return value is AppointmentStatus s ? s switch
         {
-            "new" => "Новая",
-            "confirmed" => "Подтверждена",
-            "cancelled" => "Отменена",
-            "completed" => "Завершена",
-            _ => value?.ToString() ?? "Неизвестно"
-        };
+            AppointmentStatus.New       => "Новая",
+            AppointmentStatus.Confirmed => "Подтверждена",
+            AppointmentStatus.Cancelled => "Отменена",
+            AppointmentStatus.Completed => "Завершена",
+            _                           => value.ToString() ?? ""
+        } : value?.ToString() ?? "";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         return value?.ToString() switch
         {
-            "Новая" => "new",
-            "Подтверждена" => "confirmed",
-            "Отменена" => "cancelled",
-            "Завершена" => "completed",
-            _ => value?.ToString() ?? "new"
+            "Новая"        => AppointmentStatus.New,
+            "Подтверждена" => AppointmentStatus.Confirmed,
+            "Отменена"     => AppointmentStatus.Cancelled,
+            "Завершена"    => AppointmentStatus.Completed,
+            _              => AppointmentStatus.New
         };
     }
 }

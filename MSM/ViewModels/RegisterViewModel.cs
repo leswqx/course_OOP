@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MSM.Services.Interfaces;
@@ -40,6 +41,18 @@ public partial class RegisterViewModel : ViewModelBase
             return;
         }
 
+        if (!Regex.IsMatch(Login.Trim(), @"^[a-zA-Z0-9_]{3,30}$"))
+        {
+            ErrorMessage = "Логин: только латинские буквы, цифры и «_», от 3 до 30 символов.";
+            return;
+        }
+
+        if (!Regex.IsMatch(Email.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+        {
+            ErrorMessage = "Введите корректный e-mail адрес.";
+            return;
+        }
+
         if (Password != ConfirmPassword)
         {
             ErrorMessage = "Пароли не совпадают.";
@@ -49,6 +62,13 @@ public partial class RegisterViewModel : ViewModelBase
         if (Password.Length < 6)
         {
             ErrorMessage = "Пароль должен содержать минимум 6 символов.";
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(Phone) &&
+            !Regex.IsMatch(Phone.Trim(), @"^\+375\s?\(?(29|33|44|25|17)\)?\s?\d{3}[-\s]?\d{2}[-\s]?\d{2}$"))
+        {
+            ErrorMessage = "Телефон: +375 (XX) XXX-XX-XX, где XX — 17, 25, 29, 33 или 44.";
             return;
         }
 
@@ -66,11 +86,7 @@ public partial class RegisterViewModel : ViewModelBase
             }
 
             // Приветственное письмо — fire-and-forget, не блокируем навигацию
-            _ = _notificationService.SendWelcomeEmailAsync(user).ContinueWith(t =>
-            {
-                if (t.IsFaulted)
-                    System.Diagnostics.Debug.WriteLine($"[Email] Регистрация: {t.Exception?.GetBaseException().Message}");
-            });
+            _ = _notificationService.SendWelcomeEmailAsync(user);
 
             _navigationService.NavigateTo<LoginViewModel>();
         }

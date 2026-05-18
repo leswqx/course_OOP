@@ -26,9 +26,10 @@
                         Foreground="{DynamicResource AccentBrush}"
                         BorderBrush="{DynamicResource BorderBrush}"
                         BorderThickness="1"/>
-                <TextBlock Text="{Binding ResultCount, StringFormat='Найдено: {0}'}"
-                           VerticalAlignment="Center" FontSize="13" Margin="16,0,0,0"
-                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                <TextBlock VerticalAlignment="Center" FontSize="13" Margin="16,0,0,0"
+                           Foreground="{DynamicResource TextSecondaryBrush}">
+                    <Run Text="{DynamicResource Catalog.Found}"/><Run Text="{Binding ResultCount, Mode=OneWay}"/>
+                </TextBlock>
             </StackPanel>
         </Border>
 
@@ -192,7 +193,7 @@
                                                 <Setter Property="Text" Value="{Binding}"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding}" Value="">
-                                                        <Setter Property="Text" Value="Все города"/>
+                                                        <Setter Property="Text" Value="{DynamicResource Filter.AllCities}"/>
                                                         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -221,7 +222,7 @@
                                                 <Setter Property="Text" Value="{Binding}"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding}" Value="">
-                                                        <Setter Property="Text" Value="Все районы"/>
+                                                        <Setter Property="Text" Value="{DynamicResource Filter.AllDistricts}"/>
                                                         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -309,27 +310,46 @@
                                HorizontalAlignment="Center" Margin="0,5,0,0"/>
                 </StackPanel>
 
-                <!-- Список карточек -->
+                <!-- Список карточек + кнопка "Показать ещё" -->
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
                               Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
-                    <ItemsControl ItemsSource="{Binding Properties}" Margin="12">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <controls:PropertyCardControl>
-                                    <controls:PropertyCardControl.InputBindings>
-                                        <MouseBinding MouseAction="LeftClick"
-                                                      Command="{Binding DataContext.OpenDetailCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                      CommandParameter="{Binding}"/>
-                                    </controls:PropertyCardControl.InputBindings>
-                                </controls:PropertyCardControl>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                    <StackPanel>
+                        <ItemsControl ItemsSource="{Binding DisplayedProperties}" Margin="12">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <controls:PropertyCardControl>
+                                        <controls:PropertyCardControl.InputBindings>
+                                            <MouseBinding MouseAction="LeftClick"
+                                                          Command="{Binding DataContext.OpenDetailCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                          CommandParameter="{Binding}"/>
+                                        </controls:PropertyCardControl.InputBindings>
+                                    </controls:PropertyCardControl>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Button Command="{Binding ShowMoreCommand}"
+                                Visibility="{Binding CanShowMore, Converter={StaticResource BoolToVisibility}}"
+                                HorizontalAlignment="Center" Margin="0,4,0,20"
+                                Height="40" Padding="24,0" FontSize="13"
+                                Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                            <Button.Content>
+                                <TextBlock>
+                                    <Run Text="{DynamicResource Catalog.ShowMorePrefix}"/>
+                                    <Run Text=" "/>
+                                    <Run Text="{Binding ShowMoreCount, Mode=OneWay}" FontWeight="SemiBold"/>
+                                    <Run Text=" "/>
+                                    <Run Text="{DynamicResource Catalog.ShowMoreSuffix}"/>
+                                </TextBlock>
+                            </Button.Content>
+                        </Button>
+                    </StackPanel>
                 </ScrollViewer>
             </Grid>
         </Grid>

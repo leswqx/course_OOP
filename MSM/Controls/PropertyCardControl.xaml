@@ -62,7 +62,7 @@
                     </Border>
                     <Border Background="#EF5350" CornerRadius="4" Padding="8,3"
                             Visibility="{Binding IsSold, Converter={StaticResource BoolToVisibility}}">
-                        <TextBlock Text="Продан"
+                        <TextBlock Text="{DynamicResource Status.Sold}"
                                    Foreground="White" FontSize="11" FontWeight="SemiBold"/>
                     </Border>
                 </StackPanel>

@@ -197,6 +197,11 @@
                                     <Run Text=","/>
                                     <Run Text="{Binding Property.Address}"/>
                                 </TextBlock>
+                                <Button Content="{DynamicResource Detail.ShowOnMap}" Command="{Binding OpenMapCommand}"
+                                        HorizontalAlignment="Left" Height="28" Padding="10,0" FontSize="11"
+                                        Margin="0,8,0,0"
+                                        Background="Transparent" Foreground="{DynamicResource AccentBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                             </StackPanel>
                         </Border>
 
@@ -247,7 +252,7 @@
                             <!-- Бейдж "Продан" -->
                             <Border Visibility="{Binding IsBookable, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}"
                                     Background="#EF5350" CornerRadius="6" Padding="12,8" Margin="0,0,0,8">
-                                <TextBlock Text="🏷 Объект продан — запись недоступна"
+                                <TextBlock Text="{DynamicResource Detail.SoldBadge}"
                                            Foreground="White" FontSize="13" FontWeight="SemiBold"
                                            TextAlignment="Center"/>
                             </Border>
@@ -369,13 +374,13 @@
                     <StackPanel Margin="20,16,20,0">
                         <!-- Дни недели -->
                         <UniformGrid Columns="7" Margin="0,0,0,4">
-                            <TextBlock Text="Пн" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Text="Вт" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Text="Ср" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Text="Чт" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Text="Пт" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                            <TextBlock Text="Сб" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#EF5350"/>
-                            <TextBlock Text="Вс" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#EF5350"/>
+                            <TextBlock Text="{DynamicResource Detail.Mon}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Detail.Tue}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Detail.Wed}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Detail.Thu}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Detail.Fri}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Detail.Sat}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#EF5350"/>
+                            <TextBlock Text="{DynamicResource Detail.Sun}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#EF5350"/>
                         </UniformGrid>
 
                         <!-- Ячейки календаря -->
@@ -459,11 +464,11 @@
                         <!-- Легенда -->
                         <StackPanel Orientation="Horizontal" Margin="0,8,0,12">
                             <Border Width="12" Height="5" CornerRadius="3" Background="#7CB342" Margin="0,0,4,0"/>
-                            <TextBlock Text="Доступно" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,14,0"/>
+                            <TextBlock Text="{DynamicResource Detail.SlotAvailable}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,14,0"/>
                             <Border Width="12" Height="5" CornerRadius="3" Background="#EF5350" Margin="0,0,4,0"/>
-                            <TextBlock Text="Занято" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,14,0"/>
+                            <TextBlock Text="{DynamicResource Detail.SlotBusy}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,14,0"/>
                             <Border Width="12" Height="5" CornerRadius="3" Background="#42A5F5" Margin="0,0,4,0"/>
-                            <TextBlock Text="Выбрано" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{DynamicResource Detail.SlotSelected}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -473,7 +478,7 @@
                         <StackPanel>
                             <TextBlock FontSize="13" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,10">
-                                <Run Text="Слоты на "/>
+                                <Run Text="{DynamicResource Detail.SlotsFor}"/>
                                 <Run Text="{Binding BookSelectedDateLabel, Mode=OneWay}"/>
                             </TextBlock>
                             <ItemsControl ItemsSource="{Binding BookSlots}">
@@ -484,8 +489,7 @@
                                     <DataTemplate>
                                         <Button Content="{Binding Time}"
                                                 Command="{Binding DataContext.SelectBookSlotCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                CommandParameter="{Binding Time}"
-                                                IsEnabled="{Binding IsAvailable}"
+                                                CommandParameter="{Binding}"
                                                 Width="64" Height="34" Margin="0,0,6,6"
                                                 FontSize="12" Cursor="Hand">
                                             <Button.Style>
@@ -499,6 +503,8 @@
                                                             <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
                                                             <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                                             <Setter Property="BorderBrush" Value="Transparent"/>
+                                                            <Setter Property="Opacity" Value="0.45"/>
+                                                            <Setter Property="Cursor" Value="Arrow"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>

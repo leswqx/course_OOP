@@ -142,7 +142,7 @@
                     </Button.Style>
                 </Button>
                 <!-- Кнопка открытия календаря -->
-                <Button Content="Расписание"
+                <Button Content="{DynamicResource Realtor.Schedule}"
                         Command="{Binding OpenCalendarCommand}"
                         Padding="12,0" FontSize="13" Cursor="Hand" Margin="16,0,0,0">
                     <Button.Style>
@@ -192,7 +192,7 @@
                             <Path Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center"
                                   Fill="#388E3C"
                                   Data="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"/>
-                            <TextBlock Text="Объект успешно добавлен!" FontSize="13" FontWeight="SemiBold"
+                            <TextBlock Text="{DynamicResource Realtor.PropertyAdded}" FontSize="13" FontWeight="SemiBold"
                                        Foreground="#2E7D32" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
@@ -209,7 +209,7 @@
                                 Background="{DynamicResource PrimaryBrush}"
                                 Foreground="White" BorderThickness="0"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="Все" Command="{Binding SetPropFilterAllCommand}"
+                            <Button Content="{DynamicResource Realtor.FilterAll}" Command="{Binding SetPropFilterAllCommand}"
                                     Height="30" Padding="14,0" FontSize="12" Margin="0,0,4,0"
                                     BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <Button.Style>
@@ -225,7 +225,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button Content="Активные" Command="{Binding SetPropFilterActiveCommand}"
+                            <Button Content="{DynamicResource Realtor.FilterActive}" Command="{Binding SetPropFilterActiveCommand}"
                                     Height="30" Padding="14,0" FontSize="12" Margin="0,0,4,0"
                                     BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <Button.Style>
@@ -241,7 +241,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button Content="Скрытые" Command="{Binding SetPropFilterHiddenCommand}"
+                            <Button Content="{DynamicResource Realtor.FilterHidden}" Command="{Binding SetPropFilterHiddenCommand}"
                                     Height="30" Padding="14,0" FontSize="12" Margin="0,0,4,0"
                                     BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <Button.Style>
@@ -257,7 +257,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button Content="Проданные" Command="{Binding SetPropFilterSoldCommand}"
+                            <Button Content="{DynamicResource Realtor.FilterSold}" Command="{Binding SetPropFilterSoldCommand}"
                                     Height="30" Padding="14,0" FontSize="12"
                                     BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                                 <Button.Style>
@@ -297,7 +297,7 @@
                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
                             <!-- Подсказка (плейсхолдер) -->
                             <TextBlock Grid.Column="1" IsHitTestVisible="False"
-                                       Text="Поиск по названию или городу..."
+                                       Text="{DynamicResource Realtor.SearchPlaceholder}"
                                        FontSize="13" VerticalAlignment="Center"
                                        Foreground="{DynamicResource TextSecondaryBrush}">
                                 <TextBlock.Style>
@@ -331,6 +331,80 @@
                             </Button>
                         </Grid>
                     </Border>
+
+                    <!-- Сортировка -->
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <TextBlock Text="{DynamicResource Realtor.SortLabel}" VerticalAlignment="Center" FontSize="12"
+                                   Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,8,0"/>
+                        <Button Content="{DynamicResource Realtor.SortNew}" Command="{Binding SortByDateCommand}"
+                                Height="26" Padding="10,0" FontSize="11" Margin="0,0,4,0" BorderThickness="1">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMyPropSortDate}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{DynamicResource Realtor.SortPriceAsc}" Command="{Binding SortByPriceAscCommand}"
+                                Height="26" Padding="10,0" FontSize="11" Margin="0,0,4,0" BorderThickness="1">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMyPropSortPriceAsc}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{DynamicResource Realtor.SortPriceDesc}" Command="{Binding SortByPriceDescCommand}"
+                                Height="26" Padding="10,0" FontSize="11" Margin="0,0,4,0" BorderThickness="1">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMyPropSortPriceDesc}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{DynamicResource Realtor.SortAZ}" Command="{Binding SortByTitleCommand}"
+                                Height="26" Padding="10,0" FontSize="11" BorderThickness="1">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMyPropSortTitle}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
 
                 </StackPanel>
 
@@ -399,10 +473,10 @@
                                                 <TextBlock Foreground="White" FontSize="11" FontWeight="SemiBold">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
-                                                            <Setter Property="Text" Value="Скрыт"/>
+                                                            <Setter Property="Text" Value="{DynamicResource Status.Hidden}"/>
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding Status}" Value="sold">
-                                                                    <Setter Property="Text" Value="Продан"/>
+                                                                    <Setter Property="Text" Value="{DynamicResource Status.Sold}"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -493,7 +567,7 @@
                                                             Foreground="#9E9E9E"
                                                             BorderBrush="#9E9E9E" BorderThickness="1"/>
                                                     <Button Grid.Column="1"
-                                                            Content="Продано"
+                                                            Content="{DynamicResource Realtor.SetSold}"
                                                             Command="{Binding DataContext.SetSoldCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                             CommandParameter="{Binding}"
                                                             Visibility="{Binding IsSoldable, Converter={StaticResource BoolToVisibility}}"
@@ -516,7 +590,7 @@
                                                         <ColumnDefinition/>
                                                     </Grid.ColumnDefinitions>
                                                     <Button Grid.Column="0"
-                                                            Content="Изменить"
+                                                            Content="{DynamicResource Realtor.Edit}"
                                                             Command="{Binding DataContext.OpenEditFormCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                             CommandParameter="{Binding}"
                                                             Height="26" FontSize="11" Margin="0,0,3,0"
@@ -524,7 +598,7 @@
                                                             Foreground="{DynamicResource TextPrimaryBrush}"
                                                             BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                                                     <Button Grid.Column="1"
-                                                            Content="Удалить"
+                                                            Content="{DynamicResource Realtor.Delete}"
                                                             Command="{Binding DataContext.DeletePropertyCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                             CommandParameter="{Binding}"
                                                             Height="26" FontSize="11"
@@ -553,11 +627,11 @@
                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                         CornerRadius="8" Padding="12,8" Margin="0,0,0,10">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Фильтр:" VerticalAlignment="Center" FontSize="12"
+                        <TextBlock Text="{DynamicResource Realtor.ApptFilterLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,10,0"/>
 
                         <!-- Фильтр по объекту -->
-                        <TextBlock Text="Объект:" VerticalAlignment="Center" FontSize="12"
+                        <TextBlock Text="{DynamicResource Realtor.ApptPropLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,6,0"/>
                         <ComboBox SelectedItem="{Binding ApptFilterProperty, Mode=TwoWay}"
                                   ItemsSource="{Binding AppointmentPropertyTitles}"
@@ -574,7 +648,7 @@
                                                 <Setter Property="Text" Value="{Binding}"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding}" Value="">
-                                                        <Setter Property="Text" Value="Все объекты"/>
+                                                        <Setter Property="Text" Value="{DynamicResource Realtor.AllProperties}"/>
                                                         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -586,7 +660,7 @@
                         </ComboBox>
 
                         <!-- Фильтр по статусу -->
-                        <TextBlock Text="Статус:" VerticalAlignment="Center" FontSize="12"
+                        <TextBlock Text="{DynamicResource Realtor.ApptStatusLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,6,0"/>
                         <ComboBox SelectedValue="{Binding ApptFilterStatus}"
                                   SelectedValuePath="Tag"
@@ -595,17 +669,17 @@
                                   Foreground="{DynamicResource TextPrimaryBrush}"
                                   BorderBrush="{DynamicResource BorderBrush}"
                                   Margin="0,0,10,0">
-                            <ComboBoxItem Content="Все статусы" Tag=""/>
-                            <ComboBoxItem Content="Новые"        Tag="new"/>
-                            <ComboBoxItem Content="Подтверждённые" Tag="confirmed"/>
-                            <ComboBoxItem Content="Завершённые"  Tag="completed"/>
-                            <ComboBoxItem Content="Отменённые"   Tag="cancelled"/>
+                            <ComboBoxItem Content="{DynamicResource Realtor.AllStatuses}" Tag=""/>
+                            <ComboBoxItem Content="{DynamicResource Realtor.StatusNew}"       Tag="new"/>
+                            <ComboBoxItem Content="{DynamicResource Realtor.StatusConfirmed}" Tag="confirmed"/>
+                            <ComboBoxItem Content="{DynamicResource Realtor.StatusCompleted}" Tag="completed"/>
+                            <ComboBoxItem Content="{DynamicResource Realtor.StatusCancelled}" Tag="cancelled"/>
                         </ComboBox>
 
                         <!-- Фильтр по дате -->
-                        <TextBlock Text="Дата:" VerticalAlignment="Center" FontSize="12"
+                        <TextBlock Text="{DynamicResource Realtor.DateLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="14,0,6,0"/>
-                        <Button Content="Все" Command="{Binding SetApptDateAllCommand}"
+                        <Button Content="{DynamicResource Realtor.DateAll}" Command="{Binding SetApptDateAllCommand}"
                                 Height="30" Padding="10,0" FontSize="12" Margin="0,0,4,0"
                                 BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                             <Button.Style>
@@ -621,7 +695,7 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <Button Content="Сегодня" Command="{Binding SetApptDateTodayCommand}"
+                        <Button Content="{DynamicResource Realtor.DateToday}" Command="{Binding SetApptDateTodayCommand}"
                                 Height="30" Padding="10,0" FontSize="12" Margin="0,0,4,0"
                                 BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                             <Button.Style>
@@ -637,7 +711,7 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <Button Content="Неделя" Command="{Binding SetApptDateWeekCommand}"
+                        <Button Content="{DynamicResource Realtor.DateWeek}" Command="{Binding SetApptDateWeekCommand}"
                                 Height="30" Padding="10,0" FontSize="12" Margin="0,0,4,0"
                                 BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                             <Button.Style>
@@ -653,7 +727,7 @@
                                 </Style>
                             </Button.Style>
                         </Button>
-                        <Button Content="Месяц" Command="{Binding SetApptDateMonthCommand}"
+                        <Button Content="{DynamicResource Realtor.DateMonth}" Command="{Binding SetApptDateMonthCommand}"
                                 Height="30" Padding="10,0" FontSize="12" Margin="0,0,14,0"
                                 BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
                             <Button.Style>
@@ -670,7 +744,7 @@
                             </Button.Style>
                         </Button>
 
-                        <Button Content="Сбросить" Command="{Binding ResetApptFilterCommand}"
+                        <Button Content="{DynamicResource Realtor.DateReset}" Command="{Binding ResetApptFilterCommand}"
                                 Height="30" Padding="10,0" FontSize="12"
                                 Background="Transparent" Foreground="{DynamicResource AccentBrush}"
                                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
@@ -718,6 +792,13 @@
                                             <TextBlock Text="{Binding ClientEmail}" FontSize="11"
                                                        Foreground="{DynamicResource TextSecondaryBrush}"
                                                        Visibility="{Binding ClientEmail, Converter={StaticResource BoolToVisibility}}"/>
+                                            <Border Background="{DynamicResource CardBrush}"
+                                                    CornerRadius="4" Padding="6,4" Margin="0,4,0,0"
+                                                    Visibility="{Binding HasComment, Converter={StaticResource BoolToVisibility}}">
+                                                <TextBlock Text="{Binding Comment}" FontSize="11"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                                           TextWrapping="Wrap" FontStyle="Italic"/>
+                                            </Border>
                                         </StackPanel>
 
                                         <TextBlock Grid.Column="1"
@@ -735,7 +816,7 @@
                                                     Background="{DynamicResource SuccessBrush}"
                                                     Foreground="White" BorderThickness="0"/>
                                             <!-- Для "confirmed": Завершить -->
-                                            <Button Content="Завершить"
+                                            <Button Content="{DynamicResource Realtor.Complete}"
                                                     Command="{Binding DataContext.CompleteAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     CommandParameter="{Binding Id}"
                                                     Visibility="{Binding CanComplete, Converter={StaticResource BoolToVisibility}}"
@@ -1100,7 +1181,7 @@
                         </Grid.RowDefinitions>
 
                         <!-- Заголовок -->
-                        <TextBlock Grid.Row="0" Text="Редактирование объекта"
+                        <TextBlock Grid.Row="0" Text="{DynamicResource Realtor.EditProperty}"
                                    FontSize="16" FontWeight="Bold"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
                                    Margin="0,0,0,16"/>
@@ -1126,7 +1207,18 @@
                                 <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.Title}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                                    <TextBox Text="{Binding EditTitle, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
+                                    <TextBox Text="{Binding EditTitle, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding EditTitleInvalid}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
                                 </StackPanel>
                                 <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.Type}" FontSize="12"
@@ -1142,7 +1234,18 @@
                                 <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.Price}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                                    <TextBox Text="{Binding EditPrice, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
+                                    <TextBox Text="{Binding EditPrice, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding EditPriceInvalid}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
                                 </StackPanel>
                                 <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,0,10">
                                     <Grid>
@@ -1156,12 +1259,34 @@
                                         <StackPanel Grid.Column="0">
                                             <TextBlock Text="{DynamicResource PropForm.Area}" FontSize="12"
                                                        Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBox Text="{Binding EditArea, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
+                                            <TextBox Text="{Binding EditArea, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding EditAreaInvalid}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}"/>
+                                                                <Setter Property="BorderThickness" Value="1.5"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
                                         </StackPanel>
                                         <StackPanel Grid.Column="2">
                                             <TextBlock Text="{DynamicResource PropForm.Rooms}" FontSize="12"
                                                        Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                                            <TextBox Text="{Binding EditRooms, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
+                                            <TextBox Text="{Binding EditRooms, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding EditRoomsInvalid}" Value="True">
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}"/>
+                                                                <Setter Property="BorderThickness" Value="1.5"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
                                         </StackPanel>
                                         <StackPanel Grid.Column="4">
                                             <TextBlock Text="{DynamicResource PropForm.Bathrooms}" FontSize="12"
@@ -1196,12 +1321,34 @@
                                 <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.City}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                                    <TextBox Text="{Binding EditCity, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
+                                    <TextBox Text="{Binding EditCity, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding EditCityInvalid}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
                                 </StackPanel>
                                 <StackPanel Grid.Row="3" Grid.Column="2" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.Address}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                                    <TextBox Text="{Binding EditAddress, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
+                                    <TextBox Text="{Binding EditAddress, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding EditAddressInvalid}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
                                 </StackPanel>
 
                                 <!-- Район -->
@@ -1217,7 +1364,18 @@
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Text="{Binding EditDescription, UpdateSourceTrigger=PropertyChanged}"
                                              Height="64" Padding="8,6" TextWrapping="Wrap"
-                                             AcceptsReturn="True" VerticalContentAlignment="Top"/>
+                                             AcceptsReturn="True" VerticalContentAlignment="Top">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding EditDescriptionInvalid}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
                                 </StackPanel>
 
                                 <!-- Фото при редактировании -->
@@ -1309,9 +1467,9 @@
                             BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                             Padding="14,10" Margin="0,0,0,16">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Период:" VerticalAlignment="Center" FontSize="12"
+                            <TextBlock Text="{DynamicResource Realtor.PeriodLabel}" VerticalAlignment="Center" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,14,0"/>
-                            <Button Content="Всё время" Command="{Binding SetStatPeriodAllCommand}"
+                            <Button Content="{DynamicResource Realtor.PeriodAll}" Command="{Binding SetStatPeriodAllCommand}"
                                     Height="30" Padding="14,0" FontSize="12" Margin="0,0,4,0" Cursor="Hand">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
@@ -1329,7 +1487,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button Content="Этот месяц" Command="{Binding SetStatPeriodMonthCommand}"
+                            <Button Content="{DynamicResource Realtor.PeriodMonth}" Command="{Binding SetStatPeriodMonthCommand}"
                                     Height="30" Padding="14,0" FontSize="12" Margin="0,0,4,0" Cursor="Hand">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
@@ -1347,7 +1505,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button Content="Квартал" Command="{Binding SetStatPeriodQuarterCommand}"
+                            <Button Content="{DynamicResource Realtor.PeriodQuarter}" Command="{Binding SetStatPeriodQuarterCommand}"
                                     Height="30" Padding="14,0" FontSize="12" Margin="0,0,4,0" Cursor="Hand">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
@@ -1365,7 +1523,7 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button Content="Этот год" Command="{Binding SetStatPeriodYearCommand}"
+                            <Button Content="{DynamicResource Realtor.PeriodYear}" Command="{Binding SetStatPeriodYearCommand}"
                                     Height="30" Padding="14,0" FontSize="12" Cursor="Hand">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
@@ -1397,9 +1555,9 @@
                                 <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                                 <Border Grid.Row="0" Background="#1565C0"/>
                                 <StackPanel Grid.Row="1" Margin="16,10,16,14">
-                                    <TextBlock Text="Всего объектов" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatTotalProps}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     <TextBlock Text="{Binding StatTotal}" FontSize="28" FontWeight="Bold" Foreground="#1565C0" Margin="0,4,0,0"/>
-                                    <TextBlock Text="за всё время" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatAllTime}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -1412,9 +1570,9 @@
                                 <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                                 <Border Grid.Row="0" Background="#2E7D32"/>
                                 <StackPanel Grid.Row="1" Margin="16,10,16,14">
-                                    <TextBlock Text="Активных" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatActiveProps}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     <TextBlock Text="{Binding StatActive}" FontSize="28" FontWeight="Bold" Foreground="#2E7D32" Margin="0,4,0,0"/>
-                                    <TextBlock Text="сейчас в продаже" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatOnSale}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -1427,9 +1585,9 @@
                                 <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                                 <Border Grid.Row="0" Background="#FF8F00"/>
                                 <StackPanel Grid.Row="1" Margin="16,10,16,14">
-                                    <TextBlock Text="Продано" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatSoldLabel}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     <TextBlock Text="{Binding StatSold}" FontSize="28" FontWeight="Bold" Foreground="#FF8F00" Margin="0,4,0,0"/>
-                                    <TextBlock Text="за всё время" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatAllTime}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -1447,7 +1605,7 @@
                                 <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                                 <Border Grid.Row="0" Background="#8E24AA"/>
                                 <StackPanel Grid.Row="1" Margin="16,10,16,14">
-                                    <TextBlock Text="Записей за период" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatApptPeriod}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     <TextBlock Text="{Binding StatTotalAppt}" FontSize="28" FontWeight="Bold" Foreground="#8E24AA" Margin="0,4,0,0"/>
                                 </StackPanel>
                             </Grid>
@@ -1461,7 +1619,7 @@
                                 <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                                 <Border Grid.Row="0" Background="#00897B"/>
                                 <StackPanel Grid.Row="1" Margin="16,10,16,14">
-                                    <TextBlock Text="Завершено за период" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatCompletedPeriod}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     <TextBlock Text="{Binding StatCompletedAppt}" FontSize="28" FontWeight="Bold" Foreground="#00897B" Margin="0,4,0,0"/>
                                 </StackPanel>
                             </Grid>
@@ -1475,7 +1633,7 @@
                                 <Grid.RowDefinitions><RowDefinition Height="4"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                                 <Border Grid.Row="0" Background="#F4B942"/>
                                 <StackPanel Grid.Row="1" Margin="16,10,16,14">
-                                    <TextBlock Text="Средний рейтинг" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatAvgRating}" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                                         <TextBlock Text="{Binding StatRating, StringFormat='{}{0:F1}'}"
                                                    FontSize="28" FontWeight="Bold"
@@ -1484,7 +1642,7 @@
                                         <TextBlock Text=" ★" FontSize="24" FontWeight="Bold"
                                                    Foreground="#F4B942" VerticalAlignment="Center"/>
                                     </StackPanel>
-                                    <TextBlock Text="по отзывам клиентов" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    <TextBlock Text="{DynamicResource Realtor.StatByReviews}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -1506,13 +1664,13 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="МОЙ БАЛЛ" FontSize="10" FontWeight="SemiBold"
+                                    <TextBlock Text="{DynamicResource Realtor.StatMyScore}" FontSize="10" FontWeight="SemiBold"
                                                Foreground="{DynamicResource TextSecondaryBrush}"
                                                HorizontalAlignment="Center" Margin="0,0,0,2"/>
                                     <TextBlock Text="{Binding StatScore}" FontSize="42" FontWeight="Bold"
                                                Foreground="{Binding StatScoreColor, Converter={StaticResource StringToBrush}}"
                                                HorizontalAlignment="Center"/>
-                                    <TextBlock Text="из 100" FontSize="11"
+                                    <TextBlock Text="{DynamicResource Realtor.StatOf100}" FontSize="11"
                                                Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center"/>
                                 </StackPanel>
 
@@ -1527,7 +1685,7 @@
                                                 Width="{Binding StatScoreBarWidth}"
                                                 Background="{Binding StatScoreColor, Converter={StaticResource StringToBrush}}"/>
                                     </Border>
-                                    <TextBlock Text="Рейтинг ×35%  +  Продажи ×30%  +  Записи ×20%  +  Активность ×15%"
+                                    <TextBlock Text="{DynamicResource Realtor.StatFormula}"
                                                FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
                                                TextWrapping="Wrap"/>
                                 </StackPanel>
@@ -1535,32 +1693,15 @@
                         </Border>
                     </Border>
 
-                    <!-- Графики -->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="280"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Border Grid.Column="0" Background="{DynamicResource CardBrush}"
-                                CornerRadius="8" Padding="16" Margin="0,0,12,0">
-                            <StackPanel>
-                                <TextBlock Text="Объекты по статусу" FontSize="13" FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
-                                <lvc:PieChart Series="{Binding StatusSeries}" Height="200" LegendPosition="Bottom"/>
-                            </StackPanel>
-                        </Border>
-
-                        <Border Grid.Column="1" Background="{DynamicResource CardBrush}"
-                                CornerRadius="8" Padding="16">
-                            <StackPanel>
-                                <TextBlock Text="Записи по месяцам (последние 6)" FontSize="13" FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
-                                <lvc:CartesianChart Series="{Binding RatingSeriesData}"
-                                                    XAxes="{Binding RatingXAxes}" Height="200"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
+                    <!-- График записей по месяцам -->
+                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource Realtor.StatApptByMonth}" FontSize="13" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
+                            <lvc:CartesianChart Series="{Binding RatingSeriesData}"
+                                                XAxes="{Binding RatingXAxes}" Height="240"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </ScrollViewer>
 
@@ -1594,13 +1735,13 @@
                             </Border>
                             <TextBlock Text="{Binding ProfileLogin}" FontSize="15" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Риелтор" FontSize="12"
+                            <TextBlock Text="{DynamicResource Realtor.RoleLabel}" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,2,0,12"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Загрузить фото" Command="{Binding UploadProfileAvatarCommand}"
+                                <Button Content="{DynamicResource Profile.UploadPhoto}" Command="{Binding UploadProfileAvatarCommand}"
                                         Height="30" Padding="14,0" FontSize="12" Margin="0,0,8,0"
                                         Background="{DynamicResource PrimaryBrush}" Foreground="White" BorderThickness="0"/>
-                                <Button Content="Удалить" Command="{Binding RemoveProfileAvatarCommand}"
+                                <Button Content="{DynamicResource Profile.RemovePhoto}" Command="{Binding RemoveProfileAvatarCommand}"
                                         Height="30" Padding="14,0" FontSize="12"
                                         Background="Transparent" Foreground="{DynamicResource AccentBrush}"
                                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
@@ -1623,29 +1764,29 @@
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="14" ShadowDepth="2" Opacity="0.08"/>
                             </Border.Effect>
                             <StackPanel>
-                                <TextBlock Text="Личные данные" FontSize="16" FontWeight="SemiBold"
+                                <TextBlock Text="{DynamicResource Profile.PersonalData}" FontSize="16" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,22"/>
-                                <TextBlock Text="Имя и фамилия" FontSize="12"
+                                <TextBlock Text="{DynamicResource Profile.FullName}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ProfileFullName, UpdateSourceTrigger=PropertyChanged}"
                                          Height="42" FontSize="14" Padding="5,0" Margin="0,0,0,18"
                                          BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                                <TextBlock Text="E-mail" FontSize="12"
+                                <TextBlock Text="{DynamicResource Profile.Email}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ProfileEmail, UpdateSourceTrigger=PropertyChanged}"
                                          Height="42" FontSize="14" Padding="5,0" Margin="0,0,0,18"
                                          BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                                <TextBlock Text="Телефон" FontSize="12"
+                                <TextBlock Text="{DynamicResource Profile.Phone}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ProfilePhone, UpdateSourceTrigger=PropertyChanged}"
                                          Height="42" FontSize="14" Padding="5,0" Margin="0,0,0,18"
                                          BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                                <TextBlock Text="О себе (видят клиенты)" FontSize="12"
+                                <TextBlock Text="{DynamicResource Realtor.ProfileAbout}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                                 <TextBox Text="{Binding ProfileDescription, UpdateSourceTrigger=PropertyChanged}"
                                          Height="80" Padding="12,10" TextWrapping="Wrap"
                                          AcceptsReturn="True" VerticalContentAlignment="Top" Margin="0,0,0,22"/>
-                                <Button Content="💾 Сохранить профиль" Command="{Binding SaveProfileCommand}"
+                                <Button Content="{DynamicResource Profile.Save}" Command="{Binding SaveProfileCommand}"
                                         Height="44" FontSize="14" FontWeight="SemiBold"
                                         Background="{DynamicResource PrimaryBrush}" Foreground="White" BorderThickness="0"/>
                                 <TextBlock Margin="0,12,0,0" FontSize="13" TextWrapping="Wrap"
@@ -1673,27 +1814,27 @@
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="14" ShadowDepth="2" Opacity="0.08"/>
                             </Border.Effect>
                             <StackPanel>
-                                <TextBlock Text="Смена пароля" FontSize="16" FontWeight="SemiBold"
+                                <TextBlock Text="{DynamicResource Profile.ChangePassword}" FontSize="16" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,22"/>
-                                <TextBlock Text="Текущий пароль" FontSize="12"
+                                <TextBlock Text="{DynamicResource Profile.OldPassword}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                                 <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
                                              helpers:PasswordBoxHelper.BoundPassword="{Binding ProfileOldPassword, Mode=TwoWay}"
                                              Height="42" FontSize="14" Padding="5,0" Margin="0,0,0,18"
                                              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                                <TextBlock Text="Новый пароль" FontSize="12"
+                                <TextBlock Text="{DynamicResource Profile.NewPassword}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                                 <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
                                              helpers:PasswordBoxHelper.BoundPassword="{Binding ProfileNewPassword, Mode=TwoWay}"
                                              Height="42" FontSize="14" Padding="5,0" Margin="0,0,0,18"
                                              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                                <TextBlock Text="Повторите пароль" FontSize="12"
+                                <TextBlock Text="{DynamicResource Profile.ConfirmPassword}" FontSize="12"
                                            Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,5"/>
                                 <PasswordBox helpers:PasswordBoxHelper.BindPassword="True"
                                              helpers:PasswordBoxHelper.BoundPassword="{Binding ProfileConfirmPassword, Mode=TwoWay}"
                                              Height="42" FontSize="14" Padding="5,0" Margin="0,0,0,22"
                                              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                                <Button Content="Изменить пароль" Command="{Binding ChangeProfilePasswordCommand}"
+                                <Button Content="{DynamicResource Profile.ChangePasswordBtn}" Command="{Binding ChangeProfilePasswordCommand}"
                                         Height="44" FontSize="14" FontWeight="SemiBold"
                                         Background="Transparent"
                                         Foreground="{DynamicResource AccentBrush}"
@@ -1765,20 +1906,20 @@
                                       Data="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
                                 <TextBlock FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"
                                            VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="360"
-                                           Text="Клиенты записываются самостоятельно при просмотре объекта. Управляйте записями на вкладке «Записи»."/>
+                                           Text="{DynamicResource Realtor.CalendarHint}"/>
                             </StackPanel>
                         </Border>
 
                         <!-- Календарная сетка -->
                         <StackPanel Margin="16,12,16,0">
                             <UniformGrid Columns="7" Margin="0,0,0,4">
-                                <TextBlock Text="Пн" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="Вт" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="Ср" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="Чт" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="Пт" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                <TextBlock Text="Сб" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#EF5350"/>
-                                <TextBlock Text="Вс" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#EF5350"/>
+                                <TextBlock Text="{DynamicResource Detail.Mon}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource Detail.Tue}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource Detail.Wed}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource Detail.Thu}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource Detail.Fri}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource Detail.Sat}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#EF5350"/>
+                                <TextBlock Text="{DynamicResource Detail.Sun}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="#EF5350"/>
                             </UniformGrid>
                             <ItemsControl ItemsSource="{Binding CalendarDays}">
                                 <ItemsControl.ItemsPanel>
@@ -1863,7 +2004,7 @@
                                 <Border Width="10" Height="4" CornerRadius="2" Background="#EF5350" Margin="0,0,4,0"/>
                                 <TextBlock Text="4+" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,10,0"/>
                                 <Border Width="10" Height="4" CornerRadius="2" Background="#9E9E9E" Margin="0,0,4,0"/>
-                                <TextBlock Text="Заблокировано" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                <TextBlock Text="{DynamicResource Realtor.CalendarBlocked}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -1881,10 +2022,10 @@
                                                Foreground="{DynamicResource TextSecondaryBrush}">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="Нажмите на день чтобы увидеть записи"/>
+                                                <Setter Property="Text" Value="{DynamicResource Realtor.ClickDayHint}"/>
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding CalendarSelectedDay}" Value="{x:Null}">
-                                                        <Setter Property="Text" Value="Нажмите на день чтобы увидеть записи"/>
+                                                        <Setter Property="Text" Value="{DynamicResource Realtor.ClickDayHint}"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding CalendarDayHasAppts}" Value="True">
                                                         <Setter Property="Text" Value="{Binding CalendarSelectedDateLabel}"/>
@@ -1917,6 +2058,11 @@
                                         </Button.Style>
                                     </Button>
                                 </Grid>
+                                <!-- Ошибка блокировки -->
+                                <TextBlock Text="{Binding CalendarBlockError}"
+                                           FontSize="11" Foreground="{DynamicResource ErrorBrush}"
+                                           Margin="0,4,0,4" TextWrapping="Wrap"
+                                           Visibility="{Binding CalendarBlockError, Converter={StaticResource BoolToVisibility}}"/>
                                 <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="220">
                                     <ItemsControl ItemsSource="{Binding CalendarDayAppointments}">
                                         <ItemsControl.ItemTemplate>
@@ -1950,7 +2096,7 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </ScrollViewer>
-                                <TextBlock Text="В этот день записей нет"
+                                <TextBlock Text="{DynamicResource Realtor.NoApptDay}"
                                            FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                                            HorizontalAlignment="Center" Margin="0,8,0,0">
                                     <TextBlock.Style>

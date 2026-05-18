@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.EntityFrameworkCore;
 using MSM.Data.Context;
+using MSM.Helpers;
 using MSM.Models;
 using MSM.Models.Entities;
 using MSM.Services.Interfaces;
@@ -27,7 +29,7 @@ public class UserRowViewModel
     public bool IsBlocked { get; }
     public bool CanPromote => Role == "client" && !IsBlocked;
     public bool CanDemote  => Role == "realtor" && !IsBlocked;
-    public string BlockLabel => IsBlocked ? "🔓 Разблокировать" : "🔒 Заблокировать";
+    public string BlockLabel => IsBlocked ? L.Get("Admin.Unblock", "Разблокировать") : L.Get("Admin.Block", "Заблокировать");
     public string BlockedBadge => IsBlocked ? "ЗАБЛОКИРОВАН" : "";
     public bool ShowBlockedBadge => IsBlocked;
 
@@ -91,6 +93,7 @@ public class AlertItem
     public string AlertColor  { get; init; } = "#EF5350";
     public string Icon        { get; init; } = "⚠";
     public string Severity    { get; init; } = "Внимание";
+    public string SeverityKey { get; init; } = "warning"; // info | warning | critical
 }
 
 public class DetailReviewRow
@@ -112,6 +115,22 @@ public class DetailPropertyRow
     public string City        { get; init; } = "";
 }
 
+public class AdminPropertyRow
+{
+    public int    Id              { get; init; }
+    public string Title           { get; init; } = "";
+    public string City            { get; init; } = "";
+    public string Price           { get; init; } = "";
+    public string StatusRaw       { get; init; } = "";
+    public string StatusLabel     { get; init; } = "";
+    public string StatusColor     { get; init; } = "#9E9E9E";
+    public string RealtorName     { get; init; } = "";
+    public string PropertyType    { get; init; } = "";
+    public string CreatedAt       { get; init; } = "";
+    public bool   CanToggleHide   => StatusRaw != "sold";
+    public string ToggleHideLabel => StatusRaw == "hidden" ? "Показать" : "Скрыть";
+}
+
 // Панель администратора: пользователи · модерация · статистика
 public partial class AdminDashboardViewModel : ViewModelBase
 {
@@ -121,13 +140,14 @@ public partial class AdminDashboardViewModel : ViewModelBase
 
     // ===== Вкладки =====
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowTab0), nameof(ShowTab1), nameof(ShowTab2), nameof(ShowTab3), nameof(ShowTab4))]
+    [NotifyPropertyChangedFor(nameof(ShowTab0), nameof(ShowTab1), nameof(ShowTab2), nameof(ShowTab3), nameof(ShowTab4), nameof(ShowTab5))]
     private int _selectedTab;
     public bool ShowTab0 => SelectedTab == 0;
     public bool ShowTab1 => SelectedTab == 1;
     public bool ShowTab2 => SelectedTab == 2;
     public bool ShowTab3 => SelectedTab == 3;
     public bool ShowTab4 => SelectedTab == 4;
+    public bool ShowTab5 => SelectedTab == 5;
 
     // ===== Профиль =====
     [ObservableProperty] private string _profileFullName = "";
@@ -151,7 +171,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private string _userSearch = "";
     [ObservableProperty] private string _userRoleFilter = "all"; // all, realtor, client, blocked
 
-    private List<UserRowViewModel> _allUsers = new();
 
     // ===== Отзывы =====
     [ObservableProperty] private ObservableCollection<ReviewRowViewModel> _pendingReviews = new();
@@ -159,7 +178,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private bool _noReviews;
     [ObservableProperty] private int _pendingReviewsCount;
     [ObservableProperty] private string _reviewRealtorFilter = "";
-    private List<ReviewRowViewModel> _allPendingReviews = new();
     public ObservableCollection<string> ReviewRealtorNames { get; } = new();
 
     // ===== Статистика =====
@@ -172,7 +190,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private string _statAvgDealText = "—";
     [ObservableProperty] private int _statNewClients;
     [ObservableProperty] private int _statPendingAppts;
-    [ObservableProperty] private ISeries[] _propStatusSeries = Array.Empty<ISeries>();
     [ObservableProperty] private ISeries[] _agencySalesSeries = Array.Empty<ISeries>();
     [ObservableProperty] private Axis[] _agencySalesXAxes = Array.Empty<Axis>();
 
@@ -213,7 +230,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private string _detailRatingText = "—";
     [ObservableProperty] private string _detailRevenueText = "—";
     [ObservableProperty] private string _detailAvgDealText = "—";
-    [ObservableProperty] private ISeries[] _detailStatusSeries = Array.Empty<ISeries>();
     [ObservableProperty] private ISeries[] _detailApptSeries = Array.Empty<ISeries>();
     [ObservableProperty] private Axis[] _detailApptXAxes = Array.Empty<Axis>();
 
@@ -222,8 +238,22 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private string _teamAvgColor = "#9E9E9E";
 
     // ===== Тревожные сигналы =====
+    private List<AlertItem> _allAlerts = new();
+    public int AllAlertsCount => _allAlerts.Count;
     [ObservableProperty] private ObservableCollection<AlertItem> _alerts = new();
     [ObservableProperty] private bool _hasAlerts;
+    [ObservableProperty] private bool _isAlertsExpanded = true;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAlertAll), nameof(IsAlertInfo), nameof(IsAlertWarning), nameof(IsAlertCritical))]
+    private string _alertSeverityFilter = "all";
+    public bool IsAlertAll      => AlertSeverityFilter == "all";
+    public bool IsAlertInfo     => AlertSeverityFilter == "info";
+    public bool IsAlertWarning  => AlertSeverityFilter == "warning";
+    public bool IsAlertCritical => AlertSeverityFilter == "critical";
+
+    [ObservableProperty] private string _alertRealtorFilter = "";
+    public ObservableCollection<string> AlertRealtorNames { get; } = new();
 
     // ===== Вкладки детальной панели =====
     [ObservableProperty]
@@ -237,11 +267,17 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private ObservableCollection<DetailPropertyRow> _detailProperties = new();
     [ObservableProperty] private bool _noDetailReviews;
     [ObservableProperty] private bool _noDetailProperties;
+    [ObservableProperty] private bool _hasMoreDetailReviews;
+    private const int DetailReviewPageSize = 5;
+    private int _detailReviewRealtorId;
+    private int _detailReviewPage;
+    private int _detailReviewTotal;
 
     private static readonly string[] _palette =
         { "#4A9061", "#7CB342", "#42A5F5", "#FF8F00", "#AB47BC", "#26A69A", "#EF5350", "#66BB6A", "#FFA726", "#5C6BC0" };
 
     private readonly INotificationService _notificationService;
+    private readonly bool[] _tabLoaded = new bool[6];
 
     // ===== Рассылка =====
     [ObservableProperty] private string _mailSubject = "";
@@ -251,6 +287,27 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private bool _mailSuccess;
     [ObservableProperty] private bool _isSendingMail;
 
+    private bool _suppressReviewReload;
+    private bool _suppressAdminPropReload;
+    private readonly SemaphoreSlim _reviewSem    = new(1, 1);
+    private readonly SemaphoreSlim _adminPropSem = new(1, 1);
+
+    // ===== Объекты (Tab5) =====
+    [ObservableProperty] private ObservableCollection<AdminPropertyRow> _adminProperties = new();
+    [ObservableProperty] private bool _isAdminPropsLoading;
+    [ObservableProperty] private string _adminPropSearch = "";
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAdminPropFilterAll), nameof(IsAdminPropFilterActive),
+                              nameof(IsAdminPropFilterHidden), nameof(IsAdminPropFilterSold))]
+    private string _adminPropStatusFilter = "all";
+    [ObservableProperty] private string _adminPropRealtorFilter = "";
+    [ObservableProperty] private string? _adminPropActionMessage;
+    [ObservableProperty] private int _adminPropsCount;
+    public bool IsAdminPropFilterAll    => AdminPropStatusFilter == "all";
+    public bool IsAdminPropFilterActive => AdminPropStatusFilter == "active";
+    public bool IsAdminPropFilterHidden => AdminPropStatusFilter == "hidden";
+    public bool IsAdminPropFilterSold   => AdminPropStatusFilter == "sold";
+    public ObservableCollection<string> AdminRealtorNames { get; } = new();
     public AdminDashboardViewModel(
         IReviewService reviewService,
         INavigationService navigationService,
@@ -268,18 +325,43 @@ public partial class AdminDashboardViewModel : ViewModelBase
         if (parameter is string s && s == "profile")
             SelectedTab = 3;
         LoadProfileTab();
+        Array.Clear(_tabLoaded, 0, _tabLoaded.Length);
         await Task.Yield();
-        await LoadUsersAsync();
-        await LoadReviewsAsync();
-        await LoadStatsAsync();
+        try
+        {
+            PendingReviewsCount = await _context.Reviews.CountAsync(r => !r.IsApproved);
+            await EnsureTabLoadedAsync(SelectedTab);
+        }
+        catch (ObjectDisposedException) { }
+        catch (InvalidOperationException) { }
+    }
+
+    private async Task EnsureTabLoadedAsync(int tab)
+    {
+        switch (tab)
+        {
+            case 0:
+                if (!_tabLoaded[0]) { await LoadUsersAsync(); _tabLoaded[0] = true; }
+                break;
+            case 1:
+                await LoadReviewsAsync(); _tabLoaded[1] = true;
+                break;
+            case 2: case 4:
+                if (!_tabLoaded[2]) { await LoadStatsAsync(); _tabLoaded[2] = _tabLoaded[4] = true; }
+                break;
+            case 5:
+                if (!_tabLoaded[5]) { await LoadAdminPropertiesAsync(); _tabLoaded[5] = true; }
+                break;
+        }
     }
 
     // ===== Вкладки =====
-    [RelayCommand] private void SetTab0() => SelectedTab = 0;
-    [RelayCommand] private void SetTab1() => SelectedTab = 1;
-    [RelayCommand] private void SetTab2() => SelectedTab = 2;
-    [RelayCommand] private void SetTab3() => SelectedTab = 3;
-    [RelayCommand] private void SetTab4() => SelectedTab = 4;
+    [RelayCommand] private async Task SetTab0Async() { SelectedTab = 0; await EnsureTabLoadedAsync(0); }
+    [RelayCommand] private async Task SetTab1Async() { SelectedTab = 1; await EnsureTabLoadedAsync(1); }
+    [RelayCommand] private async Task SetTab2Async() { SelectedTab = 2; await EnsureTabLoadedAsync(2); }
+    [RelayCommand] private void SetTab3() { SelectedTab = 3; }
+    [RelayCommand] private async Task SetTab4Async() { SelectedTab = 4; await EnsureTabLoadedAsync(4); }
+    [RelayCommand] private async Task SetTab5Async() { SelectedTab = 5; await EnsureTabLoadedAsync(5); }
 
     [RelayCommand] private void SetDetailTab0() => DetailTab = 0;
     [RelayCommand] private void SetDetailTab1() => DetailTab = 1;
@@ -292,24 +374,22 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [RelayCommand] private async Task SetPeriodQuarterAsync()   { SelectedPeriod = "quarter";   await LoadStatsAsync(); }
     [RelayCommand] private async Task SetPeriodYearAsync()      { SelectedPeriod = "year";      await LoadStatsAsync(); }
 
-    [RelayCommand] private async Task SetChartPeriod6mAsync()  { AgencyChartPeriod = "6m";  await RebuildAgencyChartAsync(); }
-    [RelayCommand] private async Task SetChartPeriod1yAsync()  { AgencyChartPeriod = "1y";  await RebuildAgencyChartAsync(); }
-    [RelayCommand] private async Task SetChartPeriodAllAsync() { AgencyChartPeriod = "all"; await RebuildAgencyChartAsync(); }
+    [RelayCommand] private async Task SetChartPeriod6mAsync()  { AgencyChartPeriod = "6m";  await BuildAgencyChartAsync(); }
+    [RelayCommand] private async Task SetChartPeriod1yAsync()  { AgencyChartPeriod = "1y";  await BuildAgencyChartAsync(); }
+    [RelayCommand] private async Task SetChartPeriodAllAsync() { AgencyChartPeriod = "all"; await BuildAgencyChartAsync(); }
 
-    private async Task RebuildAgencyChartAsync()
-    {
-        var props = await _context.Properties.ToListAsync();
-        BuildAgencyChart(props);
-    }
-
-    private void BuildAgencyChart(List<Property> props)
+    private async Task BuildAgencyChartAsync()
     {
         List<DateTime> months;
         if (AgencyChartPeriod == "1y")
             months = Enumerable.Range(0, 12).Select(i => DateTime.Today.AddMonths(-11 + i)).ToList();
         else if (AgencyChartPeriod == "all")
         {
-            var first = props.Where(p => p.Status == "sold").Select(p => p.UpdatedAt).DefaultIfEmpty(DateTime.Today).Min();
+            var firstDate = await _context.Properties
+                .Where(p => p.Status == "sold")
+                .Select(p => (DateTime?)p.UpdatedAt)
+                .MinAsync();
+            var first = firstDate ?? DateTime.Today;
             int totalMonths = Math.Max(1, (int)((DateTime.Today - first).TotalDays / 30));
             totalMonths = Math.Min(totalMonths, 24);
             months = Enumerable.Range(0, totalMonths).Select(i => DateTime.Today.AddMonths(-totalMonths + 1 + i)).ToList();
@@ -317,11 +397,18 @@ public partial class AdminDashboardViewModel : ViewModelBase
         else
             months = Enumerable.Range(0, 6).Select(i => DateTime.Today.AddMonths(-5 + i)).ToList();
 
+        var rangeFrom = months.First();
+        var rangeTo   = months.Last().AddMonths(1);
+        var soldDates = await _context.Properties
+            .Where(p => p.Status == "sold" && p.UpdatedAt >= rangeFrom && p.UpdatedAt < rangeTo)
+            .Select(p => new { p.UpdatedAt.Year, p.UpdatedAt.Month })
+            .ToListAsync();
+
         var counts = months.Select(m =>
-            props.Count(p => p.Status == "sold" && p.UpdatedAt.Year == m.Year && p.UpdatedAt.Month == m.Month)).ToArray();
+            soldDates.Count(p => p.Year == m.Year && p.Month == m.Month)).ToArray();
         AgencySalesSeries = new ISeries[]
         {
-            new ColumnSeries<int> { Values = counts, Name = "Продано", Fill = new SolidColorPaint(SKColor.Parse("#7CB342")) }
+            new ColumnSeries<int> { Values = counts, Name = L.Get("Status.Sold", "Продано"), Fill = new SolidColorPaint(SKColor.Parse("#7CB342")) }
         };
         AgencySalesXAxes = new Axis[] { new Axis { Labels = months.Select(m => m.ToString("MMM yy")).ToArray() } };
     }
@@ -332,51 +419,45 @@ public partial class AdminDashboardViewModel : ViewModelBase
         IsUsersLoading = true;
         try
         {
-            var users = await _context.Users
+            var query = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(UserSearch))
+            {
+                var q = UserSearch.Trim().ToLower();
+                query = query.Where(u =>
+                    u.FullName.ToLower().Contains(q) ||
+                    u.Login.ToLower().Contains(q) ||
+                    u.Email.ToLower().Contains(q));
+            }
+
+            query = UserRoleFilter switch
+            {
+                "realtor" => query.Where(u => u.Role == "realtor"),
+                "client"  => query.Where(u => u.Role == "client"),
+                "blocked" => query.Where(u => u.IsBlocked),
+                _         => query
+            };
+
+            var users = await query
                 .OrderBy(u => u.IsBlocked).ThenBy(u => u.Role).ThenBy(u => u.FullName)
                 .ToListAsync();
-            _allUsers = users.Select(u => new UserRowViewModel(u)).ToList();
-            ApplyUserFilter();
+            Users.Clear();
+            foreach (var u in users) Users.Add(new UserRowViewModel(u));
         }
         finally { IsUsersLoading = false; }
     }
 
-    private void ApplyUserFilter()
-    {
-        var filtered = _allUsers.AsEnumerable();
-
-        if (!string.IsNullOrWhiteSpace(UserSearch))
-        {
-            var q = UserSearch.Trim().ToLower();
-            filtered = filtered.Where(u =>
-                u.FullName.ToLower().Contains(q) ||
-                u.Login.ToLower().Contains(q) ||
-                u.Email.ToLower().Contains(q));
-        }
-
-        filtered = UserRoleFilter switch
-        {
-            "realtor"  => filtered.Where(u => u.Role == "realtor"),
-            "client"   => filtered.Where(u => u.Role == "client"),
-            "blocked"  => filtered.Where(u => u.IsBlocked),
-            _          => filtered
-        };
-
-        Users.Clear();
-        foreach (var u in filtered) Users.Add(u);
-    }
+    [RelayCommand]
+    private async Task SearchUsersAsync() => await LoadUsersAsync();
 
     [RelayCommand]
-    private void SearchUsers() => ApplyUserFilter();
-
+    private async Task FilterAllAsync()     { UserRoleFilter = "all";     await LoadUsersAsync(); }
     [RelayCommand]
-    private void FilterAll()     { UserRoleFilter = "all";     ApplyUserFilter(); }
+    private async Task FilterRealtorAsync() { UserRoleFilter = "realtor"; await LoadUsersAsync(); }
     [RelayCommand]
-    private void FilterRealtor() { UserRoleFilter = "realtor"; ApplyUserFilter(); }
+    private async Task FilterClientAsync()  { UserRoleFilter = "client";  await LoadUsersAsync(); }
     [RelayCommand]
-    private void FilterClient()  { UserRoleFilter = "client";  ApplyUserFilter(); }
-    [RelayCommand]
-    private void FilterBlocked() { UserRoleFilter = "blocked"; ApplyUserFilter(); }
+    private async Task FilterBlockedAsync() { UserRoleFilter = "blocked"; await LoadUsersAsync(); }
 
     [RelayCommand]
     private async Task PromoteToRealtorAsync(int userId) => await ChangeRoleAsync(userId, "realtor");
@@ -391,20 +472,49 @@ public partial class AdminDashboardViewModel : ViewModelBase
         if (user == null) return;
 
         var roleLabel = newRole == "realtor" ? "Риелтор" : "Клиент";
+
+        // При понижении риелтора — проверяем активные объекты и записи
+        string warningText = "";
+        if (newRole == "client" && user.Role == "realtor")
+        {
+            var activeProps = await _context.Properties
+                .CountAsync(p => p.RealtorId == userId && p.Status == "active");
+            var activeAppts = await _context.Appointments
+                .CountAsync(a => a.RealtorId == userId && (a.Status == AppointmentStatus.New || a.Status == AppointmentStatus.Confirmed));
+
+            if (activeProps > 0 || activeAppts > 0)
+            {
+                var parts = new List<string>();
+                if (activeProps > 0) parts.Add($"активных объектов: {activeProps}");
+                if (activeAppts > 0) parts.Add($"предстоящих записей на просмотр: {activeAppts}");
+                warningText = $"\n\n⚠ У риелтора есть {string.Join(", ", parts)}.\nВсе активные объекты будут скрыты автоматически.";
+            }
+        }
+
         var result = System.Windows.MessageBox.Show(
-            $"Изменить роль пользователя «{user.FullName}» на «{roleLabel}»?",
+            $"Изменить роль пользователя «{user.FullName}» на «{roleLabel}»?{warningText}",
             "Подтверждение смены роли",
             System.Windows.MessageBoxButton.YesNo,
-            System.Windows.MessageBoxImage.Question);
+            System.Windows.MessageBoxImage.Warning);
         if (result != System.Windows.MessageBoxResult.Yes) return;
 
         user.Role = newRole;
+
+        // Скрываем активные объекты понижаемого риелтора
+        if (newRole == "client")
+        {
+            var propsToHide = await _context.Properties
+                .Where(p => p.RealtorId == userId && p.Status == "active")
+                .ToListAsync();
+            foreach (var p in propsToHide)
+                p.Status = "hidden";
+        }
+
         await _context.SaveChangesAsync();
         UserActionMessage = $"Роль {user.FullName} изменена на «{roleLabel}»";
 
-        // Уведомляем пользователя по email
         _ = _notificationService.SendEmailAsync(user.Email, user.FullName,
-            $"Изменение роли в {(_notificationService is MSM.Services.EmailNotificationService ? "системе" : "системе")}",
+            "Изменение роли в системе",
             $"<p>Здравствуйте, <strong>{user.FullName}</strong>!</p>" +
             $"<p>Ваша роль в системе изменена на <strong>«{roleLabel}»</strong>.</p>" +
             $"<p>Для применения изменений перезайдите в систему.</p>");
@@ -442,47 +552,59 @@ public partial class AdminDashboardViewModel : ViewModelBase
         IsReviewsLoading = true;
         try
         {
-            var reviews = await _context.Reviews
-                .Include(r => r.User)
-                .Include(r => r.Realtor)
-                .Where(r => !r.IsApproved)
-                .OrderByDescending(r => r.CreatedAt)
+            var realtorNames = await _context.Reviews
+                .Where(r => !r.IsApproved && r.Realtor != null)
+                .Select(r => r.Realtor!.FullName)
+                .Distinct()
+                .OrderBy(n => n)
                 .ToListAsync();
 
-            PendingReviewsCount = reviews.Count;
-
-            _allPendingReviews = reviews.Select(r => new ReviewRowViewModel(r)).ToList();
-
-            // Заполняем список имён риелторов для фильтра
+            _suppressReviewReload = true;
             ReviewRealtorNames.Clear();
             ReviewRealtorNames.Add("");
-            foreach (var name in reviews
-                .Where(r => r.Realtor != null)
-                .Select(r => r.Realtor!.FullName)
-                .Distinct().OrderBy(n => n))
-                ReviewRealtorNames.Add(name);
+            foreach (var name in realtorNames) ReviewRealtorNames.Add(name);
+            ReviewRealtorFilter = "";
+            _suppressReviewReload = false;
 
-            ApplyReviewFilter();
+            await RefreshReviewsAsync();
         }
         finally { IsReviewsLoading = false; }
     }
 
-    private void ApplyReviewFilter()
+    private async Task RefreshReviewsAsync()
     {
-        var filtered = string.IsNullOrEmpty(ReviewRealtorFilter)
-            ? _allPendingReviews
-            : _allPendingReviews.Where(r => r.RealtorName == ReviewRealtorFilter).ToList();
+        await _reviewSem.WaitAsync();
+        try
+        {
+            var query = _context.Reviews
+                .Include(r => r.User)
+                .Include(r => r.Realtor)
+                .Where(r => !r.IsApproved)
+                .AsQueryable();
 
-        PendingReviews.Clear();
-        foreach (var r in filtered) PendingReviews.Add(r);
-        NoReviews = PendingReviews.Count == 0;
+            if (!string.IsNullOrEmpty(ReviewRealtorFilter))
+                query = query.Where(r => r.Realtor != null && r.Realtor.FullName == ReviewRealtorFilter);
+
+            var reviews = await query.OrderByDescending(r => r.CreatedAt).ToListAsync();
+            PendingReviewsCount = reviews.Count;
+            PendingReviews.Clear();
+            foreach (var r in reviews) PendingReviews.Add(new ReviewRowViewModel(r));
+            NoReviews = PendingReviews.Count == 0;
+        }
+        finally { _reviewSem.Release(); }
     }
 
-    partial void OnReviewRealtorFilterChanged(string value) => ApplyReviewFilter();
+    partial void OnReviewRealtorFilterChanged(string value) { if (!_suppressReviewReload) _ = RefreshReviewsAsync(); }
 
     [RelayCommand]
     private async Task ApproveReviewAsync(int id)
     {
+        var result = System.Windows.MessageBox.Show(
+            "Одобрить этот отзыв? Он станет виден всем пользователям.",
+            "Подтверждение одобрения",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Question);
+        if (result != System.Windows.MessageBoxResult.Yes) return;
         await _reviewService.ApproveAsync(id);
         await LoadReviewsAsync();
     }
@@ -490,6 +612,12 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [RelayCommand]
     private async Task RejectReviewAsync(int id)
     {
+        var result = System.Windows.MessageBox.Show(
+            "Отклонить и удалить этот отзыв? Действие необратимо.",
+            "Подтверждение отклонения",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Warning);
+        if (result != System.Windows.MessageBoxResult.Yes) return;
         await _reviewService.RejectAsync(id);
         await LoadReviewsAsync();
     }
@@ -531,90 +659,126 @@ public partial class AdminDashboardViewModel : ViewModelBase
     {
         try
         {
-            var props    = await _context.Properties.ToListAsync();
-            var users    = await _context.Users.ToListAsync();
-            var allAppts = await _context.Appointments.ToListAsync();
-            var realtors = users.Where(u => u.Role == "realtor").ToList();
-
-            // Глобальные счётчики — всегда за всё время
-            StatTotalProps  = props.Count;
-            StatActiveProps = props.Count(p => p.Status == "active");
-            StatSoldProps   = props.Count(p => p.Status == "sold");
-            StatTotalUsers  = users.Count;
-            StatRealtors    = realtors.Count;
-
-            PropStatusSeries = new ISeries[]
-            {
-                new PieSeries<int> { Values = new[]{ StatActiveProps },                         Name = "Активные",
-                    Fill = new SolidColorPaint(SKColor.Parse("#27563A")) },
-                new PieSeries<int> { Values = new[]{ StatSoldProps },                           Name = "Проданные",
-                    Fill = new SolidColorPaint(SKColor.Parse("#F4B942")) },
-                new PieSeries<int> { Values = new[]{ props.Count(p => p.Status == "hidden") },  Name = "Скрытые",
-                    Fill = new SolidColorPaint(SKColor.Parse("#9E9E9E")) },
-            };
-
-            // Записи за выбранный период
             var from = GetPeriodStart();
             var to   = GetPeriodEnd();
-            var periodAppts = allAppts
-                .Where(a => (from == null || a.SlotStart >= from) && (to == null || a.SlotStart < to))
-                .ToList();
 
-            // Выручка и средний чек за период (используем UpdatedAt как дату продажи)
-            var soldProps = props.Where(p => p.Status == "sold"
-                && (from == null || p.UpdatedAt >= from)
-                && (to   == null || p.UpdatedAt <  to)).ToList();
-            decimal totalRevenue = soldProps.Sum(p => p.Price);
-            StatRevenueText = soldProps.Count > 0 ? FormatMoney(totalRevenue) : "—";
-            StatAvgDealText = soldProps.Count > 0 ? FormatMoney(totalRevenue / soldProps.Count) : "—";
+            // === Глобальные счётчики через агрегатные запросы ===
+            StatTotalProps  = await _context.Properties.CountAsync();
+            StatActiveProps = await _context.Properties.CountAsync(p => p.Status == "active");
+            StatSoldProps   = await _context.Properties.CountAsync(p => p.Status == "sold");
+            StatTotalUsers  = await _context.Users.CountAsync();
+            StatRealtors    = await _context.Users.CountAsync(u => u.Role == "realtor");
+
+            // Выручка + средний чек за период
+            var soldQ = _context.Properties.Where(p => p.Status == "sold");
+            if (from.HasValue) soldQ = soldQ.Where(p => p.UpdatedAt >= from.Value);
+            if (to.HasValue)   soldQ = soldQ.Where(p => p.UpdatedAt <  to.Value);
+            var soldCount   = await soldQ.CountAsync();
+            decimal revenue = soldCount > 0 ? await soldQ.SumAsync(p => p.Price) : 0;
+            StatRevenueText = soldCount > 0 ? FormatMoney(revenue) : "—";
+            StatAvgDealText = soldCount > 0 ? FormatMoney(revenue / soldCount) : "—";
 
             // Новые клиенты за период
-            StatNewClients = users.Count(u => u.Role == "client"
-                && (from == null || u.CreatedAt >= from)
-                && (to   == null || u.CreatedAt <  to));
+            var clientQ = _context.Users.Where(u => u.Role == "client");
+            if (from.HasValue) clientQ = clientQ.Where(u => u.CreatedAt >= from.Value);
+            if (to.HasValue)   clientQ = clientQ.Where(u => u.CreatedAt <  to.Value);
+            StatNewClients = await clientQ.CountAsync();
 
-            // Всего новых (ожидающих подтверждения) записей
-            StatPendingAppts = periodAppts.Count(a => a.Status == "new");
+            // Ожидающие записи за период
+            var pendingQ = _context.Appointments.Where(a => a.Status == AppointmentStatus.New);
+            if (from.HasValue) pendingQ = pendingQ.Where(a => a.SlotStart >= from.Value);
+            if (to.HasValue)   pendingQ = pendingQ.Where(a => a.SlotStart <  to.Value);
+            StatPendingAppts = await pendingQ.CountAsync();
 
             // График продаж агентства
-            BuildAgencyChart(props);
+            await BuildAgencyChartAsync();
 
+            // === Batch-запросы для лидерборда (N+1 → несколько запросов) ===
+            var realtors = await _context.Users.Where(u => u.Role == "realtor").ToListAsync();
+
+            // Статистика объектов по риелторам (один запрос)
+            var propStats = await _context.Properties
+                .GroupBy(p => p.RealtorId)
+                .Select(g => new
+                {
+                    RealtorId = g.Key,
+                    Total     = g.Count(),
+                    Active    = g.Count(p => p.Status == "active"),
+                    Sold      = g.Count(p => p.Status == "sold"),
+                    Revenue   = g.Sum(p => p.Status == "sold" ? p.Price : 0m)
+                })
+                .ToListAsync();
+
+            // Записи за период по риелторам (один запрос)
+            var apptQ = _context.Appointments.AsQueryable();
+            if (from.HasValue) apptQ = apptQ.Where(a => a.SlotStart >= from.Value);
+            if (to.HasValue)   apptQ = apptQ.Where(a => a.SlotStart <  to.Value);
+            var periodApptStats = await apptQ
+                .GroupBy(a => new { a.RealtorId, a.Status })
+                .Select(g => new { g.Key.RealtorId, g.Key.Status, Count = g.Count() })
+                .ToListAsync();
+
+            // Все записи для тревожных сигналов (один запрос)
+            var allApptStats = await _context.Appointments
+                .GroupBy(a => new { a.RealtorId, a.Status })
+                .Select(g => new { g.Key.RealtorId, g.Key.Status, Count = g.Count() })
+                .ToListAsync();
+
+            // Тренд: текущий vs прошлый месяц (один запрос)
             var thisMonthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             var lastMonthStart = thisMonthStart.AddMonths(-1);
-            var staleThreshold = DateTime.Today.AddDays(-30); // объект активен > 30 дней
+            var trendStats = await _context.Appointments
+                .Where(a => a.Status == AppointmentStatus.Completed && a.SlotStart >= lastMonthStart)
+                .GroupBy(a => new { a.RealtorId, IsThisMonth = a.SlotStart >= thisMonthStart })
+                .Select(g => new { g.Key.RealtorId, g.Key.IsThisMonth, Count = g.Count() })
+                .ToListAsync();
 
+            // Залежавшиеся объекты (один запрос)
+            var staleThreshold = DateTime.Today.AddDays(-30);
+            var staleStats = await _context.Properties
+                .Where(p => p.Status == "active" && p.CreatedAt < staleThreshold)
+                .GroupBy(p => p.RealtorId)
+                .Select(g => new { RealtorId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            // Средние рейтинги всех риелторов (один запрос вместо N)
+            var ratingStats = await _context.Reviews
+                .Where(r => r.IsApproved)
+                .GroupBy(r => r.RealtorId)
+                .Select(g => new { RealtorId = g.Key, AvgRating = g.Average(r => (double)r.Rating) })
+                .ToListAsync();
+
+            // === Строим лидерборд в памяти из предзагруженных данных ===
             var rawList = new List<RealtorSummaryRow>();
             for (int i = 0; i < realtors.Count; i++)
             {
                 var r      = realtors[i];
-                var rProps = props.Where(p => p.RealtorId == r.Id).ToList();
-                var rAppts = periodAppts.Where(a => a.RealtorId == r.Id).ToList();
-                var rating = await _reviewService.GetAverageRatingAsync(realtorId: r.Id);
+                var ps     = propStats.FirstOrDefault(x => x.RealtorId == r.Id);
+                var rating = ratingStats.FirstOrDefault(x => x.RealtorId == r.Id)?.AvgRating ?? 0;
                 var color  = _palette[i % _palette.Length];
-                int active = rProps.Count(p => p.Status == "active");
-                int sold   = rProps.Count(p => p.Status == "sold");
-                int completed = rAppts.Count(a => a.Status == "completed");
-                int pending   = rAppts.Count(a => a.Status == "new");
-                int score  = CalcScore(rating, sold, rProps.Count, completed, rAppts.Count, active);
 
-                // Выручка риелтора (все проданные объекты за всё время)
-                decimal rRevenue = rProps.Where(p => p.Status == "sold").Sum(p => p.Price);
-                string revenueText = sold > 0 ? FormatMoney(rRevenue) : "—";
+                int total  = ps?.Total  ?? 0;
+                int active = ps?.Active ?? 0;
+                int sold   = ps?.Sold   ?? 0;
 
-                // Тренд: завершённые записи этого месяца vs прошлого
-                int thisM = allAppts.Count(a => a.RealtorId == r.Id && a.Status == "completed" && a.SlotStart >= thisMonthStart);
-                int lastM = allAppts.Count(a => a.RealtorId == r.Id && a.Status == "completed" && a.SlotStart >= lastMonthStart && a.SlotStart < thisMonthStart);
-                string trend      = thisM > lastM ? "↑" : thisM < lastM ? "↓" : "→";
-                string trendColor = trend == "↑" ? "#7CB342" : trend == "↓" ? "#EF5350" : "#9E9E9E";
+                int totalAppt    = periodApptStats.Where(x => x.RealtorId == r.Id).Sum(x => x.Count);
+                int completed    = periodApptStats.FirstOrDefault(x => x.RealtorId == r.Id && x.Status == AppointmentStatus.Completed)?.Count ?? 0;
+                int pending      = periodApptStats.FirstOrDefault(x => x.RealtorId == r.Id && x.Status == AppointmentStatus.New)?.Count ?? 0;
+                int score        = CalcScore(rating, sold, total, completed, totalAppt, active);
+                decimal rRevenue = ps?.Revenue ?? 0;
+
+                int thisM  = trendStats.FirstOrDefault(x => x.RealtorId == r.Id && x.IsThisMonth)?.Count  ?? 0;
+                int lastM  = trendStats.FirstOrDefault(x => x.RealtorId == r.Id && !x.IsThisMonth)?.Count ?? 0;
+                string trend = thisM > lastM ? "↑" : thisM < lastM ? "↓" : "→";
 
                 rawList.Add(new RealtorSummaryRow
                 {
                     Id            = r.Id,
                     Name          = r.FullName,
-                    TotalProps    = rProps.Count,
+                    TotalProps    = total,
                     ActiveProps   = active,
                     SoldProps     = sold,
-                    TotalAppt     = rAppts.Count,
+                    TotalAppt     = totalAppt,
                     CompletedAppt = completed,
                     PendingAppt   = pending,
                     Rating        = rating > 0 ? $"{rating:F1} ★" : "—",
@@ -622,81 +786,99 @@ public partial class AdminDashboardViewModel : ViewModelBase
                     Color         = color,
                     Score         = score,
                     ScoreColor    = ScoreColor(score),
-                    RevenueText   = revenueText,
+                    RevenueText   = sold > 0 ? FormatMoney(rRevenue) : "—",
                     TrendArrow    = trend,
-                    TrendColor    = trendColor
+                    TrendColor    = trend == "↑" ? "#7CB342" : trend == "↓" ? "#EF5350" : "#9E9E9E"
                 });
             }
 
             // Сортируем по Score и назначаем ранги
-            var sorted = rawList.OrderByDescending(r => r.Score).ToList();
-            _allRealtorSummary = sorted.Select((src, i) => new RealtorSummaryRow
-            {
-                Id            = src.Id,
-                Name          = src.Name,
-                TotalProps    = src.TotalProps,
-                ActiveProps   = src.ActiveProps,
-                SoldProps     = src.SoldProps,
-                TotalAppt     = src.TotalAppt,
-                CompletedAppt = src.CompletedAppt,
-                PendingAppt   = src.PendingAppt,
-                Rating        = src.Rating,
-                RatingValue   = src.RatingValue,
-                Color         = src.Color,
-                Score         = src.Score,
-                ScoreColor    = src.ScoreColor,
-                RevenueText   = src.RevenueText,
-                TrendArrow    = src.TrendArrow,
-                TrendColor    = src.TrendColor,
-                Rank          = i + 1
-            }).ToList();
+            _allRealtorSummary = rawList
+                .OrderByDescending(r => r.Score)
+                .Select((src, i) => new RealtorSummaryRow
+                {
+                    Id = src.Id, Name = src.Name, TotalProps = src.TotalProps, ActiveProps = src.ActiveProps,
+                    SoldProps = src.SoldProps, TotalAppt = src.TotalAppt, CompletedAppt = src.CompletedAppt,
+                    PendingAppt = src.PendingAppt, Rating = src.Rating, RatingValue = src.RatingValue,
+                    Color = src.Color, Score = src.Score, ScoreColor = src.ScoreColor, RevenueText = src.RevenueText,
+                    TrendArrow = src.TrendArrow, TrendColor = src.TrendColor, Rank = i + 1
+                })
+                .ToList();
             _showAllRealtors = false;
             ApplyRealtorSummaryLimit();
 
-            // Среднее по команде
             if (rawList.Count > 0)
             {
                 TeamAvgScore = (int)rawList.Average(r => r.Score);
                 TeamAvgColor = ScoreColor(TeamAvgScore);
             }
 
-            // Тревожные сигналы (всегда за всё время)
-            Alerts.Clear();
+            // === Тревожные сигналы ===
+            _allAlerts.Clear();
             foreach (var row in rawList)
             {
-                var allR      = allAppts.Where(a => a.RealtorId == row.Id).ToList();
-                int allCompl  = allR.Count(a => a.Status == "completed");
-                int allCancel = allR.Count(a => a.Status == "cancelled");
-                var rProps    = props.Where(p => p.RealtorId == row.Id).ToList();
-                int staleCount = rProps.Count(p => p.Status == "active" && p.CreatedAt < staleThreshold);
+                var allAppt   = allApptStats.Where(x => x.RealtorId == row.Id).ToList();
+                int allCompl  = allAppt.FirstOrDefault(x => x.Status == AppointmentStatus.Completed)?.Count ?? 0;
+                int allCancel = allAppt.FirstOrDefault(x => x.Status == AppointmentStatus.Cancelled)?.Count  ?? 0;
+                int allTotal  = allAppt.Sum(x => x.Count);
+                int staleCount = staleStats.FirstOrDefault(x => x.RealtorId == row.Id)?.Count ?? 0;
 
                 if (row.TotalProps == 0)
-                    Alerts.Add(new AlertItem { RealtorName = row.Name, AlertText = "нет объектов в системе",             Icon = "📭", AlertColor = "#9E9E9E", Severity = "Инфо" });
+                    _allAlerts.Add(new AlertItem { RealtorName = row.Name, AlertText = L.Get("Alert.NoProps"),  Icon = "📭", AlertColor = "#9E9E9E", Severity = L.Get("Alert.SeverityInfo"),     SeverityKey = "info" });
                 else if (row.ActiveProps == 0)
-                    Alerts.Add(new AlertItem { RealtorName = row.Name, AlertText = "нет активных объектов",              Icon = "⚠",  AlertColor = "#FF8F00", Severity = "Внимание" });
+                    _allAlerts.Add(new AlertItem { RealtorName = row.Name, AlertText = L.Get("Alert.NoActive"), Icon = "⚠",  AlertColor = "#FF8F00", Severity = L.Get("Alert.SeverityWarning"),  SeverityKey = "warning" });
 
                 if (row.SoldProps == 0)
-                    Alerts.Add(new AlertItem { RealtorName = row.Name, AlertText = "ни одной продажи за всё время",      Icon = "📉", AlertColor = "#FF8F00", Severity = "Внимание" });
+                    _allAlerts.Add(new AlertItem { RealtorName = row.Name, AlertText = L.Get("Alert.NoSales"),  Icon = "📉", AlertColor = "#FF8F00", Severity = L.Get("Alert.SeverityWarning"),  SeverityKey = "warning" });
 
                 if (row.RatingValue > 0 && row.RatingValue < 3.5)
-                    Alerts.Add(new AlertItem { RealtorName = row.Name, AlertText = $"низкий рейтинг ({row.Rating})",    Icon = "⭐", AlertColor = "#EF5350", Severity = "Критично" });
+                    _allAlerts.Add(new AlertItem { RealtorName = row.Name, AlertText = $"{L.Get("Alert.LowRating")} ({row.Rating})",   Icon = "⭐", AlertColor = "#EF5350", Severity = L.Get("Alert.SeverityCritical"), SeverityKey = "critical" });
 
                 if (row.Score < 30 && row.TotalProps > 0)
-                    Alerts.Add(new AlertItem { RealtorName = row.Name, AlertText = $"критически низкий балл ({row.Score}/100)", Icon = "🚨", AlertColor = "#EF5350", Severity = "Критично" });
+                    _allAlerts.Add(new AlertItem { RealtorName = row.Name, AlertText = $"{L.Get("Alert.LowScore")} ({row.Score}/100)", Icon = "🚨", AlertColor = "#EF5350", Severity = L.Get("Alert.SeverityCritical"), SeverityKey = "critical" });
 
-                if (allR.Count >= 3 && allCompl == 0)
-                    Alerts.Add(new AlertItem { RealtorName = row.Name, AlertText = "есть записи, но ни одной завершённой", Icon = "📋", AlertColor = "#FF8F00", Severity = "Внимание" });
+                if (allTotal >= 3 && allCompl == 0)
+                    _allAlerts.Add(new AlertItem { RealtorName = row.Name, AlertText = L.Get("Alert.NoCompleted"),  Icon = "📋", AlertColor = "#FF8F00", Severity = L.Get("Alert.SeverityWarning"),  SeverityKey = "warning" });
 
-                if (allR.Count >= 5 && (double)allCancel / allR.Count > 0.5)
-                    Alerts.Add(new AlertItem { RealtorName = row.Name, AlertText = $"высокий % отмен ({allCancel * 100 / allR.Count}%)", Icon = "❌", AlertColor = "#EF5350", Severity = "Критично" });
+                if (allTotal >= 5 && (double)allCancel / allTotal > 0.5)
+                    _allAlerts.Add(new AlertItem { RealtorName = row.Name, AlertText = $"{L.Get("Alert.HighCancels")} ({allCancel * 100 / allTotal}%)", Icon = "❌", AlertColor = "#EF5350", Severity = L.Get("Alert.SeverityCritical"), SeverityKey = "critical" });
 
                 if (staleCount > 0)
-                    Alerts.Add(new AlertItem { RealtorName = row.Name, AlertText = $"{staleCount} объект(ов) без продажи >30 дней", Icon = "🕐", AlertColor = "#FF8F00", Severity = "Внимание" });
+                    _allAlerts.Add(new AlertItem { RealtorName = row.Name, AlertText = $"{staleCount} {L.Get("Alert.StaleProps")}", Icon = "🕐", AlertColor = "#FF8F00", Severity = L.Get("Alert.SeverityWarning"),  SeverityKey = "warning" });
             }
-            HasAlerts = Alerts.Count > 0;
+            HasAlerts = _allAlerts.Count > 0;
+
+            AlertRealtorNames.Clear();
+            AlertRealtorNames.Add("");
+            foreach (var n in _allAlerts.Select(a => a.RealtorName).Distinct().OrderBy(x => x))
+                AlertRealtorNames.Add(n);
+            AlertRealtorFilter = "";
+            AlertSeverityFilter = "all";
+            ApplyAlertFilters();
         }
         catch { /* некритично */ }
     }
+
+    private void ApplyAlertFilters()
+    {
+        Alerts.Clear();
+        foreach (var a in _allAlerts)
+        {
+            if (AlertSeverityFilter != "all" && a.SeverityKey != AlertSeverityFilter) continue;
+            if (!string.IsNullOrEmpty(AlertRealtorFilter) && a.RealtorName != AlertRealtorFilter) continue;
+            Alerts.Add(a);
+        }
+        OnPropertyChanged(nameof(AllAlertsCount));
+    }
+
+    partial void OnAlertSeverityFilterChanged(string value) => ApplyAlertFilters();
+    partial void OnAlertRealtorFilterChanged(string value)  => ApplyAlertFilters();
+
+    [RelayCommand] private void ToggleAlertsExpanded() => IsAlertsExpanded = !IsAlertsExpanded;
+    [RelayCommand] private void FilterAlertAll()      => AlertSeverityFilter = "all";
+    [RelayCommand] private void FilterAlertInfo()     => AlertSeverityFilter = "info";
+    [RelayCommand] private void FilterAlertWarning()  => AlertSeverityFilter = "warning";
+    [RelayCommand] private void FilterAlertCritical() => AlertSeverityFilter = "critical";
 
     private void ApplyRealtorSummaryLimit()
     {
@@ -730,89 +912,70 @@ public partial class AdminDashboardViewModel : ViewModelBase
         DetailScoreColor   = row.ScoreColor;
         try
         {
-            var rProps = await _context.Properties.Where(p => p.RealtorId == row.Id).ToListAsync();
+            // Статистика объектов через CountAsync
+            DetailTotal  = await _context.Properties.CountAsync(p => p.RealtorId == row.Id);
+            DetailActive = await _context.Properties.CountAsync(p => p.RealtorId == row.Id && p.Status == "active");
+            DetailSold   = await _context.Properties.CountAsync(p => p.RealtorId == row.Id && p.Status == "sold");
 
             // Записи за выбранный период
             var from = GetPeriodStart();
             var to   = GetPeriodEnd();
-            var rAppts = await _context.Appointments
-                .Where(a => a.RealtorId == row.Id
-                    && (from == null || a.SlotStart >= from)
-                    && (to   == null || a.SlotStart <  to))
+            var apptQ = _context.Appointments.Where(a => a.RealtorId == row.Id);
+            if (from.HasValue) apptQ = apptQ.Where(a => a.SlotStart >= from.Value);
+            if (to.HasValue)   apptQ = apptQ.Where(a => a.SlotStart <  to.Value);
+            DetailTotalAppt     = await apptQ.CountAsync();
+            DetailCompletedAppt = await apptQ.CountAsync(a => a.Status == AppointmentStatus.Completed);
+
+            // Рейтинг
+            var avgRating = await _context.Reviews
+                .Where(r => r.RealtorId == row.Id && r.IsApproved)
+                .Select(r => (double?)r.Rating)
+                .AverageAsync();
+            DetailRatingText = avgRating.HasValue ? $"{avgRating.Value:F1} ★" : "—";
+
+            // Выручка (только SumAsync, без загрузки объектов)
+            decimal rRevenue = DetailSold > 0
+                ? await _context.Properties.Where(p => p.RealtorId == row.Id && p.Status == "sold").SumAsync(p => p.Price)
+                : 0;
+            DetailRevenueText = DetailSold > 0 ? FormatMoney(rRevenue) : "—";
+            DetailAvgDealText = DetailSold > 0 ? FormatMoney(rRevenue / DetailSold) : "—";
+
+            // График записей: загружаем только (Year, Month) — минимальная проекция
+            var months = Enumerable.Range(0, 6).Select(i => DateTime.Today.AddMonths(-5 + i)).ToList();
+            var chartFrom = months.First();
+            var apptDates = await _context.Appointments
+                .Where(a => a.RealtorId == row.Id && a.SlotStart >= chartFrom)
+                .Select(a => new { a.SlotStart.Year, a.SlotStart.Month })
                 .ToListAsync();
-
-            var rating = await _reviewService.GetAverageRatingAsync(realtorId: row.Id);
-
-            DetailTotal         = rProps.Count;
-            DetailActive        = rProps.Count(p => p.Status == "active");
-            DetailSold          = rProps.Count(p => p.Status == "sold");
-            DetailTotalAppt     = rAppts.Count;
-            DetailCompletedAppt = rAppts.Count(a => a.Status == "completed");
-            DetailRatingText    = rating > 0 ? $"{rating:F1} ★" : "—";
-
-            // Финансовые показатели риелтора (все проданные объекты, не зависит от периода)
-            var soldByRealtor = rProps.Where(p => p.Status == "sold").ToList();
-            decimal rRevenue = soldByRealtor.Sum(p => p.Price);
-            DetailRevenueText = soldByRealtor.Count > 0 ? FormatMoney(rRevenue) : "—";
-            DetailAvgDealText = soldByRealtor.Count > 0 ? FormatMoney(rRevenue / soldByRealtor.Count) : "—";
-
-            DetailStatusSeries = new ISeries[]
-            {
-                new PieSeries<int> { Values = new[]{ DetailActive }, Name = "Активные",
-                    Fill = new SolidColorPaint(SKColor.Parse("#27563A")) },
-                new PieSeries<int> { Values = new[]{ DetailSold }, Name = "Проданные",
-                    Fill = new SolidColorPaint(SKColor.Parse("#F4B942")) },
-                new PieSeries<int> { Values = new[]{ rProps.Count(p => p.Status == "hidden") }, Name = "Скрытые",
-                    Fill = new SolidColorPaint(SKColor.Parse("#9E9E9E")) },
-            };
-
-            // Записи по последним 6 месяцам (для детального графика всегда показываем динамику)
-            var months   = Enumerable.Range(0, 6).Select(i => DateTime.Today.AddMonths(-5 + i)).ToList();
-            var allRAppts = await _context.Appointments.Where(a => a.RealtorId == row.Id).ToListAsync();
-            var counts   = months.Select(m =>
-                allRAppts.Count(a => a.SlotStart.Year == m.Year && a.SlotStart.Month == m.Month)).ToArray();
+            var counts = months.Select(m => apptDates.Count(a => a.Year == m.Year && a.Month == m.Month)).ToArray();
             DetailApptSeries = new ISeries[]
             {
-                new ColumnSeries<int>
-                {
-                    Values = counts, Name = "Записи",
-                    Fill   = new SolidColorPaint(SKColor.Parse(row.Color))
-                }
+                new ColumnSeries<int> { Values = counts, Name = "Записи", Fill = new SolidColorPaint(SKColor.Parse(row.Color)) }
             };
             DetailApptXAxes = new Axis[] { new Axis { Labels = months.Select(m => m.ToString("MMM")).ToArray() } };
 
-            // Отзывы
-            var reviews = await _context.Reviews
-                .Include(r => r.User)
-                .Where(r => r.RealtorId == row.Id && r.IsApproved)
-                .OrderByDescending(r => r.CreatedAt)
-                .ToListAsync();
+            // Отзывы — первая страница
+            _detailReviewRealtorId = row.Id;
+            _detailReviewTotal = await _context.Reviews.CountAsync(r => r.RealtorId == row.Id && r.IsApproved);
+            _detailReviewPage  = 0;
             DetailReviews.Clear();
-            foreach (var rev in reviews)
-                DetailReviews.Add(new DetailReviewRow
-                {
-                    ClientName  = rev.User?.FullName ?? "—",
-                    Stars       = new string('★', rev.Rating) + new string('☆', 5 - rev.Rating),
-                    Comment     = string.IsNullOrWhiteSpace(rev.Comment) ? "Без комментария" : rev.Comment,
-                    Date        = rev.CreatedAt.ToString("dd.MM.yyyy"),
-                    RatingValue = rev.Rating
-                });
-            NoDetailReviews = DetailReviews.Count == 0;
+            await AppendDetailReviewPageAsync();
 
-            // Объекты
-            var allRPropsDetail = await _context.Properties
+            // Объекты: проекция только нужных полей
+            var propRows = await _context.Properties
                 .Where(p => p.RealtorId == row.Id)
                 .OrderBy(p => p.Status)
+                .Select(p => new { p.Title, p.Status, p.Price, p.City })
                 .ToListAsync();
             DetailProperties.Clear();
-            foreach (var prop in allRPropsDetail)
+            foreach (var p in propRows)
                 DetailProperties.Add(new DetailPropertyRow
                 {
-                    Title       = prop.Title,
-                    StatusLabel = prop.Status switch { "active" => "Активен", "sold" => "Продан", "hidden" => "Скрыт", _ => prop.Status },
-                    StatusColor = prop.Status switch { "active" => "#7CB342", "sold" => "#F4B942", _ => "#9E9E9E" },
-                    Price       = $"{prop.Price:N0} BYN",
-                    City        = prop.City
+                    Title       = p.Title,
+                    StatusLabel = p.Status switch { "active" => "Активен", "sold" => "Продан", "hidden" => "Скрыт", _ => p.Status },
+                    StatusColor = p.Status switch { "active" => "#7CB342", "sold" => "#F4B942", _ => "#9E9E9E" },
+                    Price       = $"{p.Price:N0} BYN",
+                    City        = p.City
                 });
             NoDetailProperties = DetailProperties.Count == 0;
         }
@@ -821,6 +984,195 @@ public partial class AdminDashboardViewModel : ViewModelBase
 
     [RelayCommand]
     private void GoBack() => _navigationService.GoBack();
+
+    private async Task AppendDetailReviewPageAsync()
+    {
+        var items = await _context.Reviews
+            .Include(r => r.User)
+            .Where(r => r.RealtorId == _detailReviewRealtorId && r.IsApproved)
+            .OrderByDescending(r => r.CreatedAt)
+            .Skip(_detailReviewPage * DetailReviewPageSize)
+            .Take(DetailReviewPageSize)
+            .ToListAsync();
+        foreach (var rev in items)
+            DetailReviews.Add(new DetailReviewRow
+            {
+                ClientName  = rev.User?.FullName ?? "—",
+                Stars       = new string('★', rev.Rating) + new string('☆', 5 - rev.Rating),
+                Comment     = string.IsNullOrWhiteSpace(rev.Comment) ? "Без комментария" : rev.Comment,
+                Date        = rev.CreatedAt.ToString("dd.MM.yyyy"),
+                RatingValue = rev.Rating
+            });
+        _detailReviewPage++;
+        HasMoreDetailReviews = DetailReviews.Count < _detailReviewTotal;
+        NoDetailReviews = _detailReviewTotal == 0;
+    }
+
+    [RelayCommand]
+    private async Task LoadMoreDetailReviewsAsync() => await AppendDetailReviewPageAsync();
+
+    // ===== Объекты (Tab5) =====
+    private async Task LoadAdminPropertiesAsync()
+    {
+        IsAdminPropsLoading = true;
+        try
+        {
+            var realtorNames = await _context.Properties
+                .Where(p => p.Realtor != null)
+                .Select(p => p.Realtor!.FullName)
+                .Distinct()
+                .OrderBy(n => n)
+                .ToListAsync();
+
+            _suppressAdminPropReload = true;
+            AdminRealtorNames.Clear();
+            AdminRealtorNames.Add("");
+            foreach (var name in realtorNames) AdminRealtorNames.Add(name);
+            AdminPropRealtorFilter = "";
+            _suppressAdminPropReload = false;
+
+            await RefreshAdminPropertiesAsync();
+        }
+        finally { IsAdminPropsLoading = false; }
+    }
+
+    private async Task RefreshAdminPropertiesAsync()
+    {
+        await _adminPropSem.WaitAsync();
+        try
+        {
+            var query = _context.Properties.Include(p => p.Realtor).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(AdminPropSearch))
+            {
+                var q = AdminPropSearch.Trim().ToLower();
+                query = query.Where(p =>
+                    p.Title.ToLower().Contains(q) ||
+                    p.City.ToLower().Contains(q) ||
+                    (p.Realtor != null && p.Realtor.FullName.ToLower().Contains(q)));
+            }
+
+            query = AdminPropStatusFilter switch
+            {
+                "active" => query.Where(p => p.Status == "active"),
+                "hidden" => query.Where(p => p.Status == "hidden"),
+                "sold"   => query.Where(p => p.Status == "sold"),
+                _        => query
+            };
+
+            if (!string.IsNullOrEmpty(AdminPropRealtorFilter))
+                query = query.Where(p => p.Realtor != null && p.Realtor.FullName == AdminPropRealtorFilter);
+
+            var props = await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
+            AdminProperties.Clear();
+            foreach (var p in props)
+                AdminProperties.Add(new AdminPropertyRow
+                {
+                    Id           = p.Id,
+                    Title        = p.Title,
+                    City         = p.City,
+                    Price        = $"{p.Price:N0} BYN",
+                    StatusRaw    = p.Status,
+                    StatusLabel  = p.Status switch { "active" => "Активен", "sold" => "Продан", "hidden" => "Скрыт", _ => p.Status },
+                    StatusColor  = p.Status switch { "active" => "#7CB342", "sold" => "#F4B942", "hidden" => "#9E9E9E", _ => "#9E9E9E" },
+                    RealtorName  = p.Realtor?.FullName ?? "—",
+                    PropertyType = p.PropertyType switch { "apartment" => "Квартира", "house" => "Дом", "complex" => "Комплекс", _ => p.PropertyType },
+                    CreatedAt    = p.CreatedAt.ToString("dd.MM.yyyy"),
+                });
+            AdminPropsCount = AdminProperties.Count;
+        }
+        finally { _adminPropSem.Release(); }
+    }
+
+    partial void OnAdminPropRealtorFilterChanged(string value) { if (!_suppressAdminPropReload) _ = RefreshAdminPropertiesAsync(); }
+
+    [RelayCommand] private async Task SearchAdminPropsAsync()  => await RefreshAdminPropertiesAsync();
+    [RelayCommand] private async Task FilterAdminAllAsync()    { AdminPropStatusFilter = "all";    await RefreshAdminPropertiesAsync(); }
+    [RelayCommand] private async Task FilterAdminActiveAsync() { AdminPropStatusFilter = "active"; await RefreshAdminPropertiesAsync(); }
+    [RelayCommand] private async Task FilterAdminHiddenAsync() { AdminPropStatusFilter = "hidden"; await RefreshAdminPropertiesAsync(); }
+    [RelayCommand] private async Task FilterAdminSoldAsync()   { AdminPropStatusFilter = "sold";   await RefreshAdminPropertiesAsync(); }
+
+    [RelayCommand]
+    private void OpenAdminPropertyDetail(AdminPropertyRow row) =>
+        _navigationService.NavigateTo<PropertyDetailViewModel>(row.Id);
+
+    [RelayCommand]
+    private async Task ToggleAdminPropertyStatusAsync(AdminPropertyRow row)
+    {
+        var newStatus = row.StatusRaw == "hidden" ? "active" : "hidden";
+        var label = newStatus == "hidden" ? "скрыть" : "сделать активным";
+        var result = System.Windows.MessageBox.Show(
+            $"{(newStatus == "hidden" ? "Скрыть" : "Показать")} объект «{row.Title}»?",
+            "Подтверждение",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Question);
+        if (result != System.Windows.MessageBoxResult.Yes) return;
+
+        var prop = await _context.Properties.FindAsync(row.Id);
+        if (prop == null) return;
+        prop.Status    = newStatus;
+        prop.UpdatedAt = DateTime.Now;
+        await _context.SaveChangesAsync();
+
+        AdminPropActionMessage = newStatus == "hidden"
+            ? $"Объект «{row.Title}» скрыт из каталога."
+            : $"Объект «{row.Title}» снова активен в каталоге.";
+        await RefreshAdminPropertiesAsync();
+    }
+
+    [RelayCommand]
+    private async Task DeleteAdminPropertyAsync(AdminPropertyRow row)
+    {
+        var hasActive = await _context.Appointments.AnyAsync(a =>
+            a.PropertyId == row.Id && (a.Status == AppointmentStatus.New || a.Status == AppointmentStatus.Confirmed));
+        if (hasActive)
+        {
+            System.Windows.MessageBox.Show(
+                "Нельзя удалить объект с активными записями клиентов.\nСначала отмените или завершите все записи.",
+                "Удаление невозможно",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Warning);
+            return;
+        }
+
+        var result = System.Windows.MessageBox.Show(
+            $"Удалить объект «{row.Title}»?\nЭто действие необратимо, все данные объекта будут удалены.",
+            "Подтверждение удаления",
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Warning);
+        if (result != System.Windows.MessageBoxResult.Yes) return;
+
+        try
+        {
+            var favorites    = await _context.Favorites.Where(f => f.PropertyId == row.Id).ToListAsync();
+            var reviews      = await _context.Reviews.Where(r => r.PropertyId == row.Id).ToListAsync();
+            var appointments = await _context.Appointments.Where(a => a.PropertyId == row.Id).ToListAsync();
+            var priceHist    = await _context.PriceHistories.Where(ph => ph.PropertyId == row.Id).ToListAsync();
+            var images       = await _context.PropertyImages.Where(i => i.PropertyId == row.Id).ToListAsync();
+
+            _context.Favorites.RemoveRange(favorites);
+            _context.Reviews.RemoveRange(reviews);
+            _context.Appointments.RemoveRange(appointments);
+            _context.PriceHistories.RemoveRange(priceHist);
+            _context.PropertyImages.RemoveRange(images);
+
+            var prop = await _context.Properties.FindAsync(row.Id);
+            if (prop != null) _context.Properties.Remove(prop);
+
+            await _context.SaveChangesAsync();
+            AdminPropActionMessage = $"Объект «{row.Title}» удалён.";
+            await LoadAdminPropertiesAsync();
+            await LoadStatsAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(
+                $"Ошибка при удалении: {ex.Message}",
+                "Ошибка",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
+        }
+    }
 
     // ===== Рассылка =====
     [RelayCommand] private void MailToAll()      { MailRecipients = "all";      }
@@ -896,6 +1248,10 @@ public partial class AdminDashboardViewModel : ViewModelBase
         if (user == null) return;
         if (string.IsNullOrWhiteSpace(ProfileFullName))
         { ProfileResult = "Имя не может быть пустым."; ProfileSuccess = false; return; }
+        if (string.IsNullOrWhiteSpace(ProfileEmail))
+        { ProfileResult = "E-mail не может быть пустым."; ProfileSuccess = false; return; }
+        if (!Regex.IsMatch(ProfileEmail.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+        { ProfileResult = "Введите корректный e-mail адрес."; ProfileSuccess = false; return; }
 
         IsProfileSaving = true;
         ProfileResult = null;

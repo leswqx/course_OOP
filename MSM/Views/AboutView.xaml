@@ -186,27 +186,14 @@
 
                     <!-- MAP CARD -->
                     <Border Grid.Column="1" CornerRadius="8" ClipToBounds="True"
-                            Margin="24,0,0,0" MinHeight="160"
-                            VerticalAlignment="Stretch">
+                            Margin="24,0,0,0" Height="160"
+                            VerticalAlignment="Center">
 
                         <Grid>
-                            <!-- Плейсхолдер (цвет как у карты OSM) -->
-                            <Border Background="#A8C890"/>
-
-                            <!-- Сюда положи своё фото: Resources/Images/map.png
-                                 Добавь файл в проект (Build Action = Resource) и раскомментируй:
-                            <Image Source="/Resources/Images/map.png" Stretch="UniformToFill"/> -->
+                            <Image Source="/Resources/Images/map.png" Stretch="UniformToFill"/>
 
                             <!-- Радиальное затемнение по краям -->
-                            <Border>
-                                <Border.Background>
-                                    <RadialGradientBrush Center="0.5,0.5"
-                                                         RadiusX="0.65" RadiusY="0.65">
-                                        <GradientStop Color="#00000000" Offset="0.25"/>
-                                        <GradientStop Color="#AA000000" Offset="1.0"/>
-                                    </RadialGradientBrush>
-                                </Border.Background>
-                            </Border>
+                            
 
                             <!-- Белая кнопка по центру -->
                             <Button HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -244,6 +231,22 @@
                     </Border>
 
                 </Grid>
+            </Border>
+
+            <!-- Кнопка профиля администратора — только для admin -->
+            <Border Margin="36,0,36,40" HorizontalAlignment="Left"
+                    Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibility}}">
+                <Button Command="{Binding GoToAdminProfileCommand}" Cursor="Hand"
+                        Height="36" Padding="20,0" FontSize="13"
+                        Background="{DynamicResource PrimaryBrush}"
+                        Foreground="White" BorderThickness="0">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0"
+                              VerticalAlignment="Center" Fill="White"
+                              Data="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
+                        <TextBlock Text="{DynamicResource About.AdminProfile}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
             </Border>
 
         </StackPanel>

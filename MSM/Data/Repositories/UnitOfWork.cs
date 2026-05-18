@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MSM.Data.Context;
 using MSM.Models.Entities;
@@ -43,6 +44,11 @@ public class UnitOfWork : IUnitOfWork
     public async Task BeginTransactionAsync()
     {
         _transaction = await _context.Database.BeginTransactionAsync();
+    }
+
+    public async Task BeginTransactionAsync(System.Data.IsolationLevel isolationLevel)
+    {
+        _transaction = await _context.Database.BeginTransactionAsync(isolationLevel);
     }
 
     public async Task CommitTransactionAsync()

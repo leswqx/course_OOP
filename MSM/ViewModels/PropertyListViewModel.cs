@@ -15,12 +15,20 @@ public partial class PropertyListViewModel : ViewModelBase
     private readonly INavigationService _navigationService;
     private readonly IFavoriteService _favoriteService;
 
+    private const int PageSize = 15;
+    private int _totalCount;
+    private HashSet<int> _favoriteIds = new();
+
     [ObservableProperty] private ObservableCollection<PropertyCardViewModel> _properties = new();
     [ObservableProperty] private string _searchQuery = string.Empty;
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private bool _hasNoResults;
     [ObservableProperty] private int _resultCount;
     [ObservableProperty] private string? _errorMessage;
+
+    public IEnumerable<PropertyCardViewModel> DisplayedProperties => Properties;
+    public bool CanShowMore   => _totalCount > Properties.Count;
+    public int  ShowMoreCount => Math.Max(0, _totalCount - Properties.Count);
 
     // Фильтры
     [ObservableProperty] private bool _isFilterVisible;
@@ -73,9 +81,14 @@ public partial class PropertyListViewModel : ViewModelBase
             FilterMaxRooms = p.MaxRooms ?? "";
         }
         await Task.Yield();
-        await LoadCitiesAsync();
-        await LoadDistrictsAsync();
-        await LoadPropertiesAsync();
+        try
+        {
+            await LoadCitiesAsync();
+            await LoadDistrictsAsync();
+            await LoadPropertiesAsync();
+        }
+        catch (ObjectDisposedException) { }
+        catch (InvalidOperationException) { }
     }
 
     private async Task LoadCitiesAsync()
@@ -117,7 +130,7 @@ public partial class PropertyListViewModel : ViewModelBase
         catch { }
     }
 
-    // Применяет все активные фильтры и поиск
+    // Применяет все активные фильтры и поиск (первая страница)
     [RelayCommand]
     private async Task LoadPropertiesAsync()
     {
@@ -125,6 +138,69 @@ public partial class PropertyListViewModel : ViewModelBase
         HasNoResults = false;
         ErrorMessage = null;
 
+        try
+        {
+            _favoriteIds.Clear();
+            if (Session.IsClient && Session.CurrentUser != null)
+            {
+                var favs = await _favoriteService.GetUserFavoritesAsync(Session.CurrentUser.Id);
+                foreach (var f in favs) _favoriteIds.Add(f.Id);
+            }
+
+            var minPrice      = ParseDecimal(FilterMinPrice);
+            var maxPrice      = ParseDecimal(FilterMaxPrice);
+            var minArea       = ParseDouble(FilterMinArea);
+            var maxArea       = ParseDouble(FilterMaxArea);
+            var minRooms      = ParseInt(FilterMinRooms);
+            var maxRooms      = ParseInt(FilterMaxRooms);
+            var minBathrooms  = ParseInt(FilterMinBathrooms);
+            var maxBathrooms  = ParseInt(FilterMaxBathrooms);
+            var city          = NullIfEmpty(FilterCity);
+            var district      = NullIfEmpty(FilterDistrict);
+            var propertyType  = NullIfEmpty(FilterType);
+            var searchQuery   = NullIfEmpty(SearchQuery);
+            bool? hasMortgage  = FilterMortgage   ? true : null;
+            bool? hasRenovation = FilterRenovation ? true : null;
+            var sortBy        = NullIfEmpty(FilterSortBy);
+
+            _totalCount = await _propertyService.GetFilteredCountAsync(
+                minPrice, maxPrice, minArea, maxArea,
+                minRooms, maxRooms, minBathrooms, maxBathrooms,
+                city, district, propertyType, searchQuery,
+                hasMortgage, hasRenovation);
+
+            var items = await _propertyService.GetFilteredAsync(
+                minPrice, maxPrice, minArea, maxArea,
+                minRooms, maxRooms, minBathrooms, maxBathrooms,
+                city, district, propertyType, searchQuery,
+                hasMortgage, hasRenovation,
+                sortBy, skip: 0, take: PageSize);
+
+            Properties.Clear();
+            foreach (var p in items)
+                Properties.Add(new PropertyCardViewModel(p) { IsFavorite = _favoriteIds.Contains(p.Id) });
+
+            ResultCount  = _totalCount;
+            HasNoResults = _totalCount == 0;
+            OnPropertyChanged(nameof(DisplayedProperties));
+            OnPropertyChanged(nameof(CanShowMore));
+            OnPropertyChanged(nameof(ShowMoreCount));
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Ошибка загрузки: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task ShowMoreAsync()
+    {
+        if (!CanShowMore) return;
+        IsLoading = true;
         try
         {
             var items = await _propertyService.GetFilteredAsync(
@@ -140,23 +216,18 @@ public partial class PropertyListViewModel : ViewModelBase
                 district:      NullIfEmpty(FilterDistrict),
                 propertyType:  NullIfEmpty(FilterType),
                 searchQuery:   NullIfEmpty(SearchQuery),
-                hasMortgage:   FilterMortgage ? true : null,
-                hasRenovation: FilterRenovation ? true : null,
-                sortBy:        NullIfEmpty(FilterSortBy));
+                hasMortgage:   FilterMortgage   ? true : null,
+                hasRenovation: FilterRenovation  ? true : null,
+                sortBy:        NullIfEmpty(FilterSortBy),
+                skip:          Properties.Count,
+                take:          PageSize);
 
-            HashSet<int> favoriteIds = new();
-            if (Session.IsClient && Session.CurrentUser != null)
-            {
-                var favs = await _favoriteService.GetUserFavoritesAsync(Session.CurrentUser.Id);
-                foreach (var f in favs) favoriteIds.Add(f.Id);
-            }
-
-            Properties.Clear();
             foreach (var p in items)
-                Properties.Add(new PropertyCardViewModel(p) { IsFavorite = favoriteIds.Contains(p.Id) });
+                Properties.Add(new PropertyCardViewModel(p) { IsFavorite = _favoriteIds.Contains(p.Id) });
 
-            ResultCount  = Properties.Count;
-            HasNoResults = Properties.Count == 0;
+            OnPropertyChanged(nameof(DisplayedProperties));
+            OnPropertyChanged(nameof(CanShowMore));
+            OnPropertyChanged(nameof(ShowMoreCount));
         }
         catch (Exception ex)
         {
@@ -173,7 +244,7 @@ public partial class PropertyListViewModel : ViewModelBase
 
     // Сбрасывает все фильтры и перезагружает список
     [RelayCommand]
-    private void ResetFilters()
+    private async Task ResetFiltersAsync()
     {
         FilterMinPrice = FilterMaxPrice = "";
         FilterMinArea  = FilterMaxArea  = "";
@@ -182,7 +253,7 @@ public partial class PropertyListViewModel : ViewModelBase
         FilterCity     = FilterDistrict = FilterType = "";
         FilterMortgage = FilterRenovation = false;
         FilterSortBy   = "date_desc";
-        _ = LoadPropertiesAsync();
+        await LoadPropertiesAsync();
     }
 
     [RelayCommand]

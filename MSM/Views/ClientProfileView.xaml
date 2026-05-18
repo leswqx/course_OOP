@@ -403,7 +403,7 @@
                                                     Background="Transparent"
                                                     Foreground="{DynamicResource AccentBrush}"
                                                     BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                                            <Button Content="✕ Отменить"
+                                            <Button Content="{DynamicResource MyAppt.Cancel}"
                                                     Command="{Binding DataContext.CancelAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     CommandParameter="{Binding Id}"
                                                     Visibility="{Binding CanCancel, Converter={StaticResource BoolToVisibility}}"

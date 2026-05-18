@@ -30,13 +30,13 @@
                     MaxWidth="1000" Margin="24,0">
 
             <!-- Заголовок -->
-            <TextBlock Text="Найдите дом своей мечты"
+            <TextBlock Text="{DynamicResource Landing.Title}"
                        FontSize="58" FontWeight="Bold" Foreground="White"
                        TextAlignment="Center" TextWrapping="Wrap"
                        LineHeight="68" Margin="0,0,0,14"/>
 
             <!-- Подзаголовок -->
-            <TextBlock Text="Квартиры, дома и коммерческая недвижимость — поможем найти идеальный вариант."
+            <TextBlock Text="{DynamicResource Landing.Subtitle}"
                        FontSize="17" Foreground="#CCFFFFFF"
                        TextAlignment="Center" TextWrapping="Wrap"
                        LineHeight="26" Margin="0,0,0,32"/>
@@ -88,7 +88,7 @@
                                      FontSize="15" Foreground="#222"
                                      HorizontalContentAlignment="Left"
                                      VerticalContentAlignment="Center"/>
-                            <TextBlock Text="Цена до, BYN"
+                            <TextBlock Text="{DynamicResource Landing.PricePlaceholder}"
                                        IsHitTestVisible="False"
                                        HorizontalAlignment="Left" VerticalAlignment="Center"
                                        Foreground="Black" Opacity="0.60" FontSize="15">
@@ -119,7 +119,7 @@
                                             <Border.Effect>
                                                 <DropShadowEffect Color="#000000" Opacity="0.25" BlurRadius="28" ShadowDepth="4"/>
                                             </Border.Effect>
-                                            <TextBlock Text="Показать объекты"
+                                            <TextBlock Text="{DynamicResource Landing.ShowProperties}"
                                                        Foreground="White" FontSize="15" FontWeight="SemiBold"
                                                        VerticalAlignment="Center"/>
                                         </Border>
@@ -141,7 +141,7 @@
 
             <!-- Популярные запросы -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
-                <TextBlock Text="Популярное:" Foreground="#80FFFFFF" FontSize="13"
+                <TextBlock Text="{DynamicResource Landing.Popular}" Foreground="#80FFFFFF" FontSize="13"
                            VerticalAlignment="Center" Margin="0,0,12,0"/>
                 <Button Command="{Binding SetTagSearchCommand}" CommandParameter="apartment_2k"
                         Cursor="Hand" Margin="0,0,8,0">
@@ -151,7 +151,7 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="Bd" Background="#20FFFFFF" CornerRadius="20" Padding="16,6">
-                                            <TextBlock Text="Квартира 2к" Foreground="White" FontSize="13"/>
+                                            <TextBlock Text="{DynamicResource Landing.Tag1}" Foreground="White" FontSize="13"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
@@ -172,7 +172,7 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="Bd" Background="#20FFFFFF" CornerRadius="20" Padding="16,6">
-                                            <TextBlock Text="Новостройки" Foreground="White" FontSize="13"/>
+                                            <TextBlock Text="{DynamicResource Landing.Tag2}" Foreground="White" FontSize="13"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
@@ -193,7 +193,7 @@
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
                                         <Border x:Name="Bd" Background="#20FFFFFF" CornerRadius="20" Padding="16,6">
-                                            <TextBlock Text="Дом с участком" Foreground="White" FontSize="13"/>
+                                            <TextBlock Text="{DynamicResource Landing.Tag3}" Foreground="White" FontSize="13"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
@@ -214,17 +214,17 @@
                     HorizontalAlignment="Center" Margin="0,0,0,28">
             <StackPanel HorizontalAlignment="Center" Margin="36,0">
                 <TextBlock Text="500+" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                <TextBlock Text="Объектов в каталоге" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
+                <TextBlock Text="{DynamicResource Landing.StatProps}" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
             </StackPanel>
             <Rectangle Width="1" Height="32" Fill="#28FFFFFF" Margin="0,6"/>
             <StackPanel HorizontalAlignment="Center" Margin="36,0">
                 <TextBlock Text="150+" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                <TextBlock Text="Довольных клиентов" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
+                <TextBlock Text="{DynamicResource Landing.StatClients}" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
             </StackPanel>
             <Rectangle Width="1" Height="32" Fill="#28FFFFFF" Margin="0,6"/>
             <StackPanel HorizontalAlignment="Center" Margin="36,0">
                 <TextBlock Text="10+" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
-                <TextBlock Text="Опытных риелторов" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
+                <TextBlock Text="{DynamicResource Landing.StatRealtors}" FontSize="12" Foreground="#70FFFFFF" HorizontalAlignment="Center"/>
             </StackPanel>
         </StackPanel>
     </Grid>

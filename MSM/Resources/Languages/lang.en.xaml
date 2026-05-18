@@ -99,6 +99,9 @@
     <s:String x:Key="Favorites.Title">Favorites</s:String>
     <s:String x:Key="Favorites.Empty">You haven't added any properties to favorites yet</s:String>
     <s:String x:Key="Favorites.Remove">✕ Remove</s:String>
+    <s:String x:Key="Favorites.Hidden">Unavailable</s:String>
+    <s:String x:Key="Favorites.HiddenDesc">Property hidden by realtor</s:String>
+    <s:String x:Key="Common.OutOf5">out of 5</s:String>
 
     <!-- My Appointments (client) -->
     <s:String x:Key="MyAppt.Title">My Viewing Appointments</s:String>
@@ -128,6 +131,8 @@
     <s:String x:Key="Realtor.Confirm">Confirm</s:String>
     <s:String x:Key="Realtor.Cancel">Cancel</s:String>
     <s:String x:Key="Realtor.NoAppt">No appointments</s:String>
+    <s:String x:Key="Realtor.NoApptDay">No appointments on this day</s:String>
+    <s:String x:Key="Realtor.ClickDayHint">Click on a day to see appointments</s:String>
     <s:String x:Key="Realtor.RestoreActive">↩ Back to Sale</s:String>
     <s:String x:Key="Realtor.ClientContact">Contact:</s:String>
 
@@ -208,6 +213,7 @@
     <s:String x:Key="Review.SortDateAsc">Oldest first</s:String>
     <s:String x:Key="Review.SortRatingDesc">High rating</s:String>
     <s:String x:Key="Review.SortRatingAsc">Low rating</s:String>
+    <s:String x:Key="Review.ShowMore">Show more</s:String>
 
     <!-- About page -->
     <s:String x:Key="About.Hero">Your Dream Real Estate Agency</s:String>
@@ -226,12 +232,13 @@
     <s:String x:Key="About.S3Title">Online Scheduling</s:String>
     <s:String x:Key="About.S3Body">Book a viewing directly in the app — no waiting in line</s:String>
     <s:String x:Key="About.ContactsTitle">Contact Us</s:String>
-    <s:String x:Key="About.Phone">+7 (495) 000-00-00</s:String>
-    <s:String x:Key="About.Email">info@msm-realty.ru</s:String>
-    <s:String x:Key="About.Address">Moscow, Primernaya St., 1, office 42</s:String>
+    <s:String x:Key="About.Phone">+375 (33) 374-96-45</s:String>
+    <s:String x:Key="About.Email">uunn2994@gmail.com</s:String>
+    <s:String x:Key="About.Address">Minsk, st. Belorusskaya 21 office 1213B</s:String>
     <s:String x:Key="About.Hours">Mon–Fri: 09:00 – 20:00,  Sat: 10:00 – 17:00</s:String>
     <s:String x:Key="About.MapHint">Located in the city center, easy parking nearby</s:String>
     <s:String x:Key="About.ViewOnMap">View on Map</s:String>
+    <s:String x:Key="About.AdminProfile">Administrator Profile</s:String>
 
     <!-- Role navigation -->
     <s:String x:Key="Nav.Home">Home</s:String>
@@ -247,5 +254,228 @@
     <!-- HomeView -->
     <s:String x:Key="Home.LogoutButton">Sign Out</s:String>
     <s:String x:Key="Home.Placeholder">Features will be added in the next development phases.</s:String>
+
+    <!-- Property detail — map button, sold badge, calendar -->
+    <s:String x:Key="Detail.ShowOnMap">📍 View on map</s:String>
+    <s:String x:Key="Detail.SoldBadge">🏷 Property sold — booking unavailable</s:String>
+    <s:String x:Key="Detail.Mon">Mon</s:String>
+    <s:String x:Key="Detail.Tue">Tue</s:String>
+    <s:String x:Key="Detail.Wed">Wed</s:String>
+    <s:String x:Key="Detail.Thu">Thu</s:String>
+    <s:String x:Key="Detail.Fri">Fri</s:String>
+    <s:String x:Key="Detail.Sat">Sat</s:String>
+    <s:String x:Key="Detail.Sun">Sun</s:String>
+    <s:String x:Key="Detail.SlotAvailable">Available</s:String>
+    <s:String x:Key="Detail.SlotBusy">Busy</s:String>
+    <s:String x:Key="Detail.SlotSelected">Selected</s:String>
+    <s:String x:Key="Detail.SlotsFor">Slots on </s:String>
+
+    <!-- Filter — all-districts placeholder -->
+    <s:String x:Key="Filter.AllDistricts">All districts</s:String>
+
+    <!-- Admin panel — tabs, user filter, period, KPIs -->
+    <s:String x:Key="Admin.Mailings">Mailing</s:String>
+    <s:String x:Key="Admin.Properties">Properties</s:String>
+    <s:String x:Key="Admin.FilterAll">All</s:String>
+    <s:String x:Key="Admin.FilterRealtors">Realtors</s:String>
+    <s:String x:Key="Admin.FilterClients">Clients</s:String>
+    <s:String x:Key="Admin.FilterBlocked">🔒 Blocked</s:String>
+    <s:String x:Key="Admin.BannedBadge">BAN</s:String>
+    <s:String x:Key="Admin.ReviewRealtorLabel">Realtor:</s:String>
+    <s:String x:Key="Admin.AllRealtors">All realtors</s:String>
+    <s:String x:Key="Admin.Alerts">Warning signals</s:String>
+    <s:String x:Key="Admin.Period">Period:</s:String>
+    <s:String x:Key="Admin.PeriodAll">All time</s:String>
+    <s:String x:Key="Admin.PeriodMonth">This month</s:String>
+    <s:String x:Key="Admin.PeriodLastMonth">Last month</s:String>
+    <s:String x:Key="Admin.PeriodQuarter">Quarter</s:String>
+    <s:String x:Key="Admin.PeriodYear">This year</s:String>
+    <s:String x:Key="Admin.Revenue">Revenue for period</s:String>
+    <s:String x:Key="Admin.AvgDeal">Average deal</s:String>
+    <s:String x:Key="Admin.NewClients">New clients</s:String>
+    <s:String x:Key="Admin.PendingAppt">Pending bookings</s:String>
+    <s:String x:Key="Admin.EfficiencyRating">Efficiency rating</s:String>
+    <s:String x:Key="Admin.TeamAvg">Team average: </s:String>
+
+    <!-- Realtor panel — tabs, filters, card buttons, appointment filters -->
+    <s:String x:Key="Realtor.Schedule">Schedule</s:String>
+    <s:String x:Key="Realtor.PropertyAdded">✓ Property added successfully!</s:String>
+    <s:String x:Key="Realtor.FilterAll">All</s:String>
+    <s:String x:Key="Realtor.FilterActive">Active</s:String>
+    <s:String x:Key="Realtor.FilterHidden">Hidden</s:String>
+    <s:String x:Key="Realtor.FilterSold">Sold</s:String>
+    <s:String x:Key="Realtor.SortLabel">Sort:</s:String>
+    <s:String x:Key="Realtor.SortNew">Newest</s:String>
+    <s:String x:Key="Realtor.SortPriceAsc">Price ↑</s:String>
+    <s:String x:Key="Realtor.SortPriceDesc">Price ↓</s:String>
+    <s:String x:Key="Realtor.SortAZ">A-Z</s:String>
+    <s:String x:Key="Realtor.SetSold">Sold</s:String>
+    <s:String x:Key="Realtor.Edit">Edit</s:String>
+    <s:String x:Key="Realtor.Delete">Delete</s:String>
+    <s:String x:Key="Realtor.ApptFilterLabel">Filter:</s:String>
+    <s:String x:Key="Realtor.ApptPropLabel">Property:</s:String>
+    <s:String x:Key="Realtor.AllProperties">All properties</s:String>
+    <s:String x:Key="Realtor.ApptStatusLabel">Status:</s:String>
+    <s:String x:Key="Realtor.AllStatuses">All statuses</s:String>
+    <s:String x:Key="Realtor.StatusNew">New</s:String>
+    <s:String x:Key="Realtor.StatusConfirmed">Confirmed</s:String>
+    <s:String x:Key="Realtor.StatusCompleted">Completed</s:String>
+    <s:String x:Key="Realtor.StatusCancelled">Cancelled</s:String>
+    <s:String x:Key="Realtor.DateLabel">Date:</s:String>
+    <s:String x:Key="Realtor.DateAll">All</s:String>
+    <s:String x:Key="Realtor.DateToday">Today</s:String>
+    <s:String x:Key="Realtor.DateWeek">Week</s:String>
+    <s:String x:Key="Realtor.DateMonth">Month</s:String>
+    <s:String x:Key="Realtor.DateReset">Reset</s:String>
+    <s:String x:Key="Realtor.Complete">Complete</s:String>
+    <s:String x:Key="Realtor.EditProperty">Edit property</s:String>
+    <s:String x:Key="Realtor.PeriodLabel">Period:</s:String>
+    <s:String x:Key="Realtor.PeriodAll">All time</s:String>
+    <s:String x:Key="Realtor.PeriodMonth">This month</s:String>
+    <s:String x:Key="Realtor.PeriodQuarter">Quarter</s:String>
+    <s:String x:Key="Realtor.PeriodYear">This year</s:String>
+    <s:String x:Key="Realtor.StatTotalProps">Total properties</s:String>
+    <s:String x:Key="Realtor.StatAllTime">all time</s:String>
+    <s:String x:Key="Realtor.StatActiveProps">Active</s:String>
+    <s:String x:Key="Realtor.StatOnSale">currently for sale</s:String>
+    <s:String x:Key="Realtor.StatSoldLabel">Sold</s:String>
+    <s:String x:Key="Realtor.StatApptPeriod">Appointments for period</s:String>
+    <s:String x:Key="Realtor.StatCompletedPeriod">Completed for period</s:String>
+    <s:String x:Key="Realtor.StatAvgRating">Average rating</s:String>
+    <s:String x:Key="Realtor.StatByReviews">from client reviews</s:String>
+    <s:String x:Key="Realtor.StatMyScore">MY SCORE</s:String>
+    <s:String x:Key="Realtor.StatOf100">out of 100</s:String>
+    <s:String x:Key="Realtor.StatFormula">Rating ×35%  +  Sales ×30%  +  Appts ×20%  +  Activity ×15%</s:String>
+    <s:String x:Key="Realtor.StatByStatus">Properties by status</s:String>
+    <s:String x:Key="Realtor.StatApptByMonth">Appointments by month (last 6)</s:String>
+    <s:String x:Key="Realtor.RoleLabel">Realtor</s:String>
+    <s:String x:Key="Realtor.ProfileAbout">About me (clients can see)</s:String>
+    <s:String x:Key="Realtor.CalendarBlocked">Blocked</s:String>
+    <s:String x:Key="Realtor.CalendarHint">Clients book appointments on their own when viewing a property. Manage appointments in the Appointments tab.</s:String>
+
+    <!-- Profile (shared) -->
+    <s:String x:Key="Profile.UploadPhoto">Upload photo</s:String>
+    <s:String x:Key="Profile.RemovePhoto">Remove</s:String>
+    <s:String x:Key="Profile.PersonalData">Personal data</s:String>
+    <s:String x:Key="Profile.FullName">Full name</s:String>
+    <s:String x:Key="Profile.Email">E-mail</s:String>
+    <s:String x:Key="Profile.Phone">Phone</s:String>
+    <s:String x:Key="Profile.Save">💾 Save profile</s:String>
+    <s:String x:Key="Profile.ChangePassword">Change password</s:String>
+    <s:String x:Key="Profile.OldPassword">Current password</s:String>
+    <s:String x:Key="Profile.NewPassword">New password</s:String>
+    <s:String x:Key="Profile.ConfirmPassword">Confirm password</s:String>
+    <s:String x:Key="Profile.ChangePasswordBtn">Change password</s:String>
+
+    <!-- Admin (additional) -->
+    <s:String x:Key="Admin.RoleLabel">Administrator</s:String>
+    <s:String x:Key="Admin.MailTo">Send to</s:String>
+    <s:String x:Key="Admin.MailToAll">All users</s:String>
+    <s:String x:Key="Admin.MailToClients">Clients</s:String>
+    <s:String x:Key="Admin.MailToRealtors">Realtors</s:String>
+    <s:String x:Key="Admin.MailTemplates">Email templates</s:String>
+    <s:String x:Key="Admin.MailTemplateHint">Select a template — subject and body will be filled in automatically</s:String>
+    <s:String x:Key="Admin.MailTemplateNew">📢 New listings</s:String>
+    <s:String x:Key="Admin.MailTemplatePriceDrop">💸 Price drops</s:String>
+    <s:String x:Key="Admin.MailTemplateShowings">🏠 Open showings</s:String>
+    <s:String x:Key="Admin.MailPreview">Email preview</s:String>
+    <s:String x:Key="Admin.MailSubjectPlaceholder">Subject will appear here...</s:String>
+    <s:String x:Key="Admin.MailBodyPlaceholder">Email body will appear here after selecting a template or typing manually.</s:String>
+    <s:String x:Key="Admin.MailContent">Email content</s:String>
+    <s:String x:Key="Admin.MailSubjectLabel">Subject</s:String>
+    <s:String x:Key="Admin.MailBodyLabel">Body</s:String>
+    <s:String x:Key="Admin.MailSend">Send</s:String>
+    <s:String x:Key="Admin.PropFilterActive">Active</s:String>
+    <s:String x:Key="Admin.PropFilterHidden">Hidden</s:String>
+    <s:String x:Key="Admin.PropFilterSold">Sold</s:String>
+    <s:String x:Key="Admin.PropFound">Found:</s:String>
+    <s:String x:Key="Admin.PropObjects">propertiьes</s:String>
+    <s:String x:Key="Admin.RealtorPrefix">Realtor: </s:String>
+    <s:String x:Key="Admin.AddedPrefix">  ·  Added: </s:String>
+    <s:String x:Key="Admin.OpenBtn">Open</s:String>
+    <s:String x:Key="Admin.DeleteBtn">🗑 Delete</s:String>
+    <s:String x:Key="Admin.AvgDealDetail">Avg deal value</s:String>
+    <s:String x:Key="Admin.DetailStatusChart">Property statuses</s:String>
+    <s:String x:Key="Admin.DetailApptChart">Appointments by month (last 6 mo.)</s:String>
+    <s:String x:Key="Admin.NoApprovedReviews">No approved reviews</s:String>
+    <s:String x:Key="Admin.NoRealtorProps">No properties for this realtor</s:String>
+
+    <!-- My appointments (client) -->
+    <s:String x:Key="MyAppt.Cancel">✕ Cancel</s:String>
+    <s:String x:Key="MyAppt.ReviewHint">💬 Review available after completion</s:String>
+
+    <!-- User block/unblock -->
+    <s:String x:Key="Admin.Block">🔒 Block</s:String>
+    <s:String x:Key="Admin.Unblock">🔓 Unblock</s:String>
+
+    <!-- Appointment statuses -->
+    <s:String x:Key="Appt.StatusNew">New</s:String>
+    <s:String x:Key="Appt.StatusConfirmed">Confirmed</s:String>
+    <s:String x:Key="Appt.StatusCompleted">Completed ✓</s:String>
+    <s:String x:Key="Appt.StatusCancelled">Cancelled</s:String>
+
+    <!-- Landing page -->
+    <s:String x:Key="Landing.Title">Find Your Dream Home</s:String>
+    <s:String x:Key="Landing.Subtitle">Apartments, houses and commercial real estate — we'll help you find the perfect option.</s:String>
+    <s:String x:Key="Landing.ShowProperties">Show properties</s:String>
+    <s:String x:Key="Landing.PricePlaceholder">Max price, BYN</s:String>
+    <s:String x:Key="Landing.Popular">Popular:</s:String>
+    <s:String x:Key="Landing.Tag1">2-room Apartment</s:String>
+    <s:String x:Key="Landing.Tag2">New builds</s:String>
+    <s:String x:Key="Landing.Tag3">House with plot</s:String>
+    <s:String x:Key="Landing.StatProps">Properties in catalog</s:String>
+    <s:String x:Key="Landing.StatClients">Happy clients</s:String>
+    <s:String x:Key="Landing.StatRealtors">Experienced realtors</s:String>
+
+    <!-- Catalog (list) -->
+    <s:String x:Key="Catalog.Found">Found: </s:String>
+    <s:String x:Key="Catalog.ShowMorePrefix">Show more</s:String>
+    <s:String x:Key="Catalog.ShowMoreSuffix">properties</s:String>
+
+    <!-- Realtor search -->
+    <s:String x:Key="Realtor.SearchPlaceholder">Search by title or city...</s:String>
+
+    <!-- Admin: statistics (extended) -->
+    <s:String x:Key="Admin.EfficiencyFormula">Rating 35% + Sales 30% + Appts 20% + Activity 15%</s:String>
+    <s:String x:Key="Admin.AgencySalesTitle">📈 Agency sales dynamics</s:String>
+    <s:String x:Key="Admin.Chart6m">6 mo</s:String>
+    <s:String x:Key="Admin.Chart1y">1 year</s:String>
+    <s:String x:Key="Admin.Details">Details</s:String>
+    <s:String x:Key="Admin.DetailTabOverview">Overview</s:String>
+    <s:String x:Key="Admin.DetailTabReviews">Reviews</s:String>
+    <s:String x:Key="Admin.DetailTabProperties">Properties</s:String>
+    <s:String x:Key="Admin.DetailSubtitle">Detail card — all-time properties, period appointments</s:String>
+    <s:String x:Key="Admin.DetailTotalProps">Total properties</s:String>
+    <s:String x:Key="Admin.DetailActive">Active</s:String>
+    <s:String x:Key="Admin.DetailSold">Sold</s:String>
+    <s:String x:Key="Admin.DetailCompletedAppt">Completed appts</s:String>
+    <s:String x:Key="Admin.DetailRating">Rating</s:String>
+    <s:String x:Key="Admin.DetailRevenue">Total revenue (all sales)</s:String>
+    <s:String x:Key="Admin.MetricProps">properties</s:String>
+    <s:String x:Key="Admin.MetricSold">sold</s:String>
+    <s:String x:Key="Admin.MetricRating">rating</s:String>
+    <s:String x:Key="Admin.MetricVisits">visits</s:String>
+    <s:String x:Key="Admin.MetricQueue">in queue</s:String>
+    <s:String x:Key="Admin.MetricRevenue">revenue</s:String>
+
+    <!-- Admin: alert texts -->
+    <s:String x:Key="Alert.SeverityAll">All</s:String>
+    <s:String x:Key="Alert.AllRealtors">All realtors</s:String>
+    <s:String x:Key="Alert.SeverityInfo">Info</s:String>
+    <s:String x:Key="Alert.SeverityWarning">Warning</s:String>
+    <s:String x:Key="Alert.SeverityCritical">Critical</s:String>
+    <s:String x:Key="Alert.NoProps">no properties in system</s:String>
+    <s:String x:Key="Alert.NoActive">no active properties</s:String>
+    <s:String x:Key="Alert.NoSales">no sales ever</s:String>
+    <s:String x:Key="Alert.LowRating">low rating</s:String>
+    <s:String x:Key="Alert.LowScore">critically low score</s:String>
+    <s:String x:Key="Alert.NoCompleted">has appointments but none completed</s:String>
+    <s:String x:Key="Alert.HighCancels">high cancellation rate</s:String>
+    <s:String x:Key="Alert.StaleProps">properties with no sale &gt;30 days</s:String>
+
+    <!-- Realtor: efficiency score -->
+    <s:String x:Key="Realtor.ScoreExcellent">Excellent result! 🏆</s:String>
+    <s:String x:Key="Realtor.ScoreGood">Good performance 👍</s:String>
+    <s:String x:Key="Realtor.ScoreNeedsWork">Needs improvement</s:String>
 
 </ResourceDictionary>

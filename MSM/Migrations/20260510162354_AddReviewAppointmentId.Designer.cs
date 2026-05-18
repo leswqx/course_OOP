@@ -4,6 +4,7 @@ using MSM.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MSM.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260510162354_AddReviewAppointmentId")]
+    partial class AddReviewAppointmentId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,10 +68,7 @@ namespace MSM.Migrations
 
                     b.HasIndex("PropertyId");
 
-                    b.HasIndex("RealtorId", "SlotStart")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Appointments_RealtorId_SlotStart_Active")
-                        .HasFilter("[Status] != 'cancelled'");
+                    b.HasIndex("RealtorId");
 
                     b.ToTable("Appointments");
                 });
@@ -312,10 +312,7 @@ namespace MSM.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppointmentId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Reviews_AppointmentId_Unique")
-                        .HasFilter("[AppointmentId] IS NOT NULL");
+                    b.HasIndex("AppointmentId");
 
                     b.HasIndex("PropertyId");
 
@@ -376,9 +373,6 @@ namespace MSM.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.HasIndex("Login")
                         .IsUnique();

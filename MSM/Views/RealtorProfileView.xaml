@@ -33,6 +33,13 @@
                    FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
                    Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
 
+        <!-- Ошибка (например, риелтор не найден) -->
+        <TextBlock Grid.Row="1" Text="{Binding ErrorMessage}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   FontSize="15" Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap"
+                   Margin="20,0"
+                   Visibility="{Binding HasErrorMessage, Converter={StaticResource BoolToVisibility}}"/>
+
         <!-- Контент -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
                       Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
@@ -83,7 +90,7 @@
                                 <TextBlock FontSize="14" Margin="8,2,0,0"
                                            Foreground="{DynamicResource TextSecondaryBrush}">
                                     <Run Text="{Binding StatRating, StringFormat='{}{0:F1}'}"/>
-                                    <Run Text="из 5"/>
+                                    <Run Text="{DynamicResource Common.OutOf5}"/>
                                 </TextBlock>
                             </StackPanel>
 
@@ -323,6 +330,20 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
+                <!-- Показать ещё отзывы -->
+                <Button Command="{Binding ShowMoreReviewsCommand}"
+                        Visibility="{Binding HasMoreReviews, Converter={StaticResource BoolToVisibility}}"
+                        HorizontalAlignment="Center" Margin="0,12,0,4"
+                        Height="36" Padding="28,0" FontSize="13" Cursor="Hand"
+                        Background="Transparent"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        BorderBrush="{DynamicResource PrimaryBrush}"
+                        BorderThickness="1">
+                    <TextBlock>
+                        <Run Text="{DynamicResource Review.ShowMore}"/>
+                    </TextBlock>
+                </Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>

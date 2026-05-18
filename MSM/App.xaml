@@ -447,8 +447,7 @@
             <converters:StringToBrushConverter x:Key="StringToBrush"/>
             <converters:PriceToStringConverter x:Key="PriceToString"/>
             <converters:RatingToStarsConverter x:Key="RatingToStars"/>
-            <converters:AppointmentStatusToStringConverter x:Key="AppointmentStatusToString"/>
-            <converters:ByteArrayToImageConverter x:Key="ByteArrayToImage"/>
+<converters:ByteArrayToImageConverter x:Key="ByteArrayToImage"/>
 
             <!-- DataTemplates: WPF автоматически подбирает нужный View по типу ViewModel -->
             <DataTemplate DataType="{x:Type vm:LandingViewModel}">
@@ -463,10 +462,7 @@
             <DataTemplate DataType="{x:Type vm:PropertyDetailViewModel}">
                 <views:PropertyDetailView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:HomeViewModel}">
-                <views:HomeView/>
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:RegisterViewModel}">
+<DataTemplate DataType="{x:Type vm:RegisterViewModel}">
                 <views:RegisterView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:FavoritesViewModel}">

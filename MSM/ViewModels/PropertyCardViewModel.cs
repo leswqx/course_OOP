@@ -24,6 +24,7 @@ public class PropertyCardViewModel
     public bool HasImage => MainImage != null;
     public bool IsSoldable => Status == "active";
     public bool IsSold => Status == "sold";
+    public bool IsHidden => Status == "hidden";
     public bool IsRestorable => Status == "sold";
     public bool IsToggleHideVisible => Status != "sold";
     public string ToggleHideLabel => Status == "hidden" ? "👁 Показать" : "🙈 Скрыть";

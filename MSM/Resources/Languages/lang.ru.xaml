@@ -101,6 +101,9 @@
 
     <!-- Избранное — убрать из списка -->
     <s:String x:Key="Favorites.Remove">✕ Убрать</s:String>
+    <s:String x:Key="Favorites.Hidden">Недоступен</s:String>
+    <s:String x:Key="Favorites.HiddenDesc">Объект скрыт риелтором</s:String>
+    <s:String x:Key="Common.OutOf5">из 5</s:String>
 
     <!-- Мои записи (клиент) -->
     <s:String x:Key="MyAppt.Title">Мои записи на просмотр</s:String>
@@ -130,6 +133,8 @@
     <s:String x:Key="Realtor.Confirm">Подтвердить</s:String>
     <s:String x:Key="Realtor.Cancel">Отменить</s:String>
     <s:String x:Key="Realtor.NoAppt">Нет записей</s:String>
+    <s:String x:Key="Realtor.NoApptDay">В этот день записей нет</s:String>
+    <s:String x:Key="Realtor.ClickDayHint">Нажмите на день чтобы увидеть записи</s:String>
     <s:String x:Key="Realtor.RestoreActive">↩ В продажу</s:String>
     <s:String x:Key="Realtor.ClientContact">Контакты клиента</s:String>
 
@@ -166,6 +171,7 @@
     <s:String x:Key="Review.SortDateAsc">Сначала старые</s:String>
     <s:String x:Key="Review.SortRatingDesc">Высокий рейтинг</s:String>
     <s:String x:Key="Review.SortRatingAsc">Низкий рейтинг</s:String>
+    <s:String x:Key="Review.ShowMore">Показать ещё</s:String>
 
     <!-- Кнопка профиля в детальной карточке -->
     <s:String x:Key="Detail.RealtorProfile">Профиль риелтора</s:String>
@@ -228,12 +234,13 @@
     <s:String x:Key="About.S3Title">Онлайн-запись на просмотр</s:String>
     <s:String x:Key="About.S3Body">Записывайтесь на просмотр прямо в приложении — без очередей</s:String>
     <s:String x:Key="About.ContactsTitle">Контакты</s:String>
-    <s:String x:Key="About.Phone">+7 (495) 000-00-00</s:String>
-    <s:String x:Key="About.Email">info@msm-realty.ru</s:String>
-    <s:String x:Key="About.Address">г. Москва, ул. Примерная, д. 1, офис 42</s:String>
+    <s:String x:Key="About.Phone">+375 (33) 374-96-45</s:String>
+    <s:String x:Key="About.Email">uunn2994@gmail.com</s:String>
+    <s:String x:Key="About.Address">г. Минск, ул. Белорусская 21 офис 1213Б</s:String>
     <s:String x:Key="About.Hours">Пн–Пт: 09:00 – 20:00,  Сб: 10:00 – 17:00</s:String>
     <s:String x:Key="About.MapHint">Мы находимся в центре города, удобная парковка</s:String>
     <s:String x:Key="About.ViewOnMap">Посмотреть на карте</s:String>
+    <s:String x:Key="About.AdminProfile">Профиль администратора</s:String>
 
     <!-- Навигация (роль) -->
     <s:String x:Key="Nav.Home">Главная</s:String>
@@ -249,5 +256,228 @@
     <!-- HomeView -->
     <s:String x:Key="Home.LogoutButton">Выйти из системы</s:String>
     <s:String x:Key="Home.Placeholder">Функциональность будет добавлена на следующих этапах разработки.</s:String>
+
+    <!-- Детальная страница — кнопка карты, бейдж продан, календарь -->
+    <s:String x:Key="Detail.ShowOnMap">📍 Показать на карте</s:String>
+    <s:String x:Key="Detail.SoldBadge">🏷 Объект продан — запись недоступна</s:String>
+    <s:String x:Key="Detail.Mon">Пн</s:String>
+    <s:String x:Key="Detail.Tue">Вт</s:String>
+    <s:String x:Key="Detail.Wed">Ср</s:String>
+    <s:String x:Key="Detail.Thu">Чт</s:String>
+    <s:String x:Key="Detail.Fri">Пт</s:String>
+    <s:String x:Key="Detail.Sat">Сб</s:String>
+    <s:String x:Key="Detail.Sun">Вс</s:String>
+    <s:String x:Key="Detail.SlotAvailable">Доступно</s:String>
+    <s:String x:Key="Detail.SlotBusy">Занято</s:String>
+    <s:String x:Key="Detail.SlotSelected">Выбрано</s:String>
+    <s:String x:Key="Detail.SlotsFor">Слоты на </s:String>
+
+    <!-- Фильтр — плейсхолдер района -->
+    <s:String x:Key="Filter.AllDistricts">Все районы</s:String>
+
+    <!-- Панель администратора — вкладки, фильтр пользователей, период, KPI -->
+    <s:String x:Key="Admin.Mailings">Рассылка</s:String>
+    <s:String x:Key="Admin.Properties">Объекты</s:String>
+    <s:String x:Key="Admin.FilterAll">Все</s:String>
+    <s:String x:Key="Admin.FilterRealtors">Риелторы</s:String>
+    <s:String x:Key="Admin.FilterClients">Клиенты</s:String>
+    <s:String x:Key="Admin.FilterBlocked">🔒 Заблокированные</s:String>
+    <s:String x:Key="Admin.BannedBadge">БАН</s:String>
+    <s:String x:Key="Admin.ReviewRealtorLabel">Риелтор:</s:String>
+    <s:String x:Key="Admin.AllRealtors">Все риелторы</s:String>
+    <s:String x:Key="Admin.Alerts">Тревожные сигналы</s:String>
+    <s:String x:Key="Admin.Period">Период:</s:String>
+    <s:String x:Key="Admin.PeriodAll">Всё время</s:String>
+    <s:String x:Key="Admin.PeriodMonth">Этот месяц</s:String>
+    <s:String x:Key="Admin.PeriodLastMonth">Прошлый месяц</s:String>
+    <s:String x:Key="Admin.PeriodQuarter">Квартал</s:String>
+    <s:String x:Key="Admin.PeriodYear">Этот год</s:String>
+    <s:String x:Key="Admin.Revenue">Выручка за период</s:String>
+    <s:String x:Key="Admin.AvgDeal">Средний чек</s:String>
+    <s:String x:Key="Admin.NewClients">Новых клиентов</s:String>
+    <s:String x:Key="Admin.PendingAppt">Ожидающих записей</s:String>
+    <s:String x:Key="Admin.EfficiencyRating">Рейтинг эффективности</s:String>
+    <s:String x:Key="Admin.TeamAvg">Среднее по команде: </s:String>
+
+    <!-- Панель риелтора — вкладки, фильтры, кнопки карточек, фильтры записей -->
+    <s:String x:Key="Realtor.Schedule">Расписание</s:String>
+    <s:String x:Key="Realtor.PropertyAdded">✓ Объект успешно добавлен!</s:String>
+    <s:String x:Key="Realtor.FilterAll">Все</s:String>
+    <s:String x:Key="Realtor.FilterActive">Активные</s:String>
+    <s:String x:Key="Realtor.FilterHidden">Скрытые</s:String>
+    <s:String x:Key="Realtor.FilterSold">Проданные</s:String>
+    <s:String x:Key="Realtor.SortLabel">Сортировка:</s:String>
+    <s:String x:Key="Realtor.SortNew">Новые</s:String>
+    <s:String x:Key="Realtor.SortPriceAsc">Цена ↑</s:String>
+    <s:String x:Key="Realtor.SortPriceDesc">Цена ↓</s:String>
+    <s:String x:Key="Realtor.SortAZ">А-Я</s:String>
+    <s:String x:Key="Realtor.SetSold">Продано</s:String>
+    <s:String x:Key="Realtor.Edit">Изменить</s:String>
+    <s:String x:Key="Realtor.Delete">Удалить</s:String>
+    <s:String x:Key="Realtor.ApptFilterLabel">Фильтр:</s:String>
+    <s:String x:Key="Realtor.ApptPropLabel">Объект:</s:String>
+    <s:String x:Key="Realtor.AllProperties">Все объекты</s:String>
+    <s:String x:Key="Realtor.ApptStatusLabel">Статус:</s:String>
+    <s:String x:Key="Realtor.AllStatuses">Все статусы</s:String>
+    <s:String x:Key="Realtor.StatusNew">Новые</s:String>
+    <s:String x:Key="Realtor.StatusConfirmed">Подтверждённые</s:String>
+    <s:String x:Key="Realtor.StatusCompleted">Завершённые</s:String>
+    <s:String x:Key="Realtor.StatusCancelled">Отменённые</s:String>
+    <s:String x:Key="Realtor.DateLabel">Дата:</s:String>
+    <s:String x:Key="Realtor.DateAll">Все</s:String>
+    <s:String x:Key="Realtor.DateToday">Сегодня</s:String>
+    <s:String x:Key="Realtor.DateWeek">Неделя</s:String>
+    <s:String x:Key="Realtor.DateMonth">Месяц</s:String>
+    <s:String x:Key="Realtor.DateReset">Сбросить</s:String>
+    <s:String x:Key="Realtor.Complete">Завершить</s:String>
+    <s:String x:Key="Realtor.EditProperty">Редактирование объекта</s:String>
+    <s:String x:Key="Realtor.PeriodLabel">Период:</s:String>
+    <s:String x:Key="Realtor.PeriodAll">Всё время</s:String>
+    <s:String x:Key="Realtor.PeriodMonth">Этот месяц</s:String>
+    <s:String x:Key="Realtor.PeriodQuarter">Квартал</s:String>
+    <s:String x:Key="Realtor.PeriodYear">Этот год</s:String>
+    <s:String x:Key="Realtor.StatTotalProps">Всего объектов</s:String>
+    <s:String x:Key="Realtor.StatAllTime">за всё время</s:String>
+    <s:String x:Key="Realtor.StatActiveProps">Активных</s:String>
+    <s:String x:Key="Realtor.StatOnSale">сейчас в продаже</s:String>
+    <s:String x:Key="Realtor.StatSoldLabel">Продано</s:String>
+    <s:String x:Key="Realtor.StatApptPeriod">Записей за период</s:String>
+    <s:String x:Key="Realtor.StatCompletedPeriod">Завершено за период</s:String>
+    <s:String x:Key="Realtor.StatAvgRating">Средний рейтинг</s:String>
+    <s:String x:Key="Realtor.StatByReviews">по отзывам клиентов</s:String>
+    <s:String x:Key="Realtor.StatMyScore">МОЙ БАЛЛ</s:String>
+    <s:String x:Key="Realtor.StatOf100">из 100</s:String>
+    <s:String x:Key="Realtor.StatFormula">Рейтинг ×35%  +  Продажи ×30%  +  Записи ×20%  +  Активность ×15%</s:String>
+    <s:String x:Key="Realtor.StatByStatus">Объекты по статусу</s:String>
+    <s:String x:Key="Realtor.StatApptByMonth">Записи по месяцам (последние 6)</s:String>
+    <s:String x:Key="Realtor.RoleLabel">Риелтор</s:String>
+    <s:String x:Key="Realtor.ProfileAbout">О себе (видят клиенты)</s:String>
+    <s:String x:Key="Realtor.CalendarBlocked">Заблокировано</s:String>
+    <s:String x:Key="Realtor.CalendarHint">Клиенты записываются самостоятельно при просмотре объекта. Управляйте записями на вкладке «Записи».</s:String>
+
+    <!-- Профиль (общие) -->
+    <s:String x:Key="Profile.UploadPhoto">Загрузить фото</s:String>
+    <s:String x:Key="Profile.RemovePhoto">Удалить</s:String>
+    <s:String x:Key="Profile.PersonalData">Личные данные</s:String>
+    <s:String x:Key="Profile.FullName">Имя и фамилия</s:String>
+    <s:String x:Key="Profile.Email">E-mail</s:String>
+    <s:String x:Key="Profile.Phone">Телефон</s:String>
+    <s:String x:Key="Profile.Save">💾 Сохранить профиль</s:String>
+    <s:String x:Key="Profile.ChangePassword">Смена пароля</s:String>
+    <s:String x:Key="Profile.OldPassword">Текущий пароль</s:String>
+    <s:String x:Key="Profile.NewPassword">Новый пароль</s:String>
+    <s:String x:Key="Profile.ConfirmPassword">Повторите пароль</s:String>
+    <s:String x:Key="Profile.ChangePasswordBtn">Изменить пароль</s:String>
+
+    <!-- Администратор (дополнительно) -->
+    <s:String x:Key="Admin.RoleLabel">Администратор</s:String>
+    <s:String x:Key="Admin.MailTo">Кому отправить</s:String>
+    <s:String x:Key="Admin.MailToAll">Всем пользователям</s:String>
+    <s:String x:Key="Admin.MailToClients">Клиентам</s:String>
+    <s:String x:Key="Admin.MailToRealtors">Риелторам</s:String>
+    <s:String x:Key="Admin.MailTemplates">Шаблоны писем</s:String>
+    <s:String x:Key="Admin.MailTemplateHint">Выберите шаблон — тема и текст заполнятся автоматически</s:String>
+    <s:String x:Key="Admin.MailTemplateNew">📢 Новые объекты</s:String>
+    <s:String x:Key="Admin.MailTemplatePriceDrop">💸 Снижение цен</s:String>
+    <s:String x:Key="Admin.MailTemplateShowings">🏠 Открытые показы</s:String>
+    <s:String x:Key="Admin.MailPreview">Предпросмотр письма</s:String>
+    <s:String x:Key="Admin.MailSubjectPlaceholder">Тема письма появится здесь...</s:String>
+    <s:String x:Key="Admin.MailBodyPlaceholder">Текст письма появится здесь после выбора шаблона или ввода вручную.</s:String>
+    <s:String x:Key="Admin.MailContent">Содержание письма</s:String>
+    <s:String x:Key="Admin.MailSubjectLabel">Тема письма</s:String>
+    <s:String x:Key="Admin.MailBodyLabel">Текст письма</s:String>
+    <s:String x:Key="Admin.MailSend">Отправить</s:String>
+    <s:String x:Key="Admin.PropFilterActive">Активные</s:String>
+    <s:String x:Key="Admin.PropFilterHidden">Скрытые</s:String>
+    <s:String x:Key="Admin.PropFilterSold">Проданные</s:String>
+    <s:String x:Key="Admin.PropFound">Найдено:</s:String>
+    <s:String x:Key="Admin.PropObjects">объектов</s:String>
+    <s:String x:Key="Admin.RealtorPrefix">Риелтор: </s:String>
+    <s:String x:Key="Admin.AddedPrefix">  ·  Добавлен: </s:String>
+    <s:String x:Key="Admin.OpenBtn">Открыть</s:String>
+    <s:String x:Key="Admin.DeleteBtn">🗑 Удалить</s:String>
+    <s:String x:Key="Admin.AvgDealDetail">Средний чек сделки</s:String>
+    <s:String x:Key="Admin.DetailStatusChart">Статусы объектов</s:String>
+    <s:String x:Key="Admin.DetailApptChart">Записи по месяцам (последние 6 мес.)</s:String>
+    <s:String x:Key="Admin.NoApprovedReviews">Нет одобренных отзывов</s:String>
+    <s:String x:Key="Admin.NoRealtorProps">У риелтора нет объектов</s:String>
+
+    <!-- Мои записи (клиент) -->
+    <s:String x:Key="MyAppt.Cancel">✕ Отменить</s:String>
+    <s:String x:Key="MyAppt.ReviewHint">💬 Отзыв доступен после завершения</s:String>
+
+    <!-- Блокировка пользователей -->
+    <s:String x:Key="Admin.Block">🔒 Заблокировать</s:String>
+    <s:String x:Key="Admin.Unblock">🔓 Разблокировать</s:String>
+
+    <!-- Статусы записей -->
+    <s:String x:Key="Appt.StatusNew">Новая</s:String>
+    <s:String x:Key="Appt.StatusConfirmed">Подтверждена</s:String>
+    <s:String x:Key="Appt.StatusCompleted">Завершена ✓</s:String>
+    <s:String x:Key="Appt.StatusCancelled">Отменена</s:String>
+
+    <!-- Главная страница -->
+    <s:String x:Key="Landing.Title">Найдите дом своей мечты</s:String>
+    <s:String x:Key="Landing.Subtitle">Квартиры, дома и коммерческая недвижимость — поможем найти идеальный вариант.</s:String>
+    <s:String x:Key="Landing.ShowProperties">Показать объекты</s:String>
+    <s:String x:Key="Landing.PricePlaceholder">Цена до, BYN</s:String>
+    <s:String x:Key="Landing.Popular">Популярное:</s:String>
+    <s:String x:Key="Landing.Tag1">Квартира 2к</s:String>
+    <s:String x:Key="Landing.Tag2">Новостройки</s:String>
+    <s:String x:Key="Landing.Tag3">Дом с участком</s:String>
+    <s:String x:Key="Landing.StatProps">Объектов в каталоге</s:String>
+    <s:String x:Key="Landing.StatClients">Довольных клиентов</s:String>
+    <s:String x:Key="Landing.StatRealtors">Опытных риелторов</s:String>
+
+    <!-- Каталог (список) -->
+    <s:String x:Key="Catalog.Found">Найдено: </s:String>
+    <s:String x:Key="Catalog.ShowMorePrefix">Показать ещё</s:String>
+    <s:String x:Key="Catalog.ShowMoreSuffix">объектов</s:String>
+
+    <!-- Поиск риелтора -->
+    <s:String x:Key="Realtor.SearchPlaceholder">Поиск по названию или городу...</s:String>
+
+    <!-- Админ: статистика (расширенная) -->
+    <s:String x:Key="Admin.EfficiencyFormula">Рейтинг 35% + Продажи 30% + Записи 20% + Активность 15%</s:String>
+    <s:String x:Key="Admin.AgencySalesTitle">📈 Динамика продаж агентства</s:String>
+    <s:String x:Key="Admin.Chart6m">6 мес</s:String>
+    <s:String x:Key="Admin.Chart1y">1 год</s:String>
+    <s:String x:Key="Admin.Details">Подробнее</s:String>
+    <s:String x:Key="Admin.DetailTabOverview">Обзор</s:String>
+    <s:String x:Key="Admin.DetailTabReviews">Отзывы</s:String>
+    <s:String x:Key="Admin.DetailTabProperties">Объекты</s:String>
+    <s:String x:Key="Admin.DetailSubtitle">Детальная карточка — объекты за всё время, записи за выбранный период</s:String>
+    <s:String x:Key="Admin.DetailTotalProps">Всего объектов</s:String>
+    <s:String x:Key="Admin.DetailActive">Активных</s:String>
+    <s:String x:Key="Admin.DetailSold">Продано</s:String>
+    <s:String x:Key="Admin.DetailCompletedAppt">Завершено записей</s:String>
+    <s:String x:Key="Admin.DetailRating">Рейтинг</s:String>
+    <s:String x:Key="Admin.DetailRevenue">Общая выручка (все продажи)</s:String>
+    <s:String x:Key="Admin.MetricProps">объектов</s:String>
+    <s:String x:Key="Admin.MetricSold">продано</s:String>
+    <s:String x:Key="Admin.MetricRating">рейтинг</s:String>
+    <s:String x:Key="Admin.MetricVisits">визитов</s:String>
+    <s:String x:Key="Admin.MetricQueue">в очереди</s:String>
+    <s:String x:Key="Admin.MetricRevenue">выручка</s:String>
+
+    <!-- Админ: тексты тревожных сигналов -->
+    <s:String x:Key="Alert.SeverityAll">Все</s:String>
+    <s:String x:Key="Alert.AllRealtors">Все риелторы</s:String>
+    <s:String x:Key="Alert.SeverityInfo">Инфо</s:String>
+    <s:String x:Key="Alert.SeverityWarning">Внимание</s:String>
+    <s:String x:Key="Alert.SeverityCritical">Критично</s:String>
+    <s:String x:Key="Alert.NoProps">нет объектов в системе</s:String>
+    <s:String x:Key="Alert.NoActive">нет активных объектов</s:String>
+    <s:String x:Key="Alert.NoSales">ни одной продажи за всё время</s:String>
+    <s:String x:Key="Alert.LowRating">низкий рейтинг</s:String>
+    <s:String x:Key="Alert.LowScore">критически низкий балл</s:String>
+    <s:String x:Key="Alert.NoCompleted">есть записи, но ни одной завершённой</s:String>
+    <s:String x:Key="Alert.HighCancels">высокий % отмен</s:String>
+    <s:String x:Key="Alert.StaleProps">объект(ов) без продажи &gt;30 дней</s:String>
+
+    <!-- Риелтор: балл эффективности -->
+    <s:String x:Key="Realtor.ScoreExcellent">Отличный результат! 🏆</s:String>
+    <s:String x:Key="Realtor.ScoreGood">Хороший показатель 👍</s:String>
+    <s:String x:Key="Realtor.ScoreNeedsWork">Нужно работать над показателями</s:String>
 
 </ResourceDictionary>

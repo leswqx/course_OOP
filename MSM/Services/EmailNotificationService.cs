@@ -1,9 +1,9 @@
 using System.Configuration;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 using MSM.Models.Entities;
 using MSM.Services.Interfaces;
+using static MSM.Models.Entities.AppointmentStatus;
 
 namespace MSM.Services;
 
@@ -30,8 +30,6 @@ public class EmailNotificationService : INotificationService
         _agencyName = ConfigurationManager.AppSettings["Smtp:AgencyName"] ?? "HomeEstate";
         _agencySite = ConfigurationManager.AppSettings["Smtp:AgencySite"] ?? "";
 
-        Debug.WriteLine($"[Email] Config: host={_host} port={_port} user={_userName} passLen={_password.Length}");
-
         // Считаем сервис настроенным если введены реальные данные
         _isConfigured = !string.IsNullOrWhiteSpace(_host)
                      && !string.IsNullOrWhiteSpace(_userName)
@@ -42,8 +40,8 @@ public class EmailNotificationService : INotificationService
 
     public async Task SendEmailAsync(string toEmail, string toName, string subject, string body)
     {
-        if (!_isConfigured)
-            return;
+        if (!_isConfigured) return;
+        if (string.IsNullOrWhiteSpace(toEmail)) return;
 
         using var message = new MailMessage();
         message.From = new MailAddress(_userName, _fromName);
@@ -58,16 +56,7 @@ public class EmailNotificationService : INotificationService
             EnableSsl = _useSsl
         };
 
-        try
-        {
-            await client.SendMailAsync(message);
-            Debug.WriteLine($"[Email] Отправлено: {toEmail} | Тема: {subject}");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"[Email] ОШИБКА отправки на {toEmail}: {ex.GetType().Name}: {ex.Message}");
-            Debug.WriteLine($"[Email] InnerException: {ex.InnerException?.Message}");
-        }
+        await client.SendMailAsync(message);
     }
 
     public async Task SendWelcomeEmailAsync(User user)
@@ -110,13 +99,14 @@ public class EmailNotificationService : INotificationService
         await Task.WhenAll(tasks);
     }
 
-    public async Task SendAppointmentStatusChangedAsync(User client, string propertyTitle, string realtorName, string newStatus, DateTime slotStart)
+    public async Task SendAppointmentStatusChangedAsync(User client, string propertyTitle, string realtorName, AppointmentStatus newStatus, DateTime slotStart)
     {
         var (statusText, icon) = newStatus switch
         {
-            "confirmed" => ("подтверждена", "✅"),
-            "cancelled" => ("отменена",     "❌"),
-            _           => ("изменена",     "ℹ")
+            Confirmed => ("подтверждена", "✅"),
+            Cancelled => ("отменена",     "❌"),
+            Completed => ("завершена",    "🏁"),
+            _         => ("изменена",     "ℹ️")
         };
 
         var body = $"""
@@ -129,7 +119,9 @@ public class EmailNotificationService : INotificationService
                 <tr><td style="padding:4px 12px 4px 0;color:#888">Дата:</td><td>{slotStart:dd.MM.yyyy HH:mm}</td></tr>
                 <tr><td style="padding:4px 12px 4px 0;color:#888">Статус:</td><td><strong>{statusText.ToUpper()}</strong></td></tr>
             </table>
-            {(newStatus == "confirmed" ? "<p>Пожалуйста, приходите вовремя. Риелтор ждёт вас!</p>" : "<p>Если у вас есть вопросы, свяжитесь с риелтором напрямую.</p>")}
+            {(newStatus == Confirmed ? "<p>Пожалуйста, приходите вовремя. Риелтор ждёт вас!</p>" :
+              newStatus == Completed ? "<p>Спасибо за визит! Вы можете оставить отзыв о риелторе в разделе «Мои записи».</p>" :
+              "<p>Если у вас есть вопросы, свяжитесь с риелтором напрямую.</p>")}
             """;
 
         await SendEmailAsync(client.Email, client.FullName,

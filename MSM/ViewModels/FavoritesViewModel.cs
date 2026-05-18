@@ -6,11 +6,15 @@ using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
 
-// Список избранных объектов клиента
 public partial class FavoritesViewModel : ViewModelBase
 {
+    private const int PageSize = 9;
+
     private readonly IFavoriteService _favoriteService;
     private readonly INavigationService _navigationService;
+
+    private int _loadedCount;
+    private int _totalCount;
 
     [ObservableProperty] private ObservableCollection<PropertyCardViewModel> _properties = new();
     [ObservableProperty]
@@ -19,9 +23,15 @@ public partial class FavoritesViewModel : ViewModelBase
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsContentVisible))]
     private bool _isEmpty;
-    [ObservableProperty] private string? _errorMessage;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasErrorMessage))]
+    [NotifyPropertyChangedFor(nameof(IsContentVisible))]
+    private string? _errorMessage;
 
-    public bool IsContentVisible => !IsLoading && !IsEmpty;
+    public bool HasErrorMessage => ErrorMessage != null;
+    public bool IsContentVisible => !IsLoading && !IsEmpty && !HasErrorMessage;
+    public bool CanShowMore   => _totalCount > Properties.Count;
+    public int  ShowMoreCount => Math.Max(0, _totalCount - Properties.Count);
 
     public FavoritesViewModel(IFavoriteService favoriteService, INavigationService navigationService)
     {
@@ -36,20 +46,47 @@ public partial class FavoritesViewModel : ViewModelBase
         if (Session.CurrentUser == null) return;
         IsLoading = true;
         ErrorMessage = null;
+        _loadedCount = 0;
         try
         {
-            var items = await _favoriteService.GetUserFavoritesAsync(Session.CurrentUser.Id);
+            _totalCount = await _favoriteService.GetUserFavoritesCountAsync(Session.CurrentUser.Id);
+            var items = await _favoriteService.GetUserFavoritesPagedAsync(Session.CurrentUser.Id, 0, PageSize);
             Properties.Clear();
             foreach (var p in items) Properties.Add(new PropertyCardViewModel(p));
+            _loadedCount = Properties.Count;
             IsEmpty = Properties.Count == 0;
+            OnPropertyChanged(nameof(CanShowMore));
+            OnPropertyChanged(nameof(ShowMoreCount));
         }
+        catch (ObjectDisposedException) { }
         catch (Exception ex) { ErrorMessage = $"Ошибка: {ex.Message}"; }
         finally { IsLoading = false; }
     }
 
     [RelayCommand]
-    private void OpenDetail(PropertyCardViewModel card) =>
+    private async Task ShowMoreAsync()
+    {
+        if (Session.CurrentUser == null || !CanShowMore || IsLoading) return;
+        IsLoading = true;
+        try
+        {
+            var items = await _favoriteService.GetUserFavoritesPagedAsync(Session.CurrentUser.Id, _loadedCount, PageSize);
+            foreach (var p in items) Properties.Add(new PropertyCardViewModel(p));
+            _loadedCount = Properties.Count;
+            OnPropertyChanged(nameof(CanShowMore));
+            OnPropertyChanged(nameof(ShowMoreCount));
+        }
+        catch (ObjectDisposedException) { }
+        catch (Exception ex) { ErrorMessage = $"Ошибка: {ex.Message}"; }
+        finally { IsLoading = false; }
+    }
+
+    [RelayCommand]
+    private void OpenDetail(PropertyCardViewModel card)
+    {
+        if (card.IsHidden) return;
         _navigationService.NavigateTo<PropertyDetailViewModel>(card.Id);
+    }
 
     [RelayCommand]
     private async Task RemoveFromFavoritesAsync(PropertyCardViewModel card)
@@ -59,9 +96,13 @@ public partial class FavoritesViewModel : ViewModelBase
         {
             await _favoriteService.RemoveFromFavoritesAsync(Session.CurrentUser.Id, card.Id);
             Properties.Remove(card);
+            _loadedCount = Properties.Count;
+            _totalCount  = Math.Max(0, _totalCount - 1);
             IsEmpty = Properties.Count == 0;
+            OnPropertyChanged(nameof(CanShowMore));
+            OnPropertyChanged(nameof(ShowMoreCount));
         }
-        catch { /* некритично */ }
+        catch (Exception ex) { ErrorMessage = $"Не удалось убрать из избранного: {ex.Message}"; }
     }
 
     [RelayCommand]

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using MSM.Data.Context;
+using MSM.Models.Entities;
 using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
@@ -35,10 +36,14 @@ public class ReviewDisplayRow
 public partial class RealtorProfileViewModel : ViewModelBase
 {
     private readonly AppDbContext _context;
-    private readonly IReviewService _reviewService;
     private readonly INavigationService _navigationService;
 
     [ObservableProperty] private bool _isLoading;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasErrorMessage))]
+    private string? _errorMessage;
+    public bool HasErrorMessage => ErrorMessage != null;
+
     [ObservableProperty] private string _realtorName = "";
     [ObservableProperty] private string _realtorPhone = "";
     [ObservableProperty] private string _realtorEmail = "";
@@ -64,32 +69,41 @@ public partial class RealtorProfileViewModel : ViewModelBase
     public bool IsSortRatingDesc => SortMode == "rating_desc";
     public bool IsSortRatingAsc  => SortMode == "rating_asc";
 
-    private List<ReviewDisplayRow> _allReviews = new();
+    private readonly SemaphoreSlim _sem = new(1, 1);
+    private const int ReviewPageSize = 5;
+    private int _reviewPage;
+    private int _totalReviewCount;
     private int _realtorId;
+
+    [ObservableProperty] private bool _hasMoreReviews;
 
     public RealtorProfileViewModel(
         AppDbContext context,
-        IReviewService reviewService,
         INavigationService navigationService)
     {
         _context = context;
-        _reviewService = reviewService;
         _navigationService = navigationService;
     }
 
     public override void OnNavigatedTo(object? parameter)
     {
-        if (parameter is int id) _realtorId = id;
+        _realtorId = parameter is int id ? id : 0;
         _ = LoadAsync();
     }
 
     private async Task LoadAsync()
     {
+        await _sem.WaitAsync();
         IsLoading = true;
+        ErrorMessage = null;
         try
         {
             var realtor = await _context.Users.FindAsync(_realtorId);
-            if (realtor == null) return;
+            if (realtor == null)
+            {
+                ErrorMessage = "Риелтор не найден.";
+                return;
+            }
 
             RealtorName        = realtor.FullName;
             RealtorPhone       = realtor.Phone ?? "—";
@@ -100,12 +114,13 @@ public partial class RealtorProfileViewModel : ViewModelBase
 
             if (realtor.AvatarPhoto?.Length > 0)
             {
-                var ms = new System.IO.MemoryStream(realtor.AvatarPhoto);
+                using var ms = new System.IO.MemoryStream(realtor.AvatarPhoto);
                 var bmp = new BitmapImage();
                 bmp.BeginInit();
                 bmp.CacheOption = BitmapCacheOption.OnLoad;
                 bmp.StreamSource = ms;
                 bmp.EndInit();
+                bmp.Freeze();
                 AvatarImage = bmp;
                 HasAvatar = true;
             }
@@ -114,47 +129,93 @@ public partial class RealtorProfileViewModel : ViewModelBase
                 HasAvatar = false;
             }
 
-            var props = await _context.Properties
-                .Where(p => p.RealtorId == _realtorId)
-                .ToListAsync();
-            StatProperties = props.Count;
-            StatSold       = props.Count(p => p.Status == "sold");
+            StatProperties = await _context.Properties.CountAsync(p => p.RealtorId == _realtorId);
+            StatSold       = await _context.Properties.CountAsync(p => p.RealtorId == _realtorId && p.Status == "sold");
 
-            StatRating = await _reviewService.GetAverageRatingAsync(realtorId: _realtorId);
+            StatRating = await _context.Reviews
+                .Where(r => r.RealtorId == _realtorId && r.IsApproved)
+                .Select(r => (double?)r.Rating)
+                .AverageAsync() ?? 0;
             var rounded = (int)Math.Round(StatRating);
             StatRatingStars = new string('★', rounded) + new string('☆', 5 - rounded);
             StatFilledStars = new string('★', rounded);
             StatEmptyStars  = new string('☆', 5 - rounded);
 
-            var reviewEntities = await _context.Reviews
-                .Include(r => r.User)
-                .Where(r => r.RealtorId == _realtorId && r.IsApproved)
-                .ToListAsync();
-
-            _allReviews = reviewEntities.Select(r => new ReviewDisplayRow(r)).ToList();
-            ApplySort();
-            NoReviews = _allReviews.Count == 0;
+            await LoadReviewsPageAsync(false);
         }
-        finally { IsLoading = false; }
+        finally { IsLoading = false; _sem.Release(); }
     }
 
-    private void ApplySort()
+    private IQueryable<Review> GetSortedReviewQuery()
     {
-        var sorted = SortMode switch
+        var q = _context.Reviews.Include(r => r.User)
+            .Where(r => r.RealtorId == _realtorId && r.IsApproved);
+        return SortMode switch
         {
-            "date_asc"    => _allReviews.OrderBy(r => r.CreatedAt),
-            "rating_desc" => _allReviews.OrderByDescending(r => r.RatingValue),
-            "rating_asc"  => _allReviews.OrderBy(r => r.RatingValue),
-            _             => _allReviews.OrderByDescending(r => r.CreatedAt)
+            "date_asc"    => q.OrderBy(r => r.CreatedAt),
+            "rating_desc" => q.OrderByDescending(r => r.Rating),
+            "rating_asc"  => q.OrderBy(r => r.Rating),
+            _             => q.OrderByDescending(r => r.CreatedAt)
         };
-        Reviews.Clear();
-        foreach (var r in sorted) Reviews.Add(r);
     }
 
-    [RelayCommand] private void SortDateDesc()   { SortMode = "date_desc";   ApplySort(); }
-    [RelayCommand] private void SortDateAsc()    { SortMode = "date_asc";    ApplySort(); }
-    [RelayCommand] private void SortRatingDesc() { SortMode = "rating_desc"; ApplySort(); }
-    [RelayCommand] private void SortRatingAsc()  { SortMode = "rating_asc";  ApplySort(); }
+    private async Task LoadReviewsPageAsync(bool append)
+    {
+        if (!append)
+        {
+            _totalReviewCount = await _context.Reviews.CountAsync(r => r.RealtorId == _realtorId && r.IsApproved);
+            _reviewPage = 0;
+            Reviews.Clear();
+        }
+        var items = await GetSortedReviewQuery()
+            .Skip(_reviewPage * ReviewPageSize)
+            .Take(ReviewPageSize)
+            .ToListAsync();
+        foreach (var r in items) Reviews.Add(new ReviewDisplayRow(r));
+        _reviewPage++;
+        HasMoreReviews = Reviews.Count < _totalReviewCount;
+        NoReviews = _totalReviewCount == 0;
+    }
+
+    [RelayCommand]
+    private async Task ShowMoreReviewsAsync()
+    {
+        await _sem.WaitAsync();
+        try { await LoadReviewsPageAsync(true); }
+        finally { _sem.Release(); }
+    }
+
+    [RelayCommand]
+    private async Task SortDateDescAsync()
+    {
+        await _sem.WaitAsync();
+        try { SortMode = "date_desc"; await LoadReviewsPageAsync(false); }
+        finally { _sem.Release(); }
+    }
+
+    [RelayCommand]
+    private async Task SortDateAscAsync()
+    {
+        await _sem.WaitAsync();
+        try { SortMode = "date_asc"; await LoadReviewsPageAsync(false); }
+        finally { _sem.Release(); }
+    }
+
+    [RelayCommand]
+    private async Task SortRatingDescAsync()
+    {
+        await _sem.WaitAsync();
+        try { SortMode = "rating_desc"; await LoadReviewsPageAsync(false); }
+        finally { _sem.Release(); }
+    }
+
+    [RelayCommand]
+    private async Task SortRatingAscAsync()
+    {
+        await _sem.WaitAsync();
+        try { SortMode = "rating_asc"; await LoadReviewsPageAsync(false); }
+        finally { _sem.Release(); }
+    }
 
     [RelayCommand]
     private void GoBack() => _navigationService.GoBack();

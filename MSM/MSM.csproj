@@ -13,20 +13,17 @@
         <None Remove="Resources\Images\logo.png" />
     </ItemGroup>
     <ItemGroup>
-        <Resource Include="Resources\Images\fon.png" />
-        <Resource Include="Resources\Images\logo.png" />
         <None Remove="Resources\Images\logo-white.svg" />
-        <Resource Include="Resources\Images\logo-white.svg" />
         <None Remove="Resources\Images\logo-white.png" />
         <Resource Include="Resources\Images\logo-white.png" />
         <None Remove="Resources\Images\logo-green.svg" />
-        <Resource Include="Resources\Images\logo-green.svg" />
         <None Remove="Resources\Images\logo-green.png" />
         <Resource Include="Resources\Images\logo-green.png" />
         <None Remove="Resources\Images\main.png" />
         <Resource Include="Resources\Images\main.png" />
         <None Remove="Resources\Images\header.png" />
-        <Resource Include="Resources\Images\header.png" />
+        <None Remove="Resources\Images\map.png" />
+        <Resource Include="Resources\Images\map.png" />
     </ItemGroup>
 
     <ItemGroup>

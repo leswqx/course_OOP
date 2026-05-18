@@ -31,6 +31,7 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Login).IsUnique();
+            entity.HasIndex(e => e.Email).IsUnique();
             entity.Property(e => e.Login).HasMaxLength(50).IsRequired();
             entity.Property(e => e.PasswordHash).HasMaxLength(255).IsRequired();
             entity.Property(e => e.Email).HasMaxLength(100).IsRequired();
@@ -77,8 +78,17 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Appointment>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Status).HasMaxLength(20).IsRequired().HasDefaultValue("new");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20).IsRequired().HasDefaultValueSql("'new'")
+                .HasConversion(
+                    v => v.ToString().ToLower(),
+                    v => Enum.Parse<AppointmentStatus>(v, true));
             entity.Property(e => e.Comment).HasMaxLength(500);
+            // Запрещаем двойное бронирование одного слота у риелтора (кроме отменённых)
+            entity.HasIndex(e => new { e.RealtorId, e.SlotStart })
+                .HasFilter("[Status] != 'cancelled'")
+                .IsUnique()
+                .HasDatabaseName("IX_Appointments_RealtorId_SlotStart_Active");
             entity.HasOne(e => e.Property)
                 .WithMany(e => e.Appointments)
                 .HasForeignKey(e => e.PropertyId)
@@ -136,6 +146,11 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.IsApproved).HasDefaultValue(false);
+            // Один отзыв на одну запись на просмотр
+            entity.HasIndex(e => e.AppointmentId)
+                .IsUnique()
+                .HasFilter("[AppointmentId] IS NOT NULL")
+                .HasDatabaseName("IX_Reviews_AppointmentId_Unique");
             entity.HasOne(e => e.User)
                 .WithMany(e => e.Reviews)
                 .HasForeignKey(e => e.UserId)

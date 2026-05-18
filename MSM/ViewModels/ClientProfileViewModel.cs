@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
 using MSM.Models;
+using MSM.Models.Entities;
 using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
@@ -95,11 +97,11 @@ public partial class ClientProfileViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void SetTab1()
+    private async Task SetTab1Async()
     {
         ShowTab0 = false;
         ShowTab1 = true;
-        _ = LoadAppointmentsAsync();
+        await LoadAppointmentsAsync();
     }
 
     private async Task LoadAppointmentsAsync()
@@ -110,11 +112,11 @@ public partial class ClientProfileViewModel : ViewModelBase
         {
             var items = await _appointmentService.GetByClientIdAsync(Session.CurrentUser.Id);
             var myReviews = await _reviewService.GetUserReviewsAsync(Session.CurrentUser.Id);
-            var reviewedRealtorIds = myReviews.Where(r => r.RealtorId.HasValue)
-                                               .Select(r => r.RealtorId!.Value).ToHashSet();
+            var reviewedAppointmentIds = myReviews.Where(r => r.AppointmentId.HasValue)
+                                                   .Select(r => r.AppointmentId!.Value).ToHashSet();
             Appointments.Clear();
             foreach (var a in items)
-                Appointments.Add(new AppointmentRowViewModel(a, reviewedRealtorIds.Contains(a.RealtorId)));
+                Appointments.Add(new AppointmentRowViewModel(a, reviewedAppointmentIds.Contains(a.Id)));
             IsApptEmpty = Appointments.Count == 0;
         }
         catch { IsApptEmpty = true; }
@@ -131,8 +133,13 @@ public partial class ClientProfileViewModel : ViewModelBase
             System.Windows.MessageBoxImage.Question);
         if (result != System.Windows.MessageBoxResult.Yes) return;
 
-        try { await _appointmentService.UpdateStatusAsync(appointmentId, "cancelled"); }
-        catch { }
+        try { await _appointmentService.UpdateStatusAsync(appointmentId, AppointmentStatus.Cancelled); }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Не удалось отменить запись: {ex.Message}",
+                "Ошибка", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            return;
+        }
         await LoadAppointmentsAsync();
     }
 
@@ -163,11 +170,12 @@ public partial class ClientProfileViewModel : ViewModelBase
         try
         {
             await _reviewService.CreateAsync(
-                userId: Session.CurrentUser.Id,
-                propertyId: null,
-                realtorId: ReviewTargetRealtorId,
-                rating: ReviewRating,
-                comment: string.IsNullOrWhiteSpace(ReviewComment) ? null : ReviewComment.Trim());
+                userId:        Session.CurrentUser.Id,
+                propertyId:    null,
+                realtorId:     ReviewTargetRealtorId,
+                rating:        ReviewRating,
+                comment:       string.IsNullOrWhiteSpace(ReviewComment) ? null : ReviewComment.Trim(),
+                appointmentId: ReviewTargetAppointmentId);
             ReviewSuccess = true;
             IsReviewFormVisible = false;
         }
@@ -184,6 +192,20 @@ public partial class ClientProfileViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(FullName))
         {
             ProfileResult = "Имя не может быть пустым.";
+            ProfileSuccess = false;
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            ProfileResult = "E-mail не может быть пустым.";
+            ProfileSuccess = false;
+            return;
+        }
+
+        if (!Regex.IsMatch(Email.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+        {
+            ProfileResult = "Введите корректный e-mail адрес.";
             ProfileSuccess = false;
             return;
         }

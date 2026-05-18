@@ -1,5 +1,7 @@
 using System.Configuration;
 using System.Windows;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MSM.Data;
@@ -35,6 +37,11 @@ public partial class App : Application
         ServiceProvider = services.BuildServiceProvider();
 
         await InitializeDatabaseAsync();
+
+        LiveCharts.Configure(config => config
+            .AddSkiaSharp()
+            .AddDefaultMappers()
+            .AddLightTheme());
 
         var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
