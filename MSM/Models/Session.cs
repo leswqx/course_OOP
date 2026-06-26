@@ -1,10 +1,7 @@
-using MSM.Models.Entities;
+﻿using MSM.Models.Entities;
 
 namespace MSM.Models;
 
-/// <summary>
-/// Класс для хранения состояния текущей сессии
-/// </summary>
 public static class Session
 {
     public static User? CurrentUser { get; set; }

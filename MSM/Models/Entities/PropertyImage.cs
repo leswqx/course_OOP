@@ -1,8 +1,5 @@
-namespace MSM.Models.Entities;
+﻿namespace MSM.Models.Entities;
 
-/// <summary>
-/// Изображение объекта недвижимости
-/// </summary>
 public class PropertyImage : BaseEntity
 {
     public int PropertyId { get; set; }
@@ -11,6 +8,5 @@ public class PropertyImage : BaseEntity
     public int SortOrder { get; set; }
     public bool IsMain { get; set; }
 
-    // Навигационные свойства
     public Property? Property { get; set; }
 }

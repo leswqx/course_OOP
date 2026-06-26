@@ -12,8 +12,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Шапка -->
-        <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
+<Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
             <Border.Effect>
                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
             </Border.Effect>
@@ -27,16 +26,13 @@
             </Grid>
         </Border>
 
-        <!-- Контент -->
-        <Grid Grid.Row="1" Margin="20,16">
+<Grid Grid.Row="1" Margin="20,16">
 
-            <!-- Загрузка -->
-            <TextBlock Text="{DynamicResource Common.Loading}" HorizontalAlignment="Center" VerticalAlignment="Center"
+<TextBlock Text="{DynamicResource Common.Loading}" HorizontalAlignment="Center" VerticalAlignment="Center"
                        FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
 
-            <!-- Пусто -->
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                         Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
                 <Path Width="52" Height="52" Stretch="Uniform" HorizontalAlignment="Center"
                       Fill="{DynamicResource TextSecondaryBrush}"
@@ -46,11 +42,10 @@
                            HorizontalAlignment="Center" Margin="0,10,0,0"/>
             </StackPanel>
 
-            <!-- Список записей -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
+<ScrollViewer VerticalScrollBarVisibility="Auto"
                           Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
                 <StackPanel>
-                    <!-- Сообщение об успешном отзыве -->
+                    
                     <Border Background="{DynamicResource SuccessBrush}" CornerRadius="8" Padding="14,10"
                             Margin="0,0,0,12"
                             Visibility="{Binding ReviewSuccess, Converter={StaticResource BoolToVisibility}}">
@@ -63,8 +58,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Форма отзыва (показывается поверх списка) -->
-                    <Border Visibility="{Binding IsReviewFormVisible, Converter={StaticResource BoolToVisibility}}"
+<Border Visibility="{Binding IsReviewFormVisible, Converter={StaticResource BoolToVisibility}}"
                             Background="{DynamicResource CardBrush}" CornerRadius="10"
                             BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="1"
                             Padding="20,16" Margin="0,0,0,16">
@@ -75,8 +69,7 @@
                             <TextBlock Text="{DynamicResource MyAppt.LeaveReview}" FontSize="15" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,14"/>
 
-                            <!-- Оценка -->
-                            <TextBlock Text="{DynamicResource MyAppt.Rating}" FontSize="12"
+<TextBlock Text="{DynamicResource MyAppt.Rating}" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,12">
                                 <Slider Value="{Binding ReviewRating}" Minimum="1" Maximum="5"
@@ -87,21 +80,18 @@
                                            VerticalAlignment="Center" Margin="12,0,0,0"/>
                             </StackPanel>
 
-                            <!-- Комментарий -->
-                            <TextBlock Text="{DynamicResource MyAppt.ReviewComment}" FontSize="12"
+<TextBlock Text="{DynamicResource MyAppt.ReviewComment}" FontSize="12"
                                        Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
                             <TextBox Text="{Binding ReviewComment, UpdateSourceTrigger=PropertyChanged}"
                                      Height="80" Padding="5,8" TextWrapping="Wrap"
                                      AcceptsReturn="True" VerticalContentAlignment="Top"
                                      Margin="0,0,0,12"/>
 
-                            <!-- Ошибка -->
-                            <TextBlock Text="{Binding ReviewError}" Foreground="{DynamicResource ErrorBrush}"
+<TextBlock Text="{Binding ReviewError}" Foreground="{DynamicResource ErrorBrush}"
                                        FontSize="12" Margin="0,0,0,8"
                                        Visibility="{Binding ReviewError, Converter={StaticResource BoolToVisibility}}"/>
 
-                            <!-- Кнопки -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <Button Content="{DynamicResource Common.Cancel}"
                                         Command="{Binding CloseReviewFormCommand}"
                                         Height="36" Padding="16,0" Margin="0,0,8,0"
@@ -116,8 +106,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Карточки записей -->
-                    <ItemsControl ItemsSource="{Binding Appointments}">
+<ItemsControl ItemsSource="{Binding Appointments}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
@@ -132,8 +121,7 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Инфо -->
-                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+<StackPanel Grid.Column="0" VerticalAlignment="Center">
                                             <TextBlock FontSize="14" FontWeight="SemiBold" Cursor="Hand"
                                                        Foreground="{DynamicResource PrimaryBrush}">
                                                 <TextBlock.InputBindings>
@@ -152,8 +140,7 @@
                                                        FontStyle="Italic" Margin="0,2,0,0"/>
                                         </StackPanel>
 
-                                        <!-- Статус -->
-                                        <Border Grid.Column="1" CornerRadius="4" Padding="10,4"
+<Border Grid.Column="1" CornerRadius="4" Padding="10,4"
                                                 HorizontalAlignment="Right" VerticalAlignment="Center"
                                                 Background="{Binding StatusBgColor, Converter={StaticResource StringToBrush}}"
                                                 Margin="12,0">
@@ -162,8 +149,7 @@
                                                        Foreground="{Binding StatusColor, Converter={StaticResource StringToBrush}}"/>
                                         </Border>
 
-                                        <!-- Кнопки действий -->
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                                             <Button Content="{DynamicResource MyAppt.GoToRealtor}"
                                                     Command="{Binding DataContext.GoToRealtorProfileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     CommandParameter="{Binding}"

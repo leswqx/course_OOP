@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MSM.Helpers;
@@ -60,7 +60,6 @@ public partial class MyAppointmentsViewModel : ViewModelBase
     [ObservableProperty] private bool _isEmpty;
     [ObservableProperty] private string? _errorMessage;
 
-    // ===== Форма отзыва =====
     [ObservableProperty] private bool _isReviewFormVisible;
     [ObservableProperty] private int _reviewTargetAppointmentId;
     [ObservableProperty] private int _reviewTargetRealtorId;

@@ -1,11 +1,9 @@
-using System.IO;
+﻿using System.IO;
 using System.Windows.Media.Imaging;
 using MSM.Models.Entities;
 
 namespace MSM.ViewModels;
 
-// Обёртка над сущностью Property для отображения в карточке каталога.
-// Вычисляет производные поля (строки, картинка) один раз при создании.
 public class PropertyCardViewModel
 {
     public int Id { get; }
@@ -66,7 +64,7 @@ public class PropertyCardViewModel
                 img.Freeze();
                 MainImage = img;
             }
-            catch { /* игнорируем повреждённые изображения */ }
+            catch {  }
         }
     }
 }

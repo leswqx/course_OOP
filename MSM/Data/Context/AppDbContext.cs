@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MSM.Models.Entities;
 
 namespace MSM.Data.Context;
@@ -26,7 +26,6 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // User configuration
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -40,7 +39,6 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Phone).HasMaxLength(20);
         });
 
-        // Property configuration
         modelBuilder.Entity<Property>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -62,7 +60,6 @@ public class AppDbContext : DbContext
             entity.HasIndex(e => e.City);
         });
 
-        // PropertyImage configuration
         modelBuilder.Entity<PropertyImage>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -74,7 +71,6 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Appointment configuration
         modelBuilder.Entity<Appointment>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -84,7 +80,7 @@ public class AppDbContext : DbContext
                     v => v.ToString().ToLower(),
                     v => Enum.Parse<AppointmentStatus>(v, true));
             entity.Property(e => e.Comment).HasMaxLength(500);
-            // Запрещаем двойное бронирование одного слота у риелтора (кроме отменённых)
+
             entity.HasIndex(e => new { e.RealtorId, e.SlotStart })
                 .HasFilter("[Status] != 'cancelled'")
                 .IsUnique()
@@ -103,7 +99,6 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // RealtorSchedule configuration
         modelBuilder.Entity<RealtorSchedule>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -114,7 +109,6 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // Favorite configuration
         modelBuilder.Entity<Favorite>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -129,7 +123,6 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // PriceHistory configuration
         modelBuilder.Entity<PriceHistory>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -141,12 +134,11 @@ public class AppDbContext : DbContext
             entity.HasIndex(e => e.PropertyId);
         });
 
-        // Review configuration
         modelBuilder.Entity<Review>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.IsApproved).HasDefaultValue(false);
-            // Один отзыв на одну запись на просмотр
+
             entity.HasIndex(e => e.AppointmentId)
                 .IsUnique()
                 .HasFilter("[AppointmentId] IS NOT NULL")

@@ -1,13 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MSM.Data.Repositories;
 using MSM.Models.Entities;
 using MSM.Services.Interfaces;
 
 namespace MSM.Services;
 
-/// <summary>
-/// Сервис аутентификации
-/// </summary>
 public class AuthService : IAuthService
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -27,7 +24,7 @@ public class AuthService : IAuthService
             return null;
 
         if (user.IsBlocked)
-            return null; // заблокированный не может войти
+            return null;
 
         return user;
     }
@@ -85,9 +82,6 @@ public class AuthService : IAuthService
     }
 }
 
-/// <summary>
-/// Сервис управления недвижимостью
-/// </summary>
 public class PropertyService : IPropertyService
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -272,7 +266,6 @@ public class PropertyService : IPropertyService
             throw;
         }
 
-        // Автооповещение клиентов когда активных объектов стало кратно 10
         var activeCount = await _unitOfWork.Properties.Query()
             .CountAsync(p => p.Status == "active");
         if (activeCount > 0 && activeCount % 10 == 0)
@@ -360,7 +353,6 @@ public class PropertyService : IPropertyService
             .OrderBy(ph => ph.ChangedAt)
             .ToListAsync();
 
-        // Lazy-seed: если история пуста, создаём первую запись с текущей ценой
         if (history.Count == 0)
         {
             var property = await _unitOfWork.Properties.GetByIdAsync(propertyId);
@@ -382,9 +374,6 @@ public class PropertyService : IPropertyService
     }
 }
 
-/// <summary>
-/// Сервис записей на просмотр
-/// </summary>
 public class AppointmentService : IAppointmentService
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -503,7 +492,6 @@ public class AppointmentService : IAppointmentService
         _unitOfWork.Appointments.Update(appointment);
         await _unitOfWork.SaveChangesAsync();
 
-        // Уведомляем клиента об изменении статуса
         if (appointment.Client != null && status is AppointmentStatus.Confirmed or AppointmentStatus.Cancelled or AppointmentStatus.Completed)
         {
             _ = _notificationService.SendAppointmentStatusChangedAsync(
@@ -541,9 +529,6 @@ public class AppointmentService : IAppointmentService
     }
 }
 
-/// <summary>
-/// Сервис избранного
-/// </summary>
 public class FavoriteService : IFavoriteService
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -619,9 +604,6 @@ public class FavoriteService : IFavoriteService
     }
 }
 
-/// <summary>
-/// Сервис отзывов
-/// </summary>
 public class ReviewService : IReviewService
 {
     private readonly IUnitOfWork _unitOfWork;

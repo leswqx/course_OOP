@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,7 +17,6 @@ public partial class ClientProfileViewModel : ViewModelBase
     private readonly IAppointmentService _appointmentService;
     private readonly IReviewService _reviewService;
 
-    // Profile
     [ObservableProperty] private string _fullName = "";
     [ObservableProperty] private string _email = "";
     [ObservableProperty] private string _phone = "";
@@ -44,16 +43,13 @@ public partial class ClientProfileViewModel : ViewModelBase
     public bool HasPasswordResult => PasswordResult != null;
     public string Login => Session.CurrentUser?.Login ?? "";
 
-    // Tabs
     [ObservableProperty] private bool _showTab0 = true;
     [ObservableProperty] private bool _showTab1;
 
-    // Appointments
     [ObservableProperty] private ObservableCollection<AppointmentRowViewModel> _appointments = new();
     [ObservableProperty] private bool _isApptLoading;
     [ObservableProperty] private bool _isApptEmpty;
 
-    // Review form
     [ObservableProperty] private bool _isReviewFormVisible;
     [ObservableProperty] private int _reviewTargetAppointmentId;
     [ObservableProperty] private int _reviewTargetRealtorId;

@@ -1,4 +1,4 @@
-<UserControl x:Class="MSM.Controls.ImageCarouselControl"
+﻿<UserControl x:Class="MSM.Controls.ImageCarouselControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,7 +8,7 @@
 
     <Border Background="{DynamicResource PlaceholderBrush}" CornerRadius="8" ClipToBounds="True">
         <Grid>
-            <!-- Заглушка когда нет фото -->
+            
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                         Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
                 <Path Width="72" Height="72" Stretch="Uniform" HorizontalAlignment="Center"
@@ -19,36 +19,31 @@
                            HorizontalAlignment="Center" Margin="0,12,0,0"/>
             </StackPanel>
 
-            <!-- Изображение -->
-            <Image Source="{Binding CurrentImage}"
+<Image Source="{Binding CurrentImage}"
                    Stretch="UniformToFill"
                    Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibility}}"/>
 
-            <!-- Кнопка открыть лайтбокс -->
-            <Button Command="{Binding OpenPhotoViewerCommand}"
+<Button Command="{Binding OpenPhotoViewerCommand}"
                     Background="Transparent" BorderThickness="0" Cursor="Hand"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibility}}"
                     ToolTip="Открыть фото на весь экран"/>
 
-            <!-- Кнопка «Назад» (❮) -->
-            <Button Command="{Binding PreviousImageCommand}"
+<Button Command="{Binding PreviousImageCommand}"
                     HorizontalAlignment="Left" VerticalAlignment="Center"
                     Width="40" Height="60" Margin="8,0"
                     Background="#88000000" Foreground="White"
                     BorderThickness="0" FontSize="20" Content="❮"
                     Visibility="{Binding HasMultipleImages, Converter={StaticResource BoolToVisibility}}"/>
 
-            <!-- Кнопка «Вперёд» (❯) -->
-            <Button Command="{Binding NextImageCommand}"
+<Button Command="{Binding NextImageCommand}"
                     HorizontalAlignment="Right" VerticalAlignment="Center"
                     Width="40" Height="60" Margin="8,0"
                     Background="#88000000" Foreground="White"
                     BorderThickness="0" FontSize="20" Content="❯"
                     Visibility="{Binding HasMultipleImages, Converter={StaticResource BoolToVisibility}}"/>
 
-            <!-- Счётчик фото -->
-            <Border Background="#88000000" CornerRadius="10"
+<Border Background="#88000000" CornerRadius="10"
                     HorizontalAlignment="Right" VerticalAlignment="Bottom"
                     Margin="0,0,10,10" Padding="10,4"
                     Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibility}}">

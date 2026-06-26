@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using MSM.Models;
 using MSM.Services.Interfaces;

@@ -1,10 +1,7 @@
-using MSM.Models.Entities;
+﻿using MSM.Models.Entities;
 
 namespace MSM.Data.Repositories;
 
-/// <summary>
-/// Интерфейс Unit of Work
-/// </summary>
 public interface IUnitOfWork : IDisposable
 {
     IRepository<User> Users { get; }

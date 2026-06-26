@@ -1,8 +1,7 @@
-using System.Windows;
+﻿using System.Windows;
 
 namespace MSM.Helpers;
 
-// Переключает язык интерфейса, заменяя языковой ResourceDictionary
 public static class LanguageManager
 {
     private static bool _isEnglish;

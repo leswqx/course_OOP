@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -95,7 +95,6 @@ public class ImagePreviewVm
     public bool IsMain { get; set; }
 }
 
-// Панель риелтора: мои объекты · записи клиентов · статистика
 public partial class RealtorDashboardViewModel : ViewModelBase
 {
     private readonly IPropertyService _propertyService;
@@ -108,7 +107,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     private readonly List<(byte[] Data, string FileName, bool IsMain)> _pendingImages = new();
     private readonly SemaphoreSlim _dbLock = new(1, 1);
 
-    // ===== Вкладки =====
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowTab0), nameof(ShowTab1), nameof(ShowTab2), nameof(ShowTab3))]
     private int _selectedTab;
@@ -117,7 +115,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     public bool ShowTab2 => SelectedTab == 2;
     public bool ShowTab3 => SelectedTab == 3;
 
-    // ===== Фильтр объектов =====
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FilteredMyProperties), nameof(IsPropFilterAll), nameof(IsPropFilterActive), nameof(IsPropFilterHidden), nameof(IsPropFilterSold))]
     private string _propStatusFilter = "all";
@@ -177,17 +174,14 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     [RelayCommand] private void SortByPriceDesc()     => MyPropertiesSort = "price_desc";
     [RelayCommand] private void SortByTitle()         => MyPropertiesSort = "title_asc";
 
-    // ===== Профиль риелтора =====
     [ObservableProperty] private string _realtorName = "";
     [ObservableProperty] private string _realtorPhone = "";
     [ObservableProperty] private string _realtorEmail = "";
     [ObservableProperty] private string _realtorDescription = "";
 
-    // ===== Мои объекты =====
     [ObservableProperty] private ObservableCollection<PropertyCardViewModel> _myProperties = new();
     [ObservableProperty] private bool _isPropsLoading;
 
-    // ===== Форма добавления объекта =====
     [ObservableProperty] private bool _isFormVisible;
     [ObservableProperty] private bool _formValidated;
 
@@ -239,7 +233,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     public bool CityInvalid    => FormValidated && string.IsNullOrWhiteSpace(FormCity);
     public bool AddressInvalid => FormValidated && string.IsNullOrWhiteSpace(FormAddress);
 
-    // ===== Форма редактирования объекта =====
     [ObservableProperty] private bool _isEditFormVisible;
     [ObservableProperty] private int _editPropertyId;
     [ObservableProperty]
@@ -284,7 +277,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     public bool EditCityInvalid        => _editValidated && string.IsNullOrWhiteSpace(EditCity);
     public bool EditAddressInvalid     => _editValidated && string.IsNullOrWhiteSpace(EditAddress);
 
-    // ===== Записи клиентов =====
     [ObservableProperty] private ObservableCollection<RealtorAppointmentRow> _appointments = new();
     [ObservableProperty] private bool _isApptLoading;
     [ObservableProperty] private bool _noAppointments;
@@ -301,7 +293,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     public ObservableCollection<string> AppointmentPropertyTitles { get; } = new();
     private bool _suppressApptReload;
 
-    // ===== Статистика =====
     [ObservableProperty] private int _statTotal;
     [ObservableProperty] private int _statActive;
     [ObservableProperty] private int _statSold;
@@ -326,7 +317,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     public bool IsPeriodQuarter => SelectedStatPeriod == "quarter";
     public bool IsPeriodYear    => SelectedStatPeriod == "year";
 
-    // ===== Календарь расписания =====
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCalendarClosed))]
     private bool _showCalendarOverlay;
@@ -411,19 +401,16 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         RealtorDescription = string.IsNullOrWhiteSpace(u.Description) ? "Описание не заполнено." : u.Description;
     }
 
-    // ===== Вкладки =====
     [RelayCommand] private void SetTab0() => SelectedTab = 0;
     [RelayCommand] private void SetTab1() => SelectedTab = 1;
     [RelayCommand] private void SetTab2() => SelectedTab = 2;
     [RelayCommand] private void SetTab3() => SelectedTab = 3;
 
-    // ===== Фильтры статистики =====
     [RelayCommand] private async Task SetStatPeriodAllAsync()     { SelectedStatPeriod = "all";     await LoadStatsAsync(); }
     [RelayCommand] private async Task SetStatPeriodMonthAsync()   { SelectedStatPeriod = "month";   await LoadStatsAsync(); }
     [RelayCommand] private async Task SetStatPeriodQuarterAsync() { SelectedStatPeriod = "quarter"; await LoadStatsAsync(); }
     [RelayCommand] private async Task SetStatPeriodYearAsync()    { SelectedStatPeriod = "year";    await LoadStatsAsync(); }
 
-    // ===== Объекты =====
     private async Task LoadPropertiesAsync()
     {
         if (Session.CurrentUser == null) return;
@@ -600,7 +587,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
                 EditType, EditHasRepair, EditMortgage); }
             finally { _dbLock.Release(); }
 
-            // Удаляем из БД фото, которые пользователь убрал, и добавляем новые
             var keepIds = EditImages.Where(i => i.ExistingId.HasValue).Select(i => i.ExistingId!.Value).ToHashSet();
             using (var scope = App.ServiceProvider.CreateScope())
             {
@@ -689,7 +675,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         FormSuccess = false;
     }
 
-    // Загрузить изображение через диалог
     [RelayCommand]
     private void AddImage()
     {
@@ -717,7 +702,7 @@ public partial class RealtorDashboardViewModel : ViewModelBase
                 _pendingImages.Add((Data: bytes, FileName: name, IsMain: isMain));
                 FormImages.Add(new ImagePreviewVm { FileName = name, Data = bytes, IsMain = isMain });
             }
-            catch { /* пропустить повреждённый файл */ }
+            catch {  }
         }
     }
 
@@ -729,7 +714,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         if (idx >= 0 && idx < _pendingImages.Count)
             _pendingImages.RemoveAt(idx);
 
-        // пересчитать IsMain
         if (_pendingImages.Count > 0 && !_pendingImages.Any(x => x.IsMain))
         {
             var first = _pendingImages[0];
@@ -749,7 +733,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
             || string.IsNullOrWhiteSpace(FormAddress))
         { FormError = "Заполните все обязательные поля."; return; }
 
-        // принимаем и запятую, и точку как разделитель дробной части
         var priceStr = FormPrice.Replace(',', '.').Replace(" ", "");
         if (!decimal.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var price) || price <= 0)
         { FormError = "Укажите корректную цену (например: 4500000)."; return; }
@@ -791,7 +774,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         finally { IsSaving = false; }
     }
 
-    // ===== Записи =====
     private async Task LoadAppointmentsAsync()
     {
         if (Session.CurrentUser == null) return;
@@ -801,7 +783,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         {
             var userId = Session.CurrentUser.Id;
 
-            // Список объектов для фильтра (все, без учёта текущих фильтров)
             var titles = await _context.Appointments
                 .Include(a => a.Property)
                 .Where(a => a.RealtorId == userId && a.Property != null)
@@ -817,7 +798,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
             ApptFilterProperty = titles.Contains(savedPropFilter) ? savedPropFilter : "";
             _suppressApptReload = false;
 
-            // Запрос с DB-уровневыми фильтрами
             var query = _context.Appointments
                 .Include(a => a.Client)
                 .Include(a => a.Property)
@@ -914,7 +894,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         await LoadAppointmentsAsync();
     }
 
-    // ===== Статистика =====
     private DateTime? GetStatPeriodStart() => SelectedStatPeriod switch
     {
         "month"   => new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1),
@@ -940,33 +919,28 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         {
             var userId = Session.CurrentUser.Id;
 
-            // Объекты — CountAsync вместо загрузки всего списка
             StatTotal  = await _context.Properties.CountAsync(p => p.RealtorId == userId);
             StatActive = await _context.Properties.CountAsync(p => p.RealtorId == userId && p.Status == "active");
             StatSold   = await _context.Properties.CountAsync(p => p.RealtorId == userId && p.Status == "sold");
 
-            // Записи за период
             var start = GetStatPeriodStart();
             var apptQ = _context.Appointments.Where(a => a.RealtorId == userId);
             if (start.HasValue) apptQ = apptQ.Where(a => a.SlotStart >= start.Value);
             StatTotalAppt     = await apptQ.CountAsync();
             StatCompletedAppt = await apptQ.CountAsync(a => a.Status == AppointmentStatus.Completed);
 
-            // Рейтинг — AverageAsync по одобренным отзывам
             var avgRating = await _context.Reviews
                 .Where(r => r.RealtorId == userId && r.IsApproved)
                 .Select(r => (double?)r.Rating)
                 .AverageAsync();
             StatRating = avgRating ?? 0;
 
-            // Скоринг (для скора используем все записи, без фильтра периода)
             var allCompleted = await _context.Appointments.CountAsync(a => a.RealtorId == userId && a.Status == AppointmentStatus.Completed);
             var allTotal     = await _context.Appointments.CountAsync(a => a.RealtorId == userId);
             var score = CalcRealtorScore(StatRating, StatSold, StatTotal, allCompleted, allTotal, StatActive);
             StatScore      = score;
             StatScoreColor = score >= 70 ? "#7CB342" : score >= 40 ? "#FF8F00" : "#EF5350";
 
-            // График записей: загружаем только (Year, Month) — минимальная проекция
             var months = Enumerable.Range(0, 6).Select(i => DateTime.Today.AddMonths(-5 + i)).ToList();
             var chartFrom = months.First();
             var apptDates = await _context.Appointments
@@ -983,11 +957,10 @@ public partial class RealtorDashboardViewModel : ViewModelBase
             };
             RatingXAxes = new Axis[] { new Axis { Labels = months.Select(m => m.ToString("MMM")).ToArray() } };
         }
-        catch { /* статистика некритична */ }
+        catch {  }
         finally { _dbLock.Release(); }
     }
 
-    // ===== Профиль =====
     [ObservableProperty] private string _profileFullName = "";
     [ObservableProperty] private string _profileEmail = "";
     [ObservableProperty] private string _profilePhone = "";
@@ -1040,7 +1013,7 @@ public partial class RealtorDashboardViewModel : ViewModelBase
             user.Description = string.IsNullOrWhiteSpace(ProfileDescription) ? null : ProfileDescription.Trim();
             user.AvatarPhoto = ProfileAvatar;
             await authService.UpdateProfileAsync(user);
-            // обновить шапку профиля
+
             RealtorName        = user.FullName;
             RealtorEmail       = user.Email;
             RealtorPhone       = user.Phone ?? "—";
@@ -1090,7 +1063,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     [RelayCommand]
     private void GoBack() => _navigationService.GoBack();
 
-    // ===== Календарь =====
     [RelayCommand]
     private async Task OpenCalendarAsync()
     {
@@ -1183,7 +1155,7 @@ public partial class RealtorDashboardViewModel : ViewModelBase
     {
         CalendarDays.Clear();
         var firstDay = new DateTime(CalendarYear, CalendarMonth, 1);
-        int startDow = ((int)firstDay.DayOfWeek + 6) % 7; // Mon=0
+        int startDow = ((int)firstDay.DayOfWeek + 6) % 7;
 
         for (int i = 0; i < startDow; i++)
             CalendarDays.Add(new CalendarDayVm { IsEmpty = true });
@@ -1231,7 +1203,7 @@ public partial class RealtorDashboardViewModel : ViewModelBase
 
         if (_calendarBlockedDates.Contains(date))
         {
-            // Снять блокировку
+
             using var scope = App.ServiceProvider.CreateScope();
             var ctx = scope.ServiceProvider.GetRequiredService<AppDbContext>();
             var toRemove = await ctx.RealtorSchedules
@@ -1244,14 +1216,13 @@ public partial class RealtorDashboardViewModel : ViewModelBase
         }
         else
         {
-            // Нельзя блокировать прошедший день
+
             if (date < DateTime.Today)
             {
                 CalendarBlockError = "Нельзя заблокировать прошедший день.";
                 return;
             }
 
-            // Нельзя блокировать день с активными записями
             bool hasActive = _calendarAllAppts.Any(a =>
                 a.SlotStart.Date == date &&
                 (a.Status == AppointmentStatus.New || a.Status == AppointmentStatus.Confirmed));
@@ -1261,7 +1232,6 @@ public partial class RealtorDashboardViewModel : ViewModelBase
                 return;
             }
 
-            // Добавить блокировку
             using var scope2 = App.ServiceProvider.CreateScope();
             var ctx2 = scope2.ServiceProvider.GetRequiredService<AppDbContext>();
             ctx2.RealtorSchedules.Add(new RealtorSchedule

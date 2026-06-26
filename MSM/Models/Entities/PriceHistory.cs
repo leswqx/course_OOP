@@ -1,4 +1,4 @@
-namespace MSM.Models.Entities;
+﻿namespace MSM.Models.Entities;
 
 public class PriceHistory : BaseEntity
 {

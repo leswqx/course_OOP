@@ -1,4 +1,4 @@
-using System.Configuration;
+﻿using System.Configuration;
 using System.Net;
 using System.Net.Mail;
 using MSM.Models.Entities;
@@ -30,7 +30,6 @@ public class EmailNotificationService : INotificationService
         _agencyName = ConfigurationManager.AppSettings["Smtp:AgencyName"] ?? "HomeEstate";
         _agencySite = ConfigurationManager.AppSettings["Smtp:AgencySite"] ?? "";
 
-        // Считаем сервис настроенным если введены реальные данные
         _isConfigured = !string.IsNullOrWhiteSpace(_host)
                      && !string.IsNullOrWhiteSpace(_userName)
                      && _userName != "your-email@gmail.com"
@@ -85,7 +84,7 @@ public class EmailNotificationService : INotificationService
             <p>В нашем каталоге появились новые объекты недвижимости.</p>
             <p>Сейчас доступно уже <strong>{newCount}</strong> активных предложений.</p>
             <p>Заходите и выбирайте — возможно, там уже есть то, что вы искали!</p>
-            {(_agencySite.StartsWith("http") ? $"""<p><a href="{_agencySite}" style="color:#D4A5A5">Перейти в каталог →</a></p>""" : "")}
+            {(_agencySite.StartsWith("http") ? $"""<p><a href="{_agencySite}" style="color:#27563A">Перейти в каталог →</a></p>""" : "")}
             """;
 
         var tasks = clients.Select(c =>

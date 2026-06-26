@@ -1,11 +1,10 @@
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
 
-// ViewModel формы регистрации нового клиента.
 public partial class RegisterViewModel : ViewModelBase
 {
     private readonly IAuthService _authService;
@@ -85,7 +84,6 @@ public partial class RegisterViewModel : ViewModelBase
                 return;
             }
 
-            // Приветственное письмо — fire-and-forget, не блокируем навигацию
             _ = _notificationService.SendWelcomeEmailAsync(user);
 
             _navigationService.NavigateTo<LoginViewModel>();

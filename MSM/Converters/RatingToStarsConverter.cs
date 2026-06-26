@@ -1,11 +1,8 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
 
 namespace MSM.Converters;
 
-/// <summary>
-/// Конвертер рейтинга в строку со звездами
-/// </summary>
 public class RatingToStarsConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

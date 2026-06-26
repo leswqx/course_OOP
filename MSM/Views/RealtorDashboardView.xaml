@@ -13,10 +13,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
             <RowDefinition Height="*"/>
+            
         </Grid.RowDefinitions>
 
-        <!-- Вкладки (кнопки) -->
-        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
+<Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
                 IsEnabled="{Binding IsCalendarClosed}">
             <StackPanel Orientation="Horizontal" Margin="12,0">
@@ -141,7 +141,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-                <!-- Кнопка открытия календаря -->
+                
                 <Button Content="{DynamicResource Realtor.Schedule}"
                         Command="{Binding OpenCalendarCommand}"
                         Padding="12,0" FontSize="13" Cursor="Hand" Margin="16,0,0,0">
@@ -173,11 +173,9 @@
             </StackPanel>
         </Border>
 
-        <!-- Контент -->
-        <Grid Grid.Row="1">
+<Grid Grid.Row="1">
 
-            <!-- ===== ВКЛАДКА 0: МОИ ОБЪЕКТЫ ===== -->
-            <Grid Visibility="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}">
+<Grid Visibility="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -185,8 +183,7 @@
 
                 <StackPanel Grid.Row="0" Margin="16,12,16,0">
 
-                    <!-- Баннер успеха -->
-                    <Border Background="#E8F5E9" CornerRadius="8" Margin="0,0,0,10" Padding="12,8"
+<Border Background="#E8F5E9" CornerRadius="8" Margin="0,0,0,10" Padding="12,8"
                             Visibility="{Binding FormSuccess, Converter={StaticResource BoolToVisibility}}">
                         <StackPanel Orientation="Horizontal">
                             <Path Width="16" Height="16" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center"
@@ -197,8 +194,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Верхняя строка: кнопка добавить + фильтры -->
-                    <Grid Margin="0,0,0,10">
+<Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
@@ -276,8 +272,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Поиск по названию/городу -->
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8"
+<Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8"
                             BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                             Padding="10,0" Margin="0,8,0,0" Height="36">
                         <Grid>
@@ -295,7 +290,7 @@
                                      Background="Transparent" BorderThickness="0"
                                      VerticalAlignment="Center" FontSize="13"
                                      Foreground="{DynamicResource TextPrimaryBrush}"/>
-                            <!-- Подсказка (плейсхолдер) -->
+                            
                             <TextBlock Grid.Column="1" IsHitTestVisible="False"
                                        Text="{DynamicResource Realtor.SearchPlaceholder}"
                                        FontSize="13" VerticalAlignment="Center"
@@ -311,7 +306,7 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-                            <!-- Кнопка очистки — показывается только когда есть текст -->
+                            
                             <Button Grid.Column="2" Content="✕"
                                     Command="{Binding ClearMySearchCommand}"
                                     Width="20" Height="20" Padding="0"
@@ -332,8 +327,7 @@
                         </Grid>
                     </Border>
 
-                    <!-- Сортировка -->
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+<StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                         <TextBlock Text="{DynamicResource Realtor.SortLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,8,0"/>
                         <Button Content="{DynamicResource Realtor.SortNew}" Command="{Binding SortByDateCommand}"
@@ -415,7 +409,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <!-- Цельная карточка с кнопками внутри -->
+                                
                                 <Border Width="280" Margin="8"
                                         Background="{DynamicResource CardBrush}"
                                         CornerRadius="12" ClipToBounds="True" Cursor="Hand">
@@ -432,8 +426,7 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <!-- Фото -->
-                                        <Grid Grid.Row="0" ClipToBounds="True">
+<Grid Grid.Row="0" ClipToBounds="True">
                                             <Border Background="{DynamicResource PlaceholderBrush}"
                                                     Visibility="{Binding HasImage, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
                                                 <Path Width="48" Height="48" Stretch="Uniform"
@@ -444,16 +437,14 @@
                                             <Image Source="{Binding MainImage}" Stretch="UniformToFill"
                                                    Visibility="{Binding HasImage, Converter={StaticResource BoolToVisibility}}"/>
 
-                                            <!-- Бейдж типа -->
-                                            <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="4"
+<Border Background="{DynamicResource PrimaryBrush}" CornerRadius="4"
                                                     HorizontalAlignment="Left" VerticalAlignment="Top"
                                                     Margin="10,10,0,0" Padding="8,3">
                                                 <TextBlock Text="{Binding PropertyTypeDisplay}"
                                                            Foreground="White" FontSize="11" FontWeight="SemiBold"/>
                                             </Border>
 
-                                            <!-- Бейдж статуса (не active) -->
-                                            <Border CornerRadius="4"
+<Border CornerRadius="4"
                                                     HorizontalAlignment="Right" VerticalAlignment="Top"
                                                     Margin="0,10,10,0" Padding="8,3"
                                                     Visibility="{Binding IsSoldable, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
@@ -485,8 +476,7 @@
                                             </Border>
                                         </Grid>
 
-                                        <!-- Информация -->
-                                        <StackPanel Grid.Row="1" Margin="14,12,14,12">
+<StackPanel Grid.Row="1" Margin="14,12,14,12">
                                             <TextBlock Text="{Binding Price, Converter={StaticResource PriceToString}}"
                                                        FontSize="18" FontWeight="Bold"
                                                        Foreground="{DynamicResource PrimaryBrush}"
@@ -545,13 +535,12 @@
                                             </WrapPanel>
                                         </StackPanel>
 
-                                        <!-- Кнопки управления — внутри карточки -->
-                                        <Border Grid.Row="2"
+<Border Grid.Row="2"
                                                 BorderBrush="{DynamicResource SeparatorBrush}"
                                                 BorderThickness="0,1,0,0"
                                                 Padding="8,7">
                                             <StackPanel>
-                                                <!-- Верхняя строка: Скрыть + Продано — скрывается целиком когда sold -->
+                                                
                                                 <Grid Margin="0,0,0,4"
                                                       Visibility="{Binding IsToggleHideVisible, Converter={StaticResource BoolToVisibility}}">
                                                     <Grid.ColumnDefinitions>
@@ -575,7 +564,7 @@
                                                             Background="Transparent" Foreground="#7CB342"
                                                             BorderBrush="#7CB342" BorderThickness="1"/>
                                                 </Grid>
-                                                <!-- Кнопка "Вернуть в продажу" — только для sold -->
+                                                
                                                 <Button Content="{DynamicResource Realtor.RestoreActive}"
                                                         Command="{Binding DataContext.SetActiveFromSoldCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                         CommandParameter="{Binding}"
@@ -583,7 +572,7 @@
                                                         Height="26" FontSize="11" Margin="0,0,0,4"
                                                         Background="Transparent" Foreground="#42A5F5"
                                                         BorderBrush="#42A5F5" BorderThickness="1"/>
-                                                <!-- Нижняя строка: Изменить + Удалить — всегда видна -->
+                                                
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition/>
@@ -615,23 +604,20 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- ===== ВКЛАДКА 1: ЗАПИСИ КЛИЕНТОВ ===== -->
-            <Grid Visibility="{Binding ShowTab1, Converter={StaticResource BoolToVisibility}}" Margin="16">
+<Grid Visibility="{Binding ShowTab1, Converter={StaticResource BoolToVisibility}}" Margin="16">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Фильтры записей -->
-                <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
+<Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                         CornerRadius="8" Padding="12,8" Margin="0,0,0,10">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{DynamicResource Realtor.ApptFilterLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,10,0"/>
 
-                        <!-- Фильтр по объекту -->
-                        <TextBlock Text="{DynamicResource Realtor.ApptPropLabel}" VerticalAlignment="Center" FontSize="12"
+<TextBlock Text="{DynamicResource Realtor.ApptPropLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,6,0"/>
                         <ComboBox SelectedItem="{Binding ApptFilterProperty, Mode=TwoWay}"
                                   ItemsSource="{Binding AppointmentPropertyTitles}"
@@ -659,8 +645,7 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <!-- Фильтр по статусу -->
-                        <TextBlock Text="{DynamicResource Realtor.ApptStatusLabel}" VerticalAlignment="Center" FontSize="12"
+<TextBlock Text="{DynamicResource Realtor.ApptStatusLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,6,0"/>
                         <ComboBox SelectedValue="{Binding ApptFilterStatus}"
                                   SelectedValuePath="Tag"
@@ -676,8 +661,7 @@
                             <ComboBoxItem Content="{DynamicResource Realtor.StatusCancelled}" Tag="cancelled"/>
                         </ComboBox>
 
-                        <!-- Фильтр по дате -->
-                        <TextBlock Text="{DynamicResource Realtor.DateLabel}" VerticalAlignment="Center" FontSize="12"
+<TextBlock Text="{DynamicResource Realtor.DateLabel}" VerticalAlignment="Center" FontSize="12"
                                    Foreground="{DynamicResource TextSecondaryBrush}" Margin="14,0,6,0"/>
                         <Button Content="{DynamicResource Realtor.DateAll}" Command="{Binding SetApptDateAllCommand}"
                                 Height="30" Padding="10,0" FontSize="12" Margin="0,0,4,0"
@@ -807,7 +791,7 @@
                                                    VerticalAlignment="Center"/>
 
                                         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                            <!-- Для "new": Подтвердить -->
+                                            
                                             <Button Content="{DynamicResource Realtor.Confirm}"
                                                     Command="{Binding DataContext.ConfirmAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     CommandParameter="{Binding Id}"
@@ -815,7 +799,7 @@
                                                     Height="30" Padding="10,0" FontSize="12" Margin="0,0,4,0"
                                                     Background="{DynamicResource SuccessBrush}"
                                                     Foreground="White" BorderThickness="0"/>
-                                            <!-- Для "confirmed": Завершить -->
+                                            
                                             <Button Content="{DynamicResource Realtor.Complete}"
                                                     Command="{Binding DataContext.CompleteAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     CommandParameter="{Binding Id}"
@@ -823,7 +807,7 @@
                                                     Height="30" Padding="10,0" FontSize="12" Margin="0,0,4,0"
                                                     Background="#7CB342"
                                                     Foreground="White" BorderThickness="0"/>
-                                            <!-- Для "new" и "confirmed": Отменить -->
+                                            
                                             <Button Content="{DynamicResource Realtor.Cancel}"
                                                     Command="{Binding DataContext.CancelAppointmentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     CommandParameter="{Binding Id}"
@@ -840,8 +824,7 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- ===== МОДАЛЬНАЯ ФОРМА ДОБАВЛЕНИЯ ОБЪЕКТА ===== -->
-            <Grid Visibility="{Binding IsFormVisible, Converter={StaticResource BoolToVisibility}}"
+<Grid Visibility="{Binding IsFormVisible, Converter={StaticResource BoolToVisibility}}"
                   Background="#88000000" Panel.ZIndex="10">
                 <Border Background="{DynamicResource SurfaceBrush}"
                         BorderBrush="{DynamicResource BorderBrush}"
@@ -859,8 +842,7 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Заголовок -->
-                        <Grid Grid.Row="0" Margin="0,0,0,16">
+<Grid Grid.Row="0" Margin="0,0,0,16">
                             <TextBlock Text="{DynamicResource Realtor.AddProperty}"
                                        FontSize="16" FontWeight="Bold"
                                        Foreground="{DynamicResource TextPrimaryBrush}"
@@ -872,8 +854,7 @@
                                     FontSize="16" Cursor="Hand"/>
                         </Grid>
 
-                        <!-- Поля формы -->
-                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                             <Grid Margin="0,0,14,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/><ColumnDefinition Width="16"/><ColumnDefinition/>
@@ -888,8 +869,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- Название * + Тип -->
-                                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,10">
+<StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,10">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                         <TextBlock Text="{DynamicResource PropForm.Title}" FontSize="12"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -918,8 +898,7 @@
                                     </ComboBox>
                                 </StackPanel>
 
-                                <!-- Цена * + Площадь * + Комнаты * -->
-                                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,10">
+<StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,10">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                         <TextBlock Text="{DynamicResource PropForm.Price}" FontSize="12"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -993,8 +972,7 @@
                                     </Grid>
                                 </StackPanel>
 
-                                <!-- Этаж + Год -->
-                                <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,10">
+<StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,10">
                                     <StackPanel Orientation="Horizontal">
                                         <StackPanel Width="120" Margin="0,0,8,0">
                                             <TextBlock Text="{DynamicResource PropForm.Floor}" FontSize="12"
@@ -1014,8 +992,7 @@
                                     <TextBox Text="{Binding FormYearBuilt, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
                                 </StackPanel>
 
-                                <!-- Город * + Адрес * -->
-                                <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,10">
+<StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,10">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                         <TextBlock Text="{DynamicResource PropForm.City}" FontSize="12"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -1054,15 +1031,13 @@
                                     </TextBox>
                                 </StackPanel>
 
-                                <!-- Район -->
-                                <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+<StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.District}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Text="{Binding FormDistrict, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
                                 </StackPanel>
 
-                                <!-- Описание * -->
-                                <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+<StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                         <TextBlock Text="{DynamicResource PropForm.Description}" FontSize="12"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -1084,8 +1059,7 @@
                                     </TextBox>
                                 </StackPanel>
 
-                                <!-- Картинки -->
-                                <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,4">
+<StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,4">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                                         <TextBlock Text="{DynamicResource PropForm.Images}" FontSize="12"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"
@@ -1125,8 +1099,7 @@
                             </Grid>
                         </ScrollViewer>
 
-                        <!-- Нижняя панель: чекбоксы + ошибка + кнопки -->
-                        <Grid Grid.Row="2" Margin="0,14,0,0">
+<Grid Grid.Row="2" Margin="0,14,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -1161,8 +1134,7 @@
                 </Border>
             </Grid>
 
-            <!-- ===== МОДАЛЬНАЯ ФОРМА РЕДАКТИРОВАНИЯ ОБЪЕКТА ===== -->
-            <Grid Visibility="{Binding IsEditFormVisible, Converter={StaticResource BoolToVisibility}}"
+<Grid Visibility="{Binding IsEditFormVisible, Converter={StaticResource BoolToVisibility}}"
                   Background="#88000000" Panel.ZIndex="10">
                 <Border Background="{DynamicResource SurfaceBrush}"
                         BorderBrush="{DynamicResource BorderBrush}"
@@ -1180,14 +1152,12 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Заголовок -->
-                        <TextBlock Grid.Row="0" Text="{DynamicResource Realtor.EditProperty}"
+<TextBlock Grid.Row="0" Text="{DynamicResource Realtor.EditProperty}"
                                    FontSize="16" FontWeight="Bold"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
                                    Margin="0,0,0,16"/>
 
-                        <!-- Поля формы -->
-                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                             <Grid Margin="0,0,14,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/><ColumnDefinition Width="16"/><ColumnDefinition/>
@@ -1203,8 +1173,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <!-- Название + Тип -->
-                                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,10">
+<StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.Title}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Text="{Binding EditTitle, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
@@ -1230,8 +1199,7 @@
                                     </ComboBox>
                                 </StackPanel>
 
-                                <!-- Цена + Площадь/Комнаты -->
-                                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,10">
+<StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.Price}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Text="{Binding EditPrice, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
@@ -1296,8 +1264,7 @@
                                     </Grid>
                                 </StackPanel>
 
-                                <!-- Этаж + Год -->
-                                <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,10">
+<StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,10">
                                     <StackPanel Orientation="Horizontal">
                                         <StackPanel Width="110" Margin="0,0,8,0">
                                             <TextBlock Text="{DynamicResource PropForm.Floor}" FontSize="12"
@@ -1317,8 +1284,7 @@
                                     <TextBox Text="{Binding EditYearBuilt, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
                                 </StackPanel>
 
-                                <!-- Город + Адрес -->
-                                <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,10">
+<StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.City}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Text="{Binding EditCity, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0">
@@ -1351,15 +1317,13 @@
                                     </TextBox>
                                 </StackPanel>
 
-                                <!-- Район -->
-                                <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+<StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.District}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Text="{Binding EditDistrict, UpdateSourceTrigger=PropertyChanged}" Height="32" Padding="5,0"/>
                                 </StackPanel>
 
-                                <!-- Описание -->
-                                <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+<StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
                                     <TextBlock Text="{DynamicResource PropForm.Description}" FontSize="12"
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Text="{Binding EditDescription, UpdateSourceTrigger=PropertyChanged}"
@@ -1378,8 +1342,7 @@
                                     </TextBox>
                                 </StackPanel>
 
-                                <!-- Фото при редактировании -->
-                                <StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+<StackPanel Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                                         <TextBlock Text="{DynamicResource PropForm.Images}" FontSize="12"
                                                    Foreground="{DynamicResource TextSecondaryBrush}"
@@ -1417,8 +1380,7 @@
                                     </ItemsControl>
                                 </StackPanel>
 
-                                <!-- Чекбоксы -->
-                                <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3"
+<StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="3"
                                             Orientation="Horizontal" Margin="0,0,0,4">
                                     <CheckBox Content="{DynamicResource PropForm.HasRepair}"
                                               IsChecked="{Binding EditHasRepair}"
@@ -1430,8 +1392,7 @@
                             </Grid>
                         </ScrollViewer>
 
-                        <!-- Кнопки и ошибка -->
-                        <Grid Grid.Row="2" Margin="0,14,0,0">
+<Grid Grid.Row="2" Margin="0,14,0,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -1458,12 +1419,10 @@
                 </Border>
             </Grid>
 
-            <!-- ===== ВКЛАДКА 2: СТАТИСТИКА ===== -->
-            <ScrollViewer Visibility="{Binding ShowTab2, Converter={StaticResource BoolToVisibility}}" Margin="16">
+<ScrollViewer Visibility="{Binding ShowTab2, Converter={StaticResource BoolToVisibility}}" Margin="16">
                 <StackPanel>
 
-                    <!-- Фильтр периода -->
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8"
+<Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8"
                             BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                             Padding="14,10" Margin="0,0,0,16">
                         <StackPanel Orientation="Horizontal">
@@ -1544,8 +1503,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Счётчики: объекты (всегда за всё время) -->
-                    <UniformGrid Columns="3" Margin="0,0,0,10">
+<UniformGrid Columns="3" Margin="0,0,0,10">
 
                         <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
                             <Border.Effect>
@@ -1594,8 +1552,7 @@
 
                     </UniformGrid>
 
-                    <!-- Счётчики: записи (фильтруются периодом) + рейтинг -->
-                    <UniformGrid Columns="3" Margin="0,0,0,16">
+<UniformGrid Columns="3" Margin="0,0,0,16">
 
                         <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
                             <Border.Effect>
@@ -1649,8 +1606,7 @@
 
                     </UniformGrid>
 
-                    <!-- Балл эффективности -->
-                    <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8"
+<Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8"
                             Padding="20,16" Margin="0,0,0,16">
                         <Border.Effect>
                             <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.08"/>
@@ -1693,8 +1649,7 @@
                         </Border>
                     </Border>
 
-                    <!-- График записей по месяцам -->
-                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16">
                         <StackPanel>
                             <TextBlock Text="{DynamicResource Realtor.StatApptByMonth}" FontSize="13" FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,8"/>
@@ -1705,8 +1660,7 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <!-- ===== ВКЛАДКА 3: МОЙ ПРОФИЛЬ ===== -->
-            <ScrollViewer Visibility="{Binding ShowTab3, Converter={StaticResource BoolToVisibility}}"
+<ScrollViewer Visibility="{Binding ShowTab3, Converter={StaticResource BoolToVisibility}}"
                           VerticalScrollBarVisibility="Auto">
                 <Grid Margin="24,24,24,40">
                     <Grid.RowDefinitions>
@@ -1715,8 +1669,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Аватар -->
-                    <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,20">
+<Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,20">
                         <Border.Effect>
                             <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
                         </Border.Effect>
@@ -1750,16 +1703,14 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Две колонки: личные данные | смена пароля -->
-                    <Grid Grid.Row="2">
+<Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="24"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Личные данные -->
-                        <Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,24">
+<Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,24">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="14" ShadowDepth="2" Opacity="0.08"/>
                             </Border.Effect>
@@ -1808,8 +1759,7 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Смена пароля -->
-                        <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,24">
+<Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,24">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="14" ShadowDepth="2" Opacity="0.08"/>
                             </Border.Effect>
@@ -1862,8 +1812,7 @@
                 </Grid>
             </ScrollViewer>
 
-            <!-- ===== МОДАЛЬНЫЙ ПОПАП: КАЛЕНДАРЬ РАСПИСАНИЯ ===== -->
-            <Grid Visibility="{Binding ShowCalendarOverlay, Converter={StaticResource BoolToVisibility}}"
+<Grid Visibility="{Binding ShowCalendarOverlay, Converter={StaticResource BoolToVisibility}}"
                   Panel.ZIndex="100">
                 <Border Background="#A0000000"/>
                 <Border Background="{DynamicResource CardBrush}" CornerRadius="14"
@@ -1873,7 +1822,7 @@
                         <DropShadowEffect Color="#000" BlurRadius="28" ShadowDepth="0" Opacity="0.35"/>
                     </Border.Effect>
                     <StackPanel>
-                        <!-- Заголовок -->
+                        
                         <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="14,14,0,0" Padding="18,12">
                             <Grid>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -1898,8 +1847,7 @@
                             </Grid>
                         </Border>
 
-                        <!-- Подсказка -->
-                        <Border Background="{DynamicResource SurfaceBrush}" Margin="16,12,16,0" Padding="12,8" CornerRadius="8">
+<Border Background="{DynamicResource SurfaceBrush}" Margin="16,12,16,0" Padding="12,8" CornerRadius="8">
                             <StackPanel Orientation="Horizontal">
                                 <Path Width="14" Height="14" Stretch="Uniform" Margin="0,0,8,0" VerticalAlignment="Center"
                                       Fill="{DynamicResource TextSecondaryBrush}"
@@ -1910,8 +1858,7 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Календарная сетка -->
-                        <StackPanel Margin="16,12,16,0">
+<StackPanel Margin="16,12,16,0">
                             <UniformGrid Columns="7" Margin="0,0,0,4">
                                 <TextBlock Text="{DynamicResource Detail.Mon}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                 <TextBlock Text="{DynamicResource Detail.Tue}" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource TextSecondaryBrush}"/>
@@ -1995,7 +1942,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <!-- Легенда -->
+                            
                             <StackPanel Orientation="Horizontal" Margin="0,8,0,12">
                                 <Border Width="10" Height="4" CornerRadius="2" Background="#7CB342" Margin="0,0,4,0"/>
                                 <TextBlock Text="1" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,10,0"/>
@@ -2008,8 +1955,7 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- Записи выбранного дня -->
-                        <Border Background="{DynamicResource SurfaceBrush}"
+<Border Background="{DynamicResource SurfaceBrush}"
                                 CornerRadius="0,0,14,14" Padding="16,12">
                             <StackPanel>
                                 <Grid Margin="0,0,0,8">
@@ -2035,7 +1981,7 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <!-- Кнопка блокировки дня -->
+                                    
                                     <Button Grid.Column="1"
                                             Content="{Binding CalendarBlockLabel}"
                                             Command="{Binding ToggleBlockDayCommand}"
@@ -2058,7 +2004,7 @@
                                         </Button.Style>
                                     </Button>
                                 </Grid>
-                                <!-- Ошибка блокировки -->
+                                
                                 <TextBlock Text="{Binding CalendarBlockError}"
                                            FontSize="11" Foreground="{DynamicResource ErrorBrush}"
                                            Margin="0,4,0,4" TextWrapping="Wrap"
@@ -2123,6 +2069,4 @@
         </Grid>
     </Grid>
 </UserControl>
-
-
 

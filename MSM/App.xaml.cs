@@ -1,4 +1,4 @@
-using System.Configuration;
+﻿using System.Configuration;
 using System.Windows;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
@@ -12,7 +12,6 @@ using MSM.Services.Interfaces;
 using MSM.ViewModels;
 
 namespace MSM;
-
 
 public partial class App : Application
 {
@@ -59,16 +58,14 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        // Database
+
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(
                 ConfigurationManager.ConnectionStrings["RealEstateConnection"]?.ConnectionString
                 ?? "Server=(localdb)\\mssqllocaldb;Database=RealEstateDb;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False"));
 
-        // Repositories
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        // Services
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IPropertyService, PropertyService>();
         services.AddScoped<IAppointmentService, AppointmentService>();
@@ -76,13 +73,10 @@ public partial class App : Application
         services.AddScoped<IReviewService, ReviewService>();
         services.AddSingleton<INotificationService, EmailNotificationService>();
 
-        // Navigation (singleton — хранит CurrentViewModel, создаёт DI-скоуп при каждом переходе)
         services.AddSingleton<INavigationService, NavigationService>();
 
-        // Глобальный хедер (singleton — живёт всё время приложения)
         services.AddSingleton<HeaderViewModel>();
 
-        // ViewModels (scoped — живут в рамках одного DI-скоупа, создаваемого NavigationService)
         services.AddScoped<LandingViewModel>();
         services.AddScoped<LoginViewModel>();
         services.AddScoped<RegisterViewModel>();
@@ -96,7 +90,6 @@ public partial class App : Application
         services.AddScoped<ClientProfileViewModel>();
         services.AddScoped<AboutViewModel>();
 
-        // Main window (singleton — одно окно на всё приложение)
         services.AddSingleton<MainWindow>();
     }
 

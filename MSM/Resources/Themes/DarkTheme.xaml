@@ -1,13 +1,11 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Основные цвета -->
-    <Color x:Key="PrimaryColor">#3A7D4F</Color>
+<Color x:Key="PrimaryColor">#3A7D4F</Color>
     <Color x:Key="BackgroundColor">#141F17</Color>
     <Color x:Key="ShadowColor">#000000</Color>
 
-    <!-- Кисти -->
-    <SolidColorBrush x:Key="BackgroundBrush"       Color="#141F17"/>
+<SolidColorBrush x:Key="BackgroundBrush"       Color="#141F17"/>
     <SolidColorBrush x:Key="SurfaceBrush"          Color="#1C2B20"/>
     <SolidColorBrush x:Key="HeaderBrush"           Color="#141F17"/>
     <SolidColorBrush x:Key="HeaderTextBrush"       Color="#52A86A"/>

@@ -1,12 +1,9 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MSM.Data.Context;
 
 namespace MSM.Data.Repositories;
 
-/// <summary>
-/// Базовая реализация репозитория
-/// </summary>
 public class Repository<T> : IRepository<T> where T : class
 {
     protected readonly AppDbContext Context;

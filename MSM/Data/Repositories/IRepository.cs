@@ -1,10 +1,7 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace MSM.Data.Repositories;
 
-/// <summary>
-/// Интерфейс репозитория
-/// </summary>
 public interface IRepository<T> where T : class
 {
     Task<T?> GetByIdAsync(int id);

@@ -14,11 +14,10 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Вкладки -->
-        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
+<Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal" Margin="16,0">
-                <!-- Профиль — первый -->
+                
                 <Button Content="{DynamicResource Nav.MyProfile}"
                         Command="{Binding SetTab3Command}"
                         Background="Transparent" BorderThickness="0,0,0,3" Padding="12,0"
@@ -212,11 +211,9 @@
             </StackPanel>
         </Border>
 
-        <!-- Контент -->
-        <Grid Grid.Row="1">
+<Grid Grid.Row="1">
 
-            <!-- ===== ВКЛАДКА 0: ПОЛЬЗОВАТЕЛИ ===== -->
-            <Grid Visibility="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}"
+<Grid Visibility="{Binding ShowTab0, Converter={StaticResource BoolToVisibility}}"
                   Margin="16">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -225,8 +222,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Сообщение об операции -->
-                <Border Grid.Row="0" CornerRadius="6" Padding="12,8" Margin="0,0,0,10"
+<Border Grid.Row="0" CornerRadius="6" Padding="12,8" Margin="0,0,0,10"
                         Visibility="{Binding UserActionMessage, Converter={StaticResource BoolToVisibility}}">
                     <Border.Style>
                         <Style TargetType="Border">
@@ -237,8 +233,7 @@
                                Foreground="White" FontWeight="SemiBold"/>
                 </Border>
 
-                <!-- Поиск -->
-                <Grid Grid.Row="1" Margin="0,0,0,8">
+<Grid Grid.Row="1" Margin="0,0,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="80"/>
@@ -255,8 +250,7 @@
                             Foreground="White" BorderThickness="0"/>
                 </Grid>
 
-                <!-- Фильтры по роли -->
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
+<StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,10">
                     <Button Content="{DynamicResource Admin.FilterAll}" Command="{Binding FilterAllCommand}"
                             Height="28" Padding="14,0" FontSize="12" Margin="0,0,6,0"
                             BorderThickness="1" BorderBrush="{DynamicResource BorderBrush}">
@@ -323,8 +317,7 @@
                     </Button>
                 </StackPanel>
 
-                <!-- Таблица пользователей -->
-                <DataGrid Grid.Row="3" ItemsSource="{Binding Users}" AutoGenerateColumns="False"
+<DataGrid Grid.Row="3" ItemsSource="{Binding Users}" AutoGenerateColumns="False"
                           IsReadOnly="True" CanUserAddRows="False"
                           Background="{DynamicResource SurfaceBrush}"
                           Foreground="{DynamicResource TextPrimaryBrush}"
@@ -402,16 +395,14 @@
                 </DataGrid>
             </Grid>
 
-            <!-- ===== ВКЛАДКА 1: МОДЕРАЦИЯ ОТЗЫВОВ ===== -->
-            <Grid Visibility="{Binding ShowTab1, Converter={StaticResource BoolToVisibility}}"
+<Grid Visibility="{Binding ShowTab1, Converter={StaticResource BoolToVisibility}}"
                   Margin="16">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Фильтр по риелтору -->
-                <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
+<Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}"
                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                         CornerRadius="8" Padding="12,8" Margin="0,0,0,10">
                     <StackPanel Orientation="Horizontal">
@@ -504,20 +495,18 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- ===== ВКЛАДКА 2: СТАТИСТИКА ===== -->
-            <ScrollViewer Visibility="{Binding ShowTab2, Converter={StaticResource BoolToVisibility}}"
+<ScrollViewer Visibility="{Binding ShowTab2, Converter={StaticResource BoolToVisibility}}"
                           Margin="16" VerticalScrollBarVisibility="Auto">
                 <StackPanel>
 
-                    <!-- Тревожные сигналы -->
-                    <Border Visibility="{Binding HasAlerts, Converter={StaticResource BoolToVisibility}}"
+<Border Visibility="{Binding HasAlerts, Converter={StaticResource BoolToVisibility}}"
                             Background="{DynamicResource CardBrush}" CornerRadius="8"
                             Padding="0" Margin="0,0,0,14">
                         <Border.Effect>
                             <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.12"/>
                         </Border.Effect>
                         <StackPanel>
-                            <!-- Заголовок (клик = свернуть/развернуть) -->
+                            
                             <Border Background="#EF5350" CornerRadius="8,8,0,0" Padding="16,10" Cursor="Hand">
                                 <Border.InputBindings>
                                     <MouseBinding MouseAction="LeftClick" Command="{Binding ToggleAlertsExpandedCommand}"/>
@@ -528,7 +517,7 @@
                                         <TextBlock Text="{DynamicResource Admin.Alerts}" FontSize="13" FontWeight="Bold" Foreground="White"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                        <!-- Счётчик: отфильтровано / всего -->
+                                        
                                         <Border Background="#33FFFFFF" CornerRadius="10" Padding="10,2" Margin="0,0,10,0">
                                             <TextBlock FontSize="12" FontWeight="Bold" Foreground="White">
                                                 <Run Text="{Binding Alerts.Count, Mode=OneWay}"/>
@@ -536,7 +525,7 @@
                                                 <Run Text="{Binding AllAlertsCount, Mode=OneWay}"/>
                                             </TextBlock>
                                         </Border>
-                                        <!-- Стрелка -->
+                                        
                                         <TextBlock FontSize="12" FontWeight="Bold" Foreground="White" VerticalAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
@@ -553,8 +542,7 @@
                                 </Grid>
                             </Border>
 
-                            <!-- Панель фильтров (видна только когда развёрнуто) -->
-                            <Border Visibility="{Binding IsAlertsExpanded, Converter={StaticResource BoolToVisibility}}"
+<Border Visibility="{Binding IsAlertsExpanded, Converter={StaticResource BoolToVisibility}}"
                                     Background="{DynamicResource SurfaceBrush}" Padding="12,8">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -563,8 +551,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Кнопки фильтра по серьёзности -->
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+<StackPanel Grid.Column="0" Orientation="Horizontal">
                                         <Button Content="{DynamicResource Alert.SeverityAll}" Command="{Binding FilterAlertAllCommand}" Height="26" Padding="12,0" FontSize="11" Margin="0,0,4,0" Cursor="Hand">
                                             <Button.Style><Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/><Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/><Setter Property="BorderThickness" Value="1"/><Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/><Style.Triggers><DataTrigger Binding="{Binding IsAlertAll}" Value="True"><Setter Property="Background" Value="#EF5350"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderThickness" Value="0"/></DataTrigger></Style.Triggers></Style></Button.Style>
                                         </Button>
@@ -579,8 +566,7 @@
                                         </Button>
                                     </StackPanel>
 
-                                    <!-- Фильтр по риелтору -->
-                                    <ComboBox Grid.Column="2" ItemsSource="{Binding AlertRealtorNames}"
+<ComboBox Grid.Column="2" ItemsSource="{Binding AlertRealtorNames}"
                                               SelectedItem="{Binding AlertRealtorFilter}"
                                               Width="180" Height="26" FontSize="11">
                                         <ComboBox.ItemTemplate>
@@ -604,8 +590,7 @@
                                 </Grid>
                             </Border>
 
-                            <!-- Строки алертов -->
-                            <ItemsControl ItemsSource="{Binding Alerts}" Margin="0"
+<ItemsControl ItemsSource="{Binding Alerts}" Margin="0"
                                           Visibility="{Binding IsAlertsExpanded, Converter={StaticResource BoolToVisibility}}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
@@ -618,14 +603,14 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <!-- Цветная полоска слева -->
+                                                
                                                 <Border Grid.Column="0" Background="{Binding AlertColor}"
                                                         CornerRadius="0"/>
-                                                <!-- Иконка -->
+                                                
                                                 <TextBlock Grid.Column="1" Text="{Binding Icon}"
                                                            FontSize="16" VerticalAlignment="Center"
                                                            Margin="12,10,8,10"/>
-                                                <!-- Текст -->
+                                                
                                                 <StackPanel Grid.Column="2" VerticalAlignment="Center"
                                                             Margin="0,10,12,10">
                                                     <TextBlock Text="{Binding RealtorName}" FontSize="13"
@@ -635,7 +620,7 @@
                                                                Foreground="{DynamicResource TextSecondaryBrush}"
                                                                Margin="0,2,0,0"/>
                                                 </StackPanel>
-                                                <!-- Бейдж уровня -->
+                                                
                                                 <Border Grid.Column="3" Background="{Binding AlertColor}"
                                                         CornerRadius="4" Padding="8,3" Margin="0,0,12,0"
                                                         VerticalAlignment="Center">
@@ -650,8 +635,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Фильтр периода -->
-                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,14">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="12,10" Margin="0,0,0,14">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{DynamicResource Admin.Period}" FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
                                        VerticalAlignment="Center" Margin="0,0,12,0"/>
@@ -673,11 +657,9 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Глобальные счётчики (всегда за всё время) -->
-                    <UniformGrid Columns="5" Margin="0,0,0,8">
+<UniformGrid Columns="5" Margin="0,0,0,8">
 
-                        <!-- Все объекты -->
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.10"/>
                             </Border.Effect>
@@ -696,8 +678,7 @@
                             </Grid>
                         </Border>
 
-                        <!-- Активных -->
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.10"/>
                             </Border.Effect>
@@ -716,8 +697,7 @@
                             </Grid>
                         </Border>
 
-                        <!-- Продано -->
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.10"/>
                             </Border.Effect>
@@ -736,8 +716,7 @@
                             </Grid>
                         </Border>
 
-                        <!-- Пользователей -->
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" Margin="0,0,8,0" ClipToBounds="True">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.10"/>
                             </Border.Effect>
@@ -756,8 +735,7 @@
                             </Grid>
                         </Border>
 
-                        <!-- Риелторов -->
-                        <Border Background="{DynamicResource CardBrush}" CornerRadius="8" ClipToBounds="True">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" ClipToBounds="True">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.10"/>
                             </Border.Effect>
@@ -778,8 +756,7 @@
 
                     </UniformGrid>
 
-                    <!-- Финансовые KPI за выбранный период -->
-                    <UniformGrid Columns="4" Margin="0,0,0,14">
+<UniformGrid Columns="4" Margin="0,0,0,14">
                         <Border CornerRadius="8" Padding="16" Margin="0,0,8,0"
                                 BorderBrush="#7CB342" BorderThickness="1" Background="{DynamicResource CardBrush}">
                             <StackPanel>
@@ -814,8 +791,7 @@
                         </Border>
                     </UniformGrid>
 
-                    <!-- Рейтинг риелторов -->
-                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,14">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,14">
                             <StackPanel>
                                 <Grid Margin="0,0,0,8">
                                     <Grid.ColumnDefinitions>
@@ -851,16 +827,14 @@
                                                         <ColumnDefinition Width="88"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <!-- Место -->
-                                                    <Border Grid.Column="0" Width="38" Height="38" CornerRadius="19"
+<Border Grid.Column="0" Width="38" Height="38" CornerRadius="19"
                                                             Background="{Binding Color}" VerticalAlignment="Center">
                                                         <TextBlock Text="{Binding RankEmoji}" FontSize="14" FontWeight="Bold"
                                                                    Foreground="White" HorizontalAlignment="Center"
                                                                    VerticalAlignment="Center"/>
                                                     </Border>
 
-                                                    <!-- Имя + балл + тренд + прогресс-бар -->
-                                                    <StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
+<StackPanel Grid.Column="1" Margin="10,0" VerticalAlignment="Center">
                                                         <TextBlock Text="{Binding Name}" FontSize="13" FontWeight="SemiBold"
                                                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                         <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
@@ -869,13 +843,13 @@
                                                             <TextBlock Text="/100" FontSize="11" VerticalAlignment="Bottom"
                                                                        Foreground="{DynamicResource TextSecondaryBrush}"
                                                                        Margin="2,0,8,2"/>
-                                                            <!-- Тренд -->
+                                                            
                                                             <Border Background="{Binding TrendColor}" CornerRadius="4"
                                                                     Padding="5,1" Margin="0,0,8,0" VerticalAlignment="Center">
                                                                 <TextBlock Text="{Binding TrendArrow}" FontSize="13"
                                                                            FontWeight="Bold" Foreground="White"/>
                                                             </Border>
-                                                            <!-- Прогресс-бар -->
+                                                            
                                                             <Border Background="{DynamicResource BorderBrush}"
                                                                     CornerRadius="3" Height="6" Width="150"
                                                                     VerticalAlignment="Center">
@@ -886,8 +860,7 @@
                                                         </StackPanel>
                                                     </StackPanel>
 
-                                                    <!-- Мини-метрики -->
-                                                    <StackPanel Grid.Column="2" Orientation="Horizontal"
+<StackPanel Grid.Column="2" Orientation="Horizontal"
                                                                 VerticalAlignment="Center" Margin="0,0,12,0">
                                                         <StackPanel Margin="0,0,14,0" HorizontalAlignment="Center">
                                                             <TextBlock Text="{Binding TotalProps}" FontSize="14" FontWeight="SemiBold"
@@ -927,8 +900,7 @@
                                                         </StackPanel>
                                                     </StackPanel>
 
-                                                    <!-- Кнопка Подробнее -->
-                                                    <Button Grid.Column="3" Content="{DynamicResource Admin.Details}"
+<Button Grid.Column="3" Content="{DynamicResource Admin.Details}"
                                                             Command="{Binding DataContext.SelectRealtorCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                             CommandParameter="{Binding}"
                                                             Height="32" Padding="0" FontSize="12" Cursor="Hand"
@@ -940,8 +912,7 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
 
-                                <!-- Кнопка показать всех / свернуть -->
-                                <Button Content="{Binding ShowMoreRealtorsLabel}"
+<Button Content="{Binding ShowMoreRealtorsLabel}"
                                         Command="{Binding ToggleShowAllRealtorsCommand}"
                                         Visibility="{Binding ShowMoreRealtorsButton, Converter={StaticResource BoolToVisibility}}"
                                         HorizontalAlignment="Center"
@@ -953,8 +924,7 @@
                             </StackPanel>
                     </Border>
 
-                    <!-- График продаж агентства по месяцам -->
-                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,14">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,14">
                         <StackPanel>
                             <Grid Margin="0,0,0,10">
                                 <TextBlock Text="{DynamicResource Admin.AgencySalesTitle}" FontSize="13" FontWeight="SemiBold"
@@ -980,13 +950,11 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Детальная панель выбранного риелтора -->
-                    <Border Visibility="{Binding HasSelectedRealtor, Converter={StaticResource BoolToVisibility}}"
+<Border Visibility="{Binding HasSelectedRealtor, Converter={StaticResource BoolToVisibility}}"
                             Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,14">
                         <StackPanel>
 
-                            <!-- Заголовок + балл -->
-                            <Grid Margin="0,0,0,12">
+<Grid Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
@@ -1007,8 +975,7 @@
                                 </Border>
                             </Grid>
 
-                            <!-- Вкладки детали -->
-                            <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,14">
+<Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Margin="0,0,0,14">
                                 <StackPanel Orientation="Horizontal">
                                     <Button Content="{DynamicResource Admin.DetailTabOverview}" Command="{Binding SetDetailTab0Command}"
                                             Padding="14,8" FontSize="12" Cursor="Hand">
@@ -1098,8 +1065,7 @@
                                 </StackPanel>
                             </Border>
 
-                            <!-- ── Вкладка 0: Обзор ── -->
-                            <StackPanel Visibility="{Binding ShowDetailTab0, Converter={StaticResource BoolToVisibility}}">
+<StackPanel Visibility="{Binding ShowDetailTab0, Converter={StaticResource BoolToVisibility}}">
                                 <UniformGrid Columns="5" Margin="0,0,0,8">
                                     <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Padding="12" Margin="0,0,8,0">
                                         <StackPanel>
@@ -1133,8 +1099,7 @@
                                     </Border>
                                 </UniformGrid>
 
-                                <!-- Финансовые показатели риелтора -->
-                                <UniformGrid Columns="2" Margin="0,0,0,14">
+<UniformGrid Columns="2" Margin="0,0,0,14">
                                     <Border BorderBrush="#7CB342" BorderThickness="1"
                                             Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Padding="14,10" Margin="0,0,8,0">
                                         <StackPanel Orientation="Horizontal">
@@ -1168,8 +1133,7 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <!-- ── Вкладка 1: Отзывы ── -->
-                            <StackPanel Visibility="{Binding ShowDetailTab1, Converter={StaticResource BoolToVisibility}}">
+<StackPanel Visibility="{Binding ShowDetailTab1, Converter={StaticResource BoolToVisibility}}">
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,20"
                                             Visibility="{Binding NoDetailReviews, Converter={StaticResource BoolToVisibility}}">
                                     <Path Width="40" Height="40" Stretch="Uniform" HorizontalAlignment="Center"
@@ -1220,8 +1184,7 @@
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
 
-                                <!-- Загрузить ещё отзывы -->
-                                <Button Command="{Binding LoadMoreDetailReviewsCommand}"
+<Button Command="{Binding LoadMoreDetailReviewsCommand}"
                                         Visibility="{Binding HasMoreDetailReviews, Converter={StaticResource BoolToVisibility}}"
                                         HorizontalAlignment="Center" Margin="0,8,0,0"
                                         Height="32" Padding="20,0" FontSize="12" Cursor="Hand"
@@ -1233,8 +1196,7 @@
                                 </Button>
                             </StackPanel>
 
-                            <!-- ── Вкладка 2: Объекты ── -->
-                            <StackPanel Visibility="{Binding ShowDetailTab2, Converter={StaticResource BoolToVisibility}}">
+<StackPanel Visibility="{Binding ShowDetailTab2, Converter={StaticResource BoolToVisibility}}">
                                 <StackPanel HorizontalAlignment="Center" Margin="0,20,0,20"
                                             Visibility="{Binding NoDetailProperties, Converter={StaticResource BoolToVisibility}}">
                                     <Path Width="40" Height="40" Stretch="Uniform" HorizontalAlignment="Center"
@@ -1286,14 +1248,12 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <!-- ===== ВКЛАДКА 4: РАССЫЛКА ===== -->
-            <Grid Visibility="{Binding ShowTab4, Converter={StaticResource BoolToVisibility}}"
+<Grid Visibility="{Binding ShowTab4, Converter={StaticResource BoolToVisibility}}"
                   Margin="16">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel MaxWidth="620" HorizontalAlignment="Center" Margin="0,8,0,40">
 
-                        <!-- Кому -->
-                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+<Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
                                 Padding="24,18" Margin="0,0,0,14">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.08"/>
@@ -1354,8 +1314,7 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Шаблоны -->
-                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+<Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
                                 Padding="24,18" Margin="0,0,0,14">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.08"/>
@@ -1385,8 +1344,7 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Предпросмотр письма (всегда виден) -->
-                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+<Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
                                 Padding="24,18" Margin="0,0,0,14">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.08"/>
@@ -1436,8 +1394,7 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Письмо -->
-                        <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+<Border Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
                                 Padding="24,18" Margin="0,0,0,14">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.08"/>
@@ -1465,8 +1422,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Результат -->
-                                    <TextBlock Grid.Column="0" Text="{Binding MailResult}"
+<TextBlock Grid.Column="0" Text="{Binding MailResult}"
                                                VerticalAlignment="Center" FontSize="13"
                                                TextWrapping="Wrap" Margin="0,0,12,0"
                                                Visibility="{Binding MailResult, Converter={StaticResource BoolToVisibility}}">
@@ -1493,13 +1449,11 @@
                             </StackPanel>
                         </Border>
 
-
-                    </StackPanel>
+</StackPanel>
                 </ScrollViewer>
             </Grid>
 
-            <!-- ===== ВКЛАДКА 5: ОБЪЕКТЫ ===== -->
-            <Grid Visibility="{Binding ShowTab5, Converter={StaticResource BoolToVisibility}}"
+<Grid Visibility="{Binding ShowTab5, Converter={StaticResource BoolToVisibility}}"
                   Margin="16">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -1508,15 +1462,13 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Сообщение об операции -->
-                <Border Grid.Row="0" CornerRadius="6" Padding="12,8" Margin="0,0,0,10"
+<Border Grid.Row="0" CornerRadius="6" Padding="12,8" Margin="0,0,0,10"
                         Background="{DynamicResource SuccessBrush}"
                         Visibility="{Binding AdminPropActionMessage, Converter={StaticResource BoolToVisibility}}">
                     <TextBlock Text="{Binding AdminPropActionMessage}" Foreground="White" FontSize="13"/>
                 </Border>
 
-                <!-- Поиск + фильтры -->
-                <Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
+<Border Grid.Row="1" Background="{DynamicResource SurfaceBrush}" CornerRadius="10"
                         Padding="16,12" Margin="0,0,0,12">
                     <Border.Effect>
                         <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Opacity="0.07"/>
@@ -1633,8 +1585,7 @@
                     </StackPanel>
                 </Border>
 
-                <!-- Счётчик -->
-                <TextBlock Grid.Row="2" Margin="0,0,0,8" FontSize="12"
+<TextBlock Grid.Row="2" Margin="0,0,0,8" FontSize="12"
                            Foreground="{DynamicResource TextSecondaryBrush}">
                     <Run Text="{DynamicResource Admin.PropFound}"/>
                     <Run Text="{Binding AdminPropsCount}" FontWeight="SemiBold"
@@ -1642,8 +1593,7 @@
                     <Run Text="{DynamicResource Admin.PropObjects}"/>
                 </TextBlock>
 
-                <!-- Список объектов -->
-                <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+<ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding AdminProperties}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -1659,8 +1609,7 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Информация -->
-                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+<StackPanel Grid.Column="0" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold"
                                                        Foreground="{DynamicResource TextPrimaryBrush}"
                                                        TextTrimming="CharacterEllipsis"/>
@@ -1688,16 +1637,14 @@
                                             </StackPanel>
                                         </StackPanel>
 
-                                        <!-- Статус -->
-                                        <Border Grid.Column="1" CornerRadius="4" Padding="10,3"
+<Border Grid.Column="1" CornerRadius="4" Padding="10,3"
                                                 VerticalAlignment="Center" Margin="12,0"
                                                 Background="{Binding StatusColor, Converter={StaticResource StringToBrush}}">
                                             <TextBlock Text="{Binding StatusLabel}" FontSize="12"
                                                        FontWeight="SemiBold" Foreground="White"/>
                                         </Border>
 
-                                        <!-- Кнопки -->
-                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
                                             <Button Content="{DynamicResource Admin.OpenBtn}"
                                                     Command="{Binding DataContext.OpenAdminPropertyDetailCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                     CommandParameter="{Binding}"
@@ -1726,8 +1673,7 @@
                 </ScrollViewer>
             </Grid>
 
-            <!-- ===== ВКЛАДКА 3: МОЙ ПРОФИЛЬ ===== -->
-            <ScrollViewer Visibility="{Binding ShowTab3, Converter={StaticResource BoolToVisibility}}"
+<ScrollViewer Visibility="{Binding ShowTab3, Converter={StaticResource BoolToVisibility}}"
                           VerticalScrollBarVisibility="Auto">
                 <Grid Margin="24,24,24,40">
                     <Grid.RowDefinitions>
@@ -1736,8 +1682,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Аватар -->
-                    <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,20">
+<Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,20">
                         <Border.Effect>
                             <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
                         </Border.Effect>
@@ -1771,16 +1716,14 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Две колонки: личные данные | смена пароля -->
-                    <Grid Grid.Row="2">
+<Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="24"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Личные данные -->
-                        <Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,24">
+<Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,24">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="14" ShadowDepth="2" Opacity="0.08"/>
                             </Border.Effect>
@@ -1824,8 +1767,7 @@
                             </StackPanel>
                         </Border>
 
-                        <!-- Смена пароля -->
-                        <Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,24">
+<Border Grid.Column="2" Background="{DynamicResource SurfaceBrush}" CornerRadius="12" Padding="28,24">
                             <Border.Effect>
                                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="14" ShadowDepth="2" Opacity="0.08"/>
                             </Border.Effect>
@@ -1881,6 +1823,4 @@
         </Grid>
     </Grid>
 </UserControl>
-
-
 

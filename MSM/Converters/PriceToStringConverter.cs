@@ -1,11 +1,8 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
 
 namespace MSM.Converters;
 
-/// <summary>
-/// Конвертер цены в строку с форматированием
-/// </summary>
 public class PriceToStringConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

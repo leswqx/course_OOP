@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -40,6 +40,7 @@ public class UserRowViewModel
         IsBlocked = u.IsBlocked;
         RoleDisplay = u.Role switch { "admin" => "Администратор", "realtor" => "Риелтор", _ => "Клиент" };
         CreatedAt = u.CreatedAt.ToString("dd.MM.yyyy");
+        
     }
 }
 
@@ -93,7 +94,7 @@ public class AlertItem
     public string AlertColor  { get; init; } = "#EF5350";
     public string Icon        { get; init; } = "⚠";
     public string Severity    { get; init; } = "Внимание";
-    public string SeverityKey { get; init; } = "warning"; // info | warning | critical
+    public string SeverityKey { get; init; } = "warning";
 }
 
 public class DetailReviewRow
@@ -131,14 +132,12 @@ public class AdminPropertyRow
     public string ToggleHideLabel => StatusRaw == "hidden" ? "Показать" : "Скрыть";
 }
 
-// Панель администратора: пользователи · модерация · статистика
 public partial class AdminDashboardViewModel : ViewModelBase
 {
     private readonly IReviewService _reviewService;
     private readonly INavigationService _navigationService;
     private readonly AppDbContext _context;
 
-    // ===== Вкладки =====
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowTab0), nameof(ShowTab1), nameof(ShowTab2), nameof(ShowTab3), nameof(ShowTab4), nameof(ShowTab5))]
     private int _selectedTab;
@@ -149,14 +148,15 @@ public partial class AdminDashboardViewModel : ViewModelBase
     public bool ShowTab4 => SelectedTab == 4;
     public bool ShowTab5 => SelectedTab == 5;
 
-    // ===== Профиль =====
     [ObservableProperty] private string _profileFullName = "";
     [ObservableProperty] private string _profileEmail = "";
     [ObservableProperty] private string _profilePhone = "";
     [ObservableProperty] private byte[]? _profileAvatar;
+    
     [ObservableProperty] private string _profileOldPassword = "";
     [ObservableProperty] private string _profileNewPassword = "";
     [ObservableProperty] private string _profileConfirmPassword = "";
+    
     [ObservableProperty] private string? _profileResult;
     [ObservableProperty] private bool _profileSuccess;
     [ObservableProperty] private string? _passwordResult;
@@ -164,15 +164,12 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private bool _isProfileSaving;
     public string ProfileLogin => Session.CurrentUser?.Login ?? "";
 
-    // ===== Пользователи =====
     [ObservableProperty] private ObservableCollection<UserRowViewModel> _users = new();
     [ObservableProperty] private bool _isUsersLoading;
     [ObservableProperty] private string? _userActionMessage;
     [ObservableProperty] private string _userSearch = "";
-    [ObservableProperty] private string _userRoleFilter = "all"; // all, realtor, client, blocked
+    [ObservableProperty] private string _userRoleFilter = "all";
 
-
-    // ===== Отзывы =====
     [ObservableProperty] private ObservableCollection<ReviewRowViewModel> _pendingReviews = new();
     [ObservableProperty] private bool _isReviewsLoading;
     [ObservableProperty] private bool _noReviews;
@@ -180,7 +177,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private string _reviewRealtorFilter = "";
     public ObservableCollection<string> ReviewRealtorNames { get; } = new();
 
-    // ===== Статистика =====
     [ObservableProperty] private int _statTotalProps;
     [ObservableProperty] private int _statActiveProps;
     [ObservableProperty] private int _statSoldProps;
@@ -200,7 +196,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     public bool IsChartPeriod1y  => AgencyChartPeriod == "1y";
     public bool IsChartPeriodAll => AgencyChartPeriod == "all";
 
-    // Период фильтра
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPeriodAll), nameof(IsPeriodMonth),
                               nameof(IsPeriodLastMonth), nameof(IsPeriodQuarter), nameof(IsPeriodYear))]
@@ -211,7 +206,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     public bool IsPeriodQuarter   => SelectedPeriod == "quarter";
     public bool IsPeriodYear      => SelectedPeriod == "year";
 
-    // ===== Рейтинг + детальный риелтор =====
     [ObservableProperty] private ObservableCollection<RealtorSummaryRow> _realtorSummary = new();
     private List<RealtorSummaryRow> _allRealtorSummary = new();
     private bool _showAllRealtors;
@@ -233,11 +227,9 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private ISeries[] _detailApptSeries = Array.Empty<ISeries>();
     [ObservableProperty] private Axis[] _detailApptXAxes = Array.Empty<Axis>();
 
-    // ===== Среднее по команде =====
     [ObservableProperty] private int _teamAvgScore;
     [ObservableProperty] private string _teamAvgColor = "#9E9E9E";
 
-    // ===== Тревожные сигналы =====
     private List<AlertItem> _allAlerts = new();
     public int AllAlertsCount => _allAlerts.Count;
     [ObservableProperty] private ObservableCollection<AlertItem> _alerts = new();
@@ -255,7 +247,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [ObservableProperty] private string _alertRealtorFilter = "";
     public ObservableCollection<string> AlertRealtorNames { get; } = new();
 
-    // ===== Вкладки детальной панели =====
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowDetailTab0), nameof(ShowDetailTab1), nameof(ShowDetailTab2))]
     private int _detailTab;
@@ -279,10 +270,9 @@ public partial class AdminDashboardViewModel : ViewModelBase
     private readonly INotificationService _notificationService;
     private readonly bool[] _tabLoaded = new bool[6];
 
-    // ===== Рассылка =====
     [ObservableProperty] private string _mailSubject = "";
     [ObservableProperty] private string _mailBody = "";
-    [ObservableProperty] private string _mailRecipients = "clients"; // all, clients, realtors
+    [ObservableProperty] private string _mailRecipients = "clients";
     [ObservableProperty] private string? _mailResult;
     [ObservableProperty] private bool _mailSuccess;
     [ObservableProperty] private bool _isSendingMail;
@@ -292,7 +282,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     private readonly SemaphoreSlim _reviewSem    = new(1, 1);
     private readonly SemaphoreSlim _adminPropSem = new(1, 1);
 
-    // ===== Объекты (Tab5) =====
     [ObservableProperty] private ObservableCollection<AdminPropertyRow> _adminProperties = new();
     [ObservableProperty] private bool _isAdminPropsLoading;
     [ObservableProperty] private string _adminPropSearch = "";
@@ -355,7 +344,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
         }
     }
 
-    // ===== Вкладки =====
     [RelayCommand] private async Task SetTab0Async() { SelectedTab = 0; await EnsureTabLoadedAsync(0); }
     [RelayCommand] private async Task SetTab1Async() { SelectedTab = 1; await EnsureTabLoadedAsync(1); }
     [RelayCommand] private async Task SetTab2Async() { SelectedTab = 2; await EnsureTabLoadedAsync(2); }
@@ -367,7 +355,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [RelayCommand] private void SetDetailTab1() => DetailTab = 1;
     [RelayCommand] private void SetDetailTab2() => DetailTab = 2;
 
-    // ===== Период статистики =====
     [RelayCommand] private async Task SetPeriodAllAsync()       { SelectedPeriod = "all";       await LoadStatsAsync(); }
     [RelayCommand] private async Task SetPeriodMonthAsync()     { SelectedPeriod = "month";     await LoadStatsAsync(); }
     [RelayCommand] private async Task SetPeriodLastMonthAsync() { SelectedPeriod = "lastmonth"; await LoadStatsAsync(); }
@@ -413,7 +400,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
         AgencySalesXAxes = new Axis[] { new Axis { Labels = months.Select(m => m.ToString("MMM yy")).ToArray() } };
     }
 
-    // ===== Пользователи =====
     private async Task LoadUsersAsync()
     {
         IsUsersLoading = true;
@@ -473,7 +459,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
 
         var roleLabel = newRole == "realtor" ? "Риелтор" : "Клиент";
 
-        // При понижении риелтора — проверяем активные объекты и записи
         string warningText = "";
         if (newRole == "client" && user.Role == "realtor")
         {
@@ -500,7 +485,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
 
         user.Role = newRole;
 
-        // Скрываем активные объекты понижаемого риелтора
         if (newRole == "client")
         {
             var propsToHide = await _context.Properties
@@ -546,7 +530,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
         await LoadUsersAsync();
     }
 
-    // ===== Отзывы =====
     private async Task LoadReviewsAsync()
     {
         IsReviewsLoading = true;
@@ -622,7 +605,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
         await LoadReviewsAsync();
     }
 
-    // ===== Статистика =====
     private DateTime? GetPeriodStart() => SelectedPeriod switch
     {
         "month"     => new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1),
@@ -662,14 +644,12 @@ public partial class AdminDashboardViewModel : ViewModelBase
             var from = GetPeriodStart();
             var to   = GetPeriodEnd();
 
-            // === Глобальные счётчики через агрегатные запросы ===
-            StatTotalProps  = await _context.Properties.CountAsync();
             StatActiveProps = await _context.Properties.CountAsync(p => p.Status == "active");
+            StatTotalProps  = await _context.Properties.CountAsync(p => p.Status == "active");
             StatSoldProps   = await _context.Properties.CountAsync(p => p.Status == "sold");
             StatTotalUsers  = await _context.Users.CountAsync();
             StatRealtors    = await _context.Users.CountAsync(u => u.Role == "realtor");
 
-            // Выручка + средний чек за период
             var soldQ = _context.Properties.Where(p => p.Status == "sold");
             if (from.HasValue) soldQ = soldQ.Where(p => p.UpdatedAt >= from.Value);
             if (to.HasValue)   soldQ = soldQ.Where(p => p.UpdatedAt <  to.Value);
@@ -678,25 +658,20 @@ public partial class AdminDashboardViewModel : ViewModelBase
             StatRevenueText = soldCount > 0 ? FormatMoney(revenue) : "—";
             StatAvgDealText = soldCount > 0 ? FormatMoney(revenue / soldCount) : "—";
 
-            // Новые клиенты за период
             var clientQ = _context.Users.Where(u => u.Role == "client");
             if (from.HasValue) clientQ = clientQ.Where(u => u.CreatedAt >= from.Value);
             if (to.HasValue)   clientQ = clientQ.Where(u => u.CreatedAt <  to.Value);
             StatNewClients = await clientQ.CountAsync();
 
-            // Ожидающие записи за период
             var pendingQ = _context.Appointments.Where(a => a.Status == AppointmentStatus.New);
             if (from.HasValue) pendingQ = pendingQ.Where(a => a.SlotStart >= from.Value);
             if (to.HasValue)   pendingQ = pendingQ.Where(a => a.SlotStart <  to.Value);
             StatPendingAppts = await pendingQ.CountAsync();
 
-            // График продаж агентства
             await BuildAgencyChartAsync();
 
-            // === Batch-запросы для лидерборда (N+1 → несколько запросов) ===
             var realtors = await _context.Users.Where(u => u.Role == "realtor").ToListAsync();
 
-            // Статистика объектов по риелторам (один запрос)
             var propStats = await _context.Properties
                 .GroupBy(p => p.RealtorId)
                 .Select(g => new
@@ -709,7 +684,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
                 })
                 .ToListAsync();
 
-            // Записи за период по риелторам (один запрос)
             var apptQ = _context.Appointments.AsQueryable();
             if (from.HasValue) apptQ = apptQ.Where(a => a.SlotStart >= from.Value);
             if (to.HasValue)   apptQ = apptQ.Where(a => a.SlotStart <  to.Value);
@@ -718,13 +692,11 @@ public partial class AdminDashboardViewModel : ViewModelBase
                 .Select(g => new { g.Key.RealtorId, g.Key.Status, Count = g.Count() })
                 .ToListAsync();
 
-            // Все записи для тревожных сигналов (один запрос)
             var allApptStats = await _context.Appointments
                 .GroupBy(a => new { a.RealtorId, a.Status })
                 .Select(g => new { g.Key.RealtorId, g.Key.Status, Count = g.Count() })
                 .ToListAsync();
 
-            // Тренд: текущий vs прошлый месяц (один запрос)
             var thisMonthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             var lastMonthStart = thisMonthStart.AddMonths(-1);
             var trendStats = await _context.Appointments
@@ -733,7 +705,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
                 .Select(g => new { g.Key.RealtorId, g.Key.IsThisMonth, Count = g.Count() })
                 .ToListAsync();
 
-            // Залежавшиеся объекты (один запрос)
             var staleThreshold = DateTime.Today.AddDays(-30);
             var staleStats = await _context.Properties
                 .Where(p => p.Status == "active" && p.CreatedAt < staleThreshold)
@@ -741,14 +712,12 @@ public partial class AdminDashboardViewModel : ViewModelBase
                 .Select(g => new { RealtorId = g.Key, Count = g.Count() })
                 .ToListAsync();
 
-            // Средние рейтинги всех риелторов (один запрос вместо N)
             var ratingStats = await _context.Reviews
                 .Where(r => r.IsApproved)
                 .GroupBy(r => r.RealtorId)
                 .Select(g => new { RealtorId = g.Key, AvgRating = g.Average(r => (double)r.Rating) })
                 .ToListAsync();
 
-            // === Строим лидерборд в памяти из предзагруженных данных ===
             var rawList = new List<RealtorSummaryRow>();
             for (int i = 0; i < realtors.Count; i++)
             {
@@ -792,7 +761,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
                 });
             }
 
-            // Сортируем по Score и назначаем ранги
             _allRealtorSummary = rawList
                 .OrderByDescending(r => r.Score)
                 .Select((src, i) => new RealtorSummaryRow
@@ -813,7 +781,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
                 TeamAvgColor = ScoreColor(TeamAvgScore);
             }
 
-            // === Тревожные сигналы ===
             _allAlerts.Clear();
             foreach (var row in rawList)
             {
@@ -856,7 +823,7 @@ public partial class AdminDashboardViewModel : ViewModelBase
             AlertSeverityFilter = "all";
             ApplyAlertFilters();
         }
-        catch { /* некритично */ }
+        catch {  }
     }
 
     private void ApplyAlertFilters()
@@ -912,12 +879,11 @@ public partial class AdminDashboardViewModel : ViewModelBase
         DetailScoreColor   = row.ScoreColor;
         try
         {
-            // Статистика объектов через CountAsync
+
             DetailTotal  = await _context.Properties.CountAsync(p => p.RealtorId == row.Id);
             DetailActive = await _context.Properties.CountAsync(p => p.RealtorId == row.Id && p.Status == "active");
             DetailSold   = await _context.Properties.CountAsync(p => p.RealtorId == row.Id && p.Status == "sold");
 
-            // Записи за выбранный период
             var from = GetPeriodStart();
             var to   = GetPeriodEnd();
             var apptQ = _context.Appointments.Where(a => a.RealtorId == row.Id);
@@ -926,21 +892,18 @@ public partial class AdminDashboardViewModel : ViewModelBase
             DetailTotalAppt     = await apptQ.CountAsync();
             DetailCompletedAppt = await apptQ.CountAsync(a => a.Status == AppointmentStatus.Completed);
 
-            // Рейтинг
             var avgRating = await _context.Reviews
                 .Where(r => r.RealtorId == row.Id && r.IsApproved)
                 .Select(r => (double?)r.Rating)
                 .AverageAsync();
             DetailRatingText = avgRating.HasValue ? $"{avgRating.Value:F1} ★" : "—";
 
-            // Выручка (только SumAsync, без загрузки объектов)
             decimal rRevenue = DetailSold > 0
                 ? await _context.Properties.Where(p => p.RealtorId == row.Id && p.Status == "sold").SumAsync(p => p.Price)
                 : 0;
             DetailRevenueText = DetailSold > 0 ? FormatMoney(rRevenue) : "—";
             DetailAvgDealText = DetailSold > 0 ? FormatMoney(rRevenue / DetailSold) : "—";
 
-            // График записей: загружаем только (Year, Month) — минимальная проекция
             var months = Enumerable.Range(0, 6).Select(i => DateTime.Today.AddMonths(-5 + i)).ToList();
             var chartFrom = months.First();
             var apptDates = await _context.Appointments
@@ -954,14 +917,12 @@ public partial class AdminDashboardViewModel : ViewModelBase
             };
             DetailApptXAxes = new Axis[] { new Axis { Labels = months.Select(m => m.ToString("MMM")).ToArray() } };
 
-            // Отзывы — первая страница
             _detailReviewRealtorId = row.Id;
             _detailReviewTotal = await _context.Reviews.CountAsync(r => r.RealtorId == row.Id && r.IsApproved);
             _detailReviewPage  = 0;
             DetailReviews.Clear();
             await AppendDetailReviewPageAsync();
 
-            // Объекты: проекция только нужных полей
             var propRows = await _context.Properties
                 .Where(p => p.RealtorId == row.Id)
                 .OrderBy(p => p.Status)
@@ -979,7 +940,7 @@ public partial class AdminDashboardViewModel : ViewModelBase
                 });
             NoDetailProperties = DetailProperties.Count == 0;
         }
-        catch { /* некритично */ }
+        catch {  }
     }
 
     [RelayCommand]
@@ -1011,7 +972,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
     [RelayCommand]
     private async Task LoadMoreDetailReviewsAsync() => await AppendDetailReviewPageAsync();
 
-    // ===== Объекты (Tab5) =====
     private async Task LoadAdminPropertiesAsync()
     {
         IsAdminPropsLoading = true;
@@ -1174,7 +1134,6 @@ public partial class AdminDashboardViewModel : ViewModelBase
         }
     }
 
-    // ===== Рассылка =====
     [RelayCommand] private void MailToAll()      { MailRecipients = "all";      }
     [RelayCommand] private void MailToClients()  { MailRecipients = "clients";  }
     [RelayCommand] private void MailToRealtors() { MailRecipients = "realtors"; }
@@ -1228,7 +1187,7 @@ public partial class AdminDashboardViewModel : ViewModelBase
         finally { IsSendingMail = false; }
     }
 
-    // ===== Профиль =====
+    // Мой профиль 
     private void LoadProfileTab()
     {
         var u = Session.CurrentUser;

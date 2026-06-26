@@ -1,8 +1,7 @@
-using System.Windows;
+﻿using System.Windows;
 
 namespace MSM.Helpers;
 
-// Переключает тему оформления, заменяя ResourceDictionary в MergedDictionaries
 public static class ThemeManager
 {
     private static bool _isDark;

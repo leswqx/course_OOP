@@ -1,13 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MSM.Data.Context;
 using MSM.Models.Entities;
 
 namespace MSM.Data.Repositories;
 
-/// <summary>
-/// Реализация Unit of Work
-/// </summary>
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;

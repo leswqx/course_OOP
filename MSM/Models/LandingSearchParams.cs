@@ -1,4 +1,4 @@
-namespace MSM.Models;
+﻿namespace MSM.Models;
 
 public record LandingSearchParams(
     string? PropertyType,

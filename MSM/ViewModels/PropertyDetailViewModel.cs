@@ -1,6 +1,7 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Windows.Threading;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -59,18 +60,15 @@ public partial class PropertyDetailViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(ImageCounter))]
     private int _currentImageIndex;
 
-    // ===== Lightbox =====
     [ObservableProperty] private bool         _isPhotoViewerOpen;
     [ObservableProperty] private BitmapImage? _fullScreenImage;
 
-    // ===== Price History =====
     [ObservableProperty] private ObservableCollection<PriceHistoryRowVm> _priceHistoryRows = new();
     [ObservableProperty] private ISeries[] _priceHistorySeries = Array.Empty<ISeries>();
     [ObservableProperty] private Axis[]    _priceHistoryXAxes  = Array.Empty<Axis>();
     [ObservableProperty] private bool      _hasPriceHistory;
     [ObservableProperty] private bool      _hasPriceChart;
 
-    // ===== Booking Calendar =====
     [ObservableProperty] private bool _showBookingCalendar;
     [ObservableProperty] private int  _bookCalYear  = DateTime.Today.Year;
     [ObservableProperty] private int  _bookCalMonth = DateTime.Today.Month;
@@ -84,7 +82,6 @@ public partial class PropertyDetailViewModel : ViewModelBase
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(BookDaySelected), nameof(BookSelectedDateLabel))]
     private DateTime? _bookSelectedDate;
-
     [ObservableProperty] private string  _scheduleComment   = "";
     [ObservableProperty] private bool    _scheduleSuccess;
     [ObservableProperty] private bool    _scheduleSlotTaken;
@@ -187,8 +184,8 @@ public partial class PropertyDetailViewModel : ViewModelBase
     private async Task LoadPriceHistoryAsync(int propertyId)
     {
         var history = (await _propertyService.GetPriceHistoryAsync(propertyId)).ToList();
-        HasPriceHistory = history.Count > 0;
-        HasPriceChart   = history.Count >= 1;
+        var hasHistory = history.Count > 0;
+        var hasChart   = history.Count >= 1;
 
         PriceHistoryRows.Clear();
         for (int i = 0; i < history.Count; i++)
@@ -211,12 +208,15 @@ public partial class PropertyDetailViewModel : ViewModelBase
             });
         }
 
-        if (HasPriceChart)
+        HasPriceHistory = hasHistory;
+
+        if (hasChart)
         {
             var values = history.Select(h => (double)h.Price).ToArray();
             var labels = history.Select(h => h.ChangedAt.ToString("dd.MM.yy")).ToArray();
-            // LiveCharts canvas needs a frame to initialize before Series data arrives
-            await Task.Delay(80);
+
+            await Dispatcher.Yield(DispatcherPriority.Background);
+
             PriceHistorySeries = new ISeries[]
             {
                 new LineSeries<double>
@@ -235,11 +235,11 @@ public partial class PropertyDetailViewModel : ViewModelBase
                 new Axis { Labels = labels, TextSize = 11 }
             };
         }
+
+        HasPriceChart   = hasChart;
     }
 
-    // ── Карусель ──────────────────────────────────────────────
-
-    [RelayCommand]
+[RelayCommand]
     private void NextImage()
     {
         if (_images.Count == 0) return;
@@ -281,10 +281,7 @@ public partial class PropertyDetailViewModel : ViewModelBase
         catch (Exception ex) { ErrorMessage = $"Ошибка: {ex.Message}"; }
     }
 
-    // ── Booking Calendar ──────────────────────────────────────
-
-    // Загружает только записи риелтора для текущего отображаемого месяца
-    private async Task LoadCalendarAppointmentsAsync()
+private async Task LoadCalendarAppointmentsAsync()
     {
         if (Property == null) return;
         var monthStart = new DateTime(BookCalYear, BookCalMonth, 1);
@@ -452,7 +449,7 @@ public partial class PropertyDetailViewModel : ViewModelBase
             bool isSelected = selected.HasValue && selected.Value.Date == date;
 
             bool isBlocked = _blockedDates.Contains(date.Date);
-            // Доступен ли день: не заблокирован, хотя бы один слот (9-18) не занят и дата не в прошлом
+
             bool hasFreeSLot = !isPast && !isBlocked && Enumerable.Range(WorkdayStartHour, WorkdayEndHour - WorkdayStartHour + 1).Any(h =>
                 !_realtorAppts.Any(a =>
                     a.SlotStart.Date == date &&

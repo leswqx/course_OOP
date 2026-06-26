@@ -1,31 +1,21 @@
-using MSM.Models.Entities;
+﻿using MSM.Models.Entities;
 
 namespace MSM.Services.Interfaces;
 
-/// <summary>
-/// Сервис email-уведомлений
-/// </summary>
 public interface INotificationService
 {
-    /// <summary>Отправить письмо одному адресату</summary>
+
     Task SendEmailAsync(string toEmail, string toName, string subject, string body);
 
-    /// <summary>Приветственное письмо при регистрации</summary>
     Task SendWelcomeEmailAsync(User user);
 
-    /// <summary>Оповещение о пополнении каталога всем клиентам</summary>
     Task SendNewListingsNotificationAsync(IEnumerable<User> clients, int newCount);
 
-    /// <summary>Ручная рассылка из админки</summary>
     Task SendBulkEmailAsync(IEnumerable<User> recipients, string subject, string body);
 
-    /// <summary>Уведомление клиенту об изменении статуса записи</summary>
     Task SendAppointmentStatusChangedAsync(User client, string propertyTitle, string realtorName, AppointmentStatus newStatus, DateTime slotStart);
 }
 
-/// <summary>
-/// Интерфейс сервиса аутентификации
-/// </summary>
 public interface IAuthService
 {
     Task<User?> LoginAsync(string login, string password);
@@ -35,9 +25,6 @@ public interface IAuthService
     Task<string?> GetLoginErrorAsync(string login, string password);
 }
 
-/// <summary>
-/// Интерфейс сервиса недвижимости
-/// </summary>
 public interface IPropertyService
 {
     Task<IEnumerable<Property>> GetAllAsync();
@@ -90,12 +77,9 @@ public interface IPropertyService
 
 public enum BookingStatus { Success, AlreadyBooked, SlotTaken }
 
-/// <summary>
-/// Интерфейс сервиса записей
-/// </summary>
 public interface IAppointmentService
 {
-    /// <summary>Атомарная запись на просмотр: проверка дубля + слота + создание в одной транзакции.</summary>
+
     Task<BookingStatus> BookSlotAsync(int propertyId, int clientId, int realtorId, DateTime slotStart, DateTime slotEnd, string? comment = null);
     Task<Appointment> CreateAsync(int propertyId, int clientId, int realtorId, DateTime slotStart, DateTime slotEnd, string? comment = null);
     Task<Appointment?> GetByIdAsync(int id);
@@ -106,9 +90,6 @@ public interface IAppointmentService
     Task<IEnumerable<RealtorSchedule>> GetBlockedSchedulesAsync(int realtorId);
 }
 
-/// <summary>
-/// Интерфейс сервиса избранного
-/// </summary>
 public interface IFavoriteService
 {
     Task<IEnumerable<Property>> GetUserFavoritesAsync(int userId);
@@ -119,9 +100,6 @@ public interface IFavoriteService
     Task RemoveFromFavoritesAsync(int userId, int propertyId);
 }
 
-/// <summary>
-/// Интерфейс сервиса отзывов
-/// </summary>
 public interface IReviewService
 {
     Task<Review> CreateAsync(int userId, int? propertyId, int? realtorId, int rating, string? comment = null, int? appointmentId = null);

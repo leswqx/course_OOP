@@ -12,8 +12,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Шапка -->
-        <Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
+<Border Grid.Row="0" Background="{DynamicResource HeaderBrush}">
             <Border.Effect>
                 <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.2"/>
             </Border.Effect>
@@ -27,26 +26,22 @@
             </Grid>
         </Border>
 
-        <!-- Загрузка -->
-        <TextBlock Grid.Row="1" Text="{DynamicResource Common.Loading}"
+<TextBlock Grid.Row="1" Text="{DynamicResource Common.Loading}"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    FontSize="18" Foreground="{DynamicResource TextSecondaryBrush}"
                    Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}}"/>
 
-        <!-- Ошибка (например, риелтор не найден) -->
-        <TextBlock Grid.Row="1" Text="{Binding ErrorMessage}"
+<TextBlock Grid.Row="1" Text="{Binding ErrorMessage}"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    FontSize="15" Foreground="{DynamicResource ErrorBrush}" TextWrapping="Wrap"
                    Margin="20,0"
                    Visibility="{Binding HasErrorMessage, Converter={StaticResource BoolToVisibility}}"/>
 
-        <!-- Контент -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
                       Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibility}, ConverterParameter=invert}">
             <StackPanel Margin="24,20">
 
-                <!-- Карточка риелтора -->
-                <Border Background="{DynamicResource CardBrush}" CornerRadius="12"
+<Border Background="{DynamicResource CardBrush}" CornerRadius="12"
                         Padding="24" Margin="0,0,0,20">
                     <Border.Effect>
                         <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
@@ -57,15 +52,14 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Аватар -->
-                        <Border Grid.Column="0" Width="100" Height="100"
+<Border Grid.Column="0" Width="100" Height="100"
                                 CornerRadius="50" ClipToBounds="True"
                                 HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <!-- Фото если есть -->
+                            
                             <Image Source="{Binding AvatarImage}" Stretch="UniformToFill"
                                    Visibility="{Binding HasAvatar, Converter={StaticResource BoolToVisibility}}"/>
                         </Border>
-                        <!-- Заглушка аватара -->
+                        
                         <Border Grid.Column="0" Width="100" Height="100"
                                 CornerRadius="50" Background="{DynamicResource PrimaryBrush}"
                                 HorizontalAlignment="Left" VerticalAlignment="Top"
@@ -76,13 +70,11 @@
                                   Data="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z"/>
                         </Border>
 
-                        <!-- Инфо -->
-                        <StackPanel Grid.Column="1" Margin="20,0,0,0">
+<StackPanel Grid.Column="1" Margin="20,0,0,0">
                             <TextBlock Text="{Binding RealtorName}" FontSize="22" FontWeight="Bold"
                                        Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,6"/>
 
-                            <!-- Рейтинг -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+<StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                 <TextBlock Text="{Binding StatFilledStars}" FontSize="18"
                                            Foreground="#F4B942"/>
                                 <TextBlock Text="{Binding StatEmptyStars}" FontSize="18"
@@ -94,8 +86,7 @@
                                 </TextBlock>
                             </StackPanel>
 
-                            <!-- Контакты -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+<StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <Path Width="13" Height="13" Stretch="Uniform" Margin="0,0,5,0" VerticalAlignment="Center"
                                       Fill="{DynamicResource TextSecondaryBrush}"
                                       Data="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/>
@@ -110,19 +101,16 @@
                                            Foreground="{DynamicResource TextSecondaryBrush}"/>
                             </StackPanel>
 
-                            <!-- Описание -->
-                            <TextBlock Text="{Binding RealtorDescription}" FontSize="13"
+<TextBlock Text="{Binding RealtorDescription}" FontSize="13"
                                        Foreground="{DynamicResource TextPrimaryBrush}"
                                        TextWrapping="Wrap" LineHeight="20"/>
                         </StackPanel>
                     </Grid>
                 </Border>
 
-                <!-- Статистика -->
-                <UniformGrid Columns="3" Margin="0,0,0,20">
+<UniformGrid Columns="3" Margin="0,0,0,20">
 
-                    <!-- Всего объектов -->
-                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8"
                             Margin="0,0,8,0" ClipToBounds="True">
                         <Border.Effect>
                             <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.10"/>
@@ -144,8 +132,7 @@
                         </Grid>
                     </Border>
 
-                    <!-- Продано -->
-                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8"
                             Margin="0,0,8,0" ClipToBounds="True">
                         <Border.Effect>
                             <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.10"/>
@@ -167,8 +154,7 @@
                         </Grid>
                     </Border>
 
-                    <!-- Рейтинг -->
-                    <Border Background="{DynamicResource CardBrush}" CornerRadius="8" ClipToBounds="True">
+<Border Background="{DynamicResource CardBrush}" CornerRadius="8" ClipToBounds="True">
                         <Border.Effect>
                             <DropShadowEffect Color="{DynamicResource ShadowColor}" BlurRadius="6" ShadowDepth="1" Opacity="0.10"/>
                         </Border.Effect>
@@ -197,8 +183,7 @@
 
                 </UniformGrid>
 
-                <!-- Отзывы -->
-                <Grid Margin="0,0,0,12">
+<Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -290,16 +275,14 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Нет отзывов -->
-                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="20"
+<Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="20"
                         Visibility="{Binding NoReviews, Converter={StaticResource BoolToVisibility}}">
                     <TextBlock Text="{DynamicResource RealtorProfile.NoReviews}"
                                HorizontalAlignment="Center" FontSize="14"
                                Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </Border>
 
-                <!-- Список отзывов -->
-                <ItemsControl ItemsSource="{Binding Reviews}">
+<ItemsControl ItemsSource="{Binding Reviews}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Background="{DynamicResource CardBrush}" CornerRadius="8"
@@ -331,8 +314,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <!-- Показать ещё отзывы -->
-                <Button Command="{Binding ShowMoreReviewsCommand}"
+<Button Command="{Binding ShowMoreReviewsCommand}"
                         Visibility="{Binding HasMoreReviews, Converter={StaticResource BoolToVisibility}}"
                         HorizontalAlignment="Center" Margin="0,12,0,4"
                         Height="36" Padding="28,0" FontSize="13" Cursor="Hand"

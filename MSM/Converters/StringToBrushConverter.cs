@@ -1,10 +1,9 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace MSM.Converters;
 
-// Конвертирует строку-цвет ("#RRGGBB") в SolidColorBrush для привязки к Foreground/Background
 public class StringToBrushConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

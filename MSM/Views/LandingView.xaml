@@ -7,15 +7,14 @@
              d:DesignHeight="590" d:DesignWidth="1000">
 
     <Grid Focusable="False">
-        <!-- Фоновое фото -->
+        
         <Rectangle>
             <Rectangle.Fill>
                 <ImageBrush ImageSource="/Resources/Images/main.png" Stretch="UniformToFill"/>
             </Rectangle.Fill>
         </Rectangle>
 
-        <!-- Градиентный оверлей -->
-        <Rectangle>
+<Rectangle>
             <Rectangle.Fill>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <GradientStop Color="#78000000" Offset="0"/>
@@ -25,32 +24,27 @@
             </Rectangle.Fill>
         </Rectangle>
 
-        <!-- Герой-контент -->
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"
+<StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch"
                     MaxWidth="1000" Margin="24,0">
 
-            <!-- Заголовок -->
-            <TextBlock Text="{DynamicResource Landing.Title}"
+<TextBlock Text="{DynamicResource Landing.Title}"
                        FontSize="58" FontWeight="Bold" Foreground="White"
                        TextAlignment="Center" TextWrapping="Wrap"
                        LineHeight="68" Margin="0,0,0,14"/>
 
-            <!-- Подзаголовок -->
-            <TextBlock Text="{DynamicResource Landing.Subtitle}"
+<TextBlock Text="{DynamicResource Landing.Subtitle}"
                        FontSize="17" Foreground="#CCFFFFFF"
                        TextAlignment="Center" TextWrapping="Wrap"
                        LineHeight="26" Margin="0,0,0,32"/>
 
-            <!-- Поисковая панель -->
-            <Grid>
+<Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MaxWidth="900"/>
                     <ColumnDefinition Width="20"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Поля поиска -->
-                <Border Grid.Column="0" Background="White" CornerRadius="14" Height="62">
+<Border Grid.Column="0" Background="White" CornerRadius="14" Height="62">
                     <Border.Effect>
                         <DropShadowEffect Color="#000000" Opacity="0.25" BlurRadius="28" ShadowDepth="4"/>
                     </Border.Effect>
@@ -63,8 +57,7 @@
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Тип объекта -->
-                        <ComboBox Grid.Column="0"
+<ComboBox Grid.Column="0"
                                   Style="{StaticResource TransparentComboBox}"
                                   ItemsSource="{Binding PropertyTypes}"
                                   SelectedItem="{Binding SelectedPropertyType}"
@@ -72,8 +65,7 @@
 
                         <Rectangle Grid.Column="1" Fill="#E0E0E0" Margin="0,16"/>
 
-                        <!-- Комнат -->
-                        <ComboBox Grid.Column="2"
+<ComboBox Grid.Column="2"
                                   Style="{StaticResource TransparentComboBox}"
                                   ItemsSource="{Binding RoomOptions}"
                                   SelectedItem="{Binding SelectedRooms}"
@@ -81,8 +73,7 @@
 
                         <Rectangle Grid.Column="3" Fill="#E0E0E0" Margin="0,16"/>
 
-                        <!-- Цена до (с плейсхолдером) -->
-                        <Grid Grid.Column="4" Margin="20,0">
+<Grid Grid.Column="4" Margin="20,0">
                             <TextBox Text="{Binding MaxPrice, UpdateSourceTrigger=PropertyChanged}"
                                      BorderThickness="0" Background="Transparent"
                                      FontSize="15" Foreground="#222"
@@ -107,8 +98,7 @@
                     </Grid>
                 </Border>
 
-                <!-- Кнопка Показать объекты (отдельная) -->
-                <Button Grid.Column="2" Command="{Binding ShowPropertiesCommand}" Cursor="Hand">
+<Button Grid.Column="2" Command="{Binding ShowPropertiesCommand}" Cursor="Hand">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                             <Setter Property="Template">
@@ -139,8 +129,7 @@
                 </Button>
             </Grid>
 
-            <!-- Популярные запросы -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
                 <TextBlock Text="{DynamicResource Landing.Popular}" Foreground="#80FFFFFF" FontSize="13"
                            VerticalAlignment="Center" Margin="0,0,12,0"/>
                 <Button Command="{Binding SetTagSearchCommand}" CommandParameter="apartment_2k"
@@ -209,8 +198,7 @@
             </StackPanel>
         </StackPanel>
 
-        <!-- Статистика снизу -->
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom"
+<StackPanel Orientation="Horizontal" VerticalAlignment="Bottom"
                     HorizontalAlignment="Center" Margin="0,0,0,28">
             <StackPanel HorizontalAlignment="Center" Margin="36,0">
                 <TextBlock Text="500+" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>

@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,7 +8,6 @@ using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
 
-// ViewModel каталога: поиск, фильтры по цене/площади/комнатам/городу/типу/ипотеке/ремонту.
 public partial class PropertyListViewModel : ViewModelBase
 {
     private readonly IPropertyService _propertyService;
@@ -30,7 +29,6 @@ public partial class PropertyListViewModel : ViewModelBase
     public bool CanShowMore   => _totalCount > Properties.Count;
     public int  ShowMoreCount => Math.Max(0, _totalCount - Properties.Count);
 
-    // Фильтры
     [ObservableProperty] private bool _isFilterVisible;
     [ObservableProperty] private string _filterMinPrice = "";
     [ObservableProperty] private string _filterMaxPrice = "";
@@ -47,7 +45,6 @@ public partial class PropertyListViewModel : ViewModelBase
     [ObservableProperty] private bool _filterRenovation;
     [ObservableProperty] private string _filterSortBy = "date_desc";
 
-    // Список городов и районов для ComboBox (загружается из БД, первый элемент — пустой «Все»)
     public ObservableCollection<string> Cities         { get; } = new();
     public ObservableCollection<string> FilteredCities { get; } = new();
     public ObservableCollection<string> Districts      { get; } = new();
@@ -130,7 +127,6 @@ public partial class PropertyListViewModel : ViewModelBase
         catch { }
     }
 
-    // Применяет все активные фильтры и поиск (первая страница)
     [RelayCommand]
     private async Task LoadPropertiesAsync()
     {
@@ -242,7 +238,6 @@ public partial class PropertyListViewModel : ViewModelBase
     [RelayCommand]
     private void ToggleFilter() => IsFilterVisible = !IsFilterVisible;
 
-    // Сбрасывает все фильтры и перезагружает список
     [RelayCommand]
     private async Task ResetFiltersAsync()
     {
@@ -284,7 +279,6 @@ public partial class PropertyListViewModel : ViewModelBase
         _navigationService.NavigateTo<LoginViewModel>();
     }
 
-    // Вспомогательные методы парсинга
     private static decimal? ParseDecimal(string s) =>
         decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var v) ? v : null;
 

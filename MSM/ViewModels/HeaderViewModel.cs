@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using MSM.Models;
@@ -6,7 +6,6 @@ using MSM.Services.Interfaces;
 
 namespace MSM.ViewModels;
 
-// Синглтон — живёт всё время приложения, управляет глобальной шапкой.
 public partial class HeaderViewModel : ViewModelBase
 {
     private readonly INavigationService _nav;
@@ -14,13 +13,12 @@ public partial class HeaderViewModel : ViewModelBase
 
     public bool IsLoggedIn    => Session.CurrentUser != null;
     public bool IsNotLoggedIn => Session.CurrentUser == null;
-    // Избранное доступно только клиентам
+
     public bool IsClientUser  => Session.CurrentUser?.Role == "client";
 
     public bool CanGoBack    => _nav.CanGoBack;
     public bool CanGoForward => _nav.CanGoForward;
 
-    // Прозрачный режим — когда на главной странице, хедер накладывается поверх hero-image
     public bool IsHeroMode => _nav.CurrentViewModel is LandingViewModel;
 
     [ObservableProperty] private int _favoritesCount;
@@ -65,14 +63,12 @@ public partial class HeaderViewModel : ViewModelBase
         catch { FavoritesCount = 0; }
     }
 
-    // ── Навигационные стрелки ──────────────────────────────────────────────
     [RelayCommand(CanExecute = nameof(CanGoBack))]
     private void GoBackNav() => _nav.GoBack();
 
     [RelayCommand(CanExecute = nameof(CanGoForward))]
     private void GoForwardNav() => _nav.GoForward();
 
-    // ── Навигационные кнопки ──────────────────────────────────────────────
     [RelayCommand]
     private void GoHome() => _nav.GoHome();
 
@@ -100,7 +96,6 @@ public partial class HeaderViewModel : ViewModelBase
     [RelayCommand]
     private void GoToLogin() => _nav.NavigateTo<LoginViewModel>();
 
-    // «Мой профиль» — одна кнопка, маршрут зависит от роли
     [RelayCommand]
     private void GoToProfile()
     {

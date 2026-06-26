@@ -1,11 +1,10 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
 namespace MSM.Converters;
 
-// Конвертирует byte[] (изображение из БД) в BitmapImage для отображения в Image
 public class ByteArrayToImageConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)

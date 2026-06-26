@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using MSM.ViewModels;
