@@ -6,3 +6,19 @@ riderModule.iml
 
 # SMTP credentials — не коммитить
 MSM/App.config
+
+# IDE
+.idea/
+.claude/
+.qwen/
+
+# Docs
+Docs/
+
+# Hasher
+_hashgen.cs
+_hashgen.csx
+_hashgen/
+
+# User-specific config
+*.DotSettings.user
